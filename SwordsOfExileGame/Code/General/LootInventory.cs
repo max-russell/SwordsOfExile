@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -24,18 +16,11 @@ namespace SwordsOfExileGame
         }
 
         List<lootEntry> List = new List<lootEntry>();
-
-
-        //List<Item> itemList = new List<Item>();
-        //List<int> slotList = new List<int>();
-
-
         TownMap Town;
         Location basePos;
         public Location Pos { get { return basePos; } set { basePos = value; } }
         bool Empty;
         public bool Gathering;
-        //int lastSlot = -1;
 
         eItemFilter _Filter = eItemFilter.ALL;
         public eItemFilter Filter
@@ -54,21 +39,8 @@ namespace SwordsOfExileGame
                         l.Slot = -1;
                 }
                 setShortcuts();
-                //slotList.Clear();
-
-                //int n = 0;
-                //foreach (Item i in itemList)
-                //{
-                //    if (i.Filter(_Filter))
-                //        slotList.Add(n++);
-                //    else
-                //        slotList.Add(-1);
-                //}
             }
         }
-
-        //public List<Item> MyInventory { get { return itemList; } set { itemList = value; } }
-        //public IEnumerable<Item> MyInventory() { foreach (Item i in itemList) yield return i; }
 
         public static LootSpot Generate(Location loc, TownMap town, bool gathered)
         {
@@ -91,25 +63,17 @@ namespace SwordsOfExileGame
         {
             Town = town;
             basePos = loc;
-            //List<Item> to_remove = new List<Item>();
 
             int range = Game.Mode == eMode.COMBAT ? 1 : 4;
 
             //If this is an outside combat map, we can pick up anything on the map provided all the enemies are dead.
             if (town is CombatMap && town.NoHostileNPCsLeft()) range = int.MaxValue;
-            //int n = 0;
 
             foreach (Item i in gathered ? town.EachItemInRange(loc, range) : town.EachItemThere(loc, true))
             {
                 if (gathered && i.Contained) continue; //We can't gather items in containers
-                //to_remove.Add(i);
                 AddItem(i, false);
-                //slotList.Add(n++);//i.Pos);
             }
-            //foreach (Item i in to_remove)
-            //{
-            //    Town.ItemList.Remove(i);
-            //}
 
             if (List.Count == 0) Empty = true;
         }
@@ -119,12 +83,6 @@ namespace SwordsOfExileGame
         /// </summary>
         public void Finish()
         {
-            //for (int n = 0; n < itemList.Count; n++)
-            //{
-            //    if (Town.ItemList.Contains(
-            //    Town.PlaceItem(itemList[n], locList[n]);
-            //}
-            //lastSlot = -1;
             int n = 0;
 
             foreach (lootEntry l in List)
@@ -136,7 +94,6 @@ namespace SwordsOfExileGame
                 }
                 else
                 {
-                    //item.Pos = slotList[n];
                     if (!Gathering) l.Item.Contained = true;
                 }
                 n++;
@@ -192,9 +149,6 @@ namespace SwordsOfExileGame
             if (l == null) return (char)0; else return (char)((l.Shortcut - Keys.A) + (int)'a');
         }
 
-
-        //public int LastSlot { get { return lastSlot; } }
-
         /// <summary>
         /// IInventory function. Places an item in a specific slot in the inventory, returning the item that was already there. The item returned is not removed from the inventory itself, but that must
         /// be done externally to ensure two items aren't in the same slot.
@@ -218,7 +172,6 @@ namespace SwordsOfExileGame
             if (index != -1) //There is no item in this slot.
             {
                 replaces = List[index].Item;
-                //replaces.Pos = slotList[index];
             }
 
             if (item != null)
@@ -234,28 +187,17 @@ namespace SwordsOfExileGame
                     else replaces = null;
                 }
 
-                //item.Pos.x = slotno;
-
-                //index = itemList.FindIndex(n => n == item);
-                //slotList[index] = slotno;
-
                 item.Contained = !Gathering;
-                //if (slotno > lastSlot) lastSlot = slotno;
 
                 var e = List.Find(n => n.Item == item);
 
-                if (e == null)//.Contains(item))
+                if (e == null)
                 {
                     List.Add(new lootEntry { Item = item, Slot = slotno });
-                    //itemList.Add(item);
-                    //slotList.Add(slotno);
                 }
                 else
                 {
                     e.Slot = slotno;
-
-                    //index = itemList.FindIndex(n => n == item);
-                    //slotList[index] = slotno;
                 }
 
             }
@@ -290,16 +232,11 @@ namespace SwordsOfExileGame
                 slotfree = true;
                 foreach (lootEntry l in List)
                 {
-                    if (l.Slot/*[m++]*/ == n) { n++; slotfree = false; break; }
+                    if (l.Slot == n) { n++; slotfree = false; break; }
                 }
             };
 
             List.Add(new lootEntry { Item = item, Slot = n });
-            
-            //slotList.Add(n);//item.Pos);
-            //item.Pos.x = n;
-            //itemList.Add(item);
-            //if (n > lastSlot) lastSlot = n;
             setShortcuts();
             return true;
         }
@@ -310,15 +247,8 @@ namespace SwordsOfExileGame
             if (e != null)
             {
                 if (Town.ItemList.Contains(item)) Town.ItemList.Remove(item);
-                //int ind = List.IndexOf(item);
                 List.Remove(e);
                 setShortcuts();
-
-                //itemList.Remove(item);
-                //item.Pos = locList[ind];
-                //slotList.RemoveAt(ind);
-                //lastSlot = -1;
-                //foreach (int i in slotList) lastSlot = i > lastSlot ? i : lastSlot;
                 return true;
             }
             return false;
@@ -328,16 +258,12 @@ namespace SwordsOfExileGame
         {
             for (int n = List.Count - 1; n >= 0; n--)
             {
-
                 var l = List[n];
                 if (!l.Item.Filter(_Filter)) continue;
 
                 if (Town.ItemList.Contains(l.Item)) Town.ItemList.Remove(l.Item);
 
                 List.Remove(l);
-
-                //itemList.Remove(itemList[n]);
-                //slotList.RemoveAt(n);
                 yield return l.Item;
             }
         }
@@ -353,12 +279,6 @@ namespace SwordsOfExileGame
                 if (l.Item.Filter(_Filter))
                     yield return new Tuple<Item, int>(l.Item, l.Slot);
             }
-
-            //for (int n = 0; n < itemList.Count; n++)
-            //{
-            //    if (itemList[n].Filter(_Filter))
-            //        yield return new Tuple<Item, int>(itemList[n], slotList[n]);
-            //}
         }
 
         public void ArrangeItems()
@@ -395,13 +315,6 @@ namespace SwordsOfExileGame
             {
                 if (toremove.Find(i => i == List[n].Item) != null)
                     List.RemoveAt(n);
-
-
-                //if (toremove.Contains(itemList[n]))
-                //{
-                //    itemList.RemoveAt(n);
-                //    slotList.RemoveAt(n);
-                //}
             }
 
             //Gaps are removed
@@ -414,18 +327,7 @@ namespace SwordsOfExileGame
                 else
                     l.Slot = -1;
             }
-
             setShortcuts();
-            //slotList.Clear();
-            //int l = 0;
-            //foreach (Item i in itemList)
-            //{
-            //    if (i.Filter(_Filter))
-            //        slotList.Add(l++);
-            //    else
-            //        slotList.Add(-1);
-            //}
-
         }
 
         public bool InventorysClose(IInventory other)
@@ -439,17 +341,16 @@ namespace SwordsOfExileGame
             return false;
         }
 
-        public void MakeItemToolTip(Item e, XnaRect r)//int slotno)
+        public void MakeItemToolTip(Item e, XnaRect r)
         {
-            if (/*GetSlot(slotno)*/e != null)
-                new ToolTipV2(false, r, e.TooltipInfo(), -1);//ToolTip(e.TooltipInfo(),-1, false);
+            if (e != null)
+                new ToolTipV2(false, r, e.TooltipInfo(), -1);
         }
 
         public void MakeInventoryPopUpWindow(Item c)
         {
-            var popupoptions = new List<PopUpMenuData>();//<Tuple<string, object, int>>();
+            var popupoptions = new List<PopUpMenuData>();
 
-            //Item c = GetSlot(slot);
             if (c != null)
             {
                 Gui.DragItem = null;
@@ -460,18 +361,11 @@ namespace SwordsOfExileGame
         }
 
         void handlePopUp(object o, object o2, int data)
-        {//string option) {
-            Item c = (Item)o;//owner.GetSlot(popupSlot);//carryables.Find(cFind => cFind.Pos.X == popupSlot);
+        {
+            Item c = (Item)o;
             PCType pc = Game.CurrentParty.CurrentPC;//owner as PCType;
             if (data == PopUpMenuData.EQUIP || data == PopUpMenuData.TAKE)
             {
-                //Action.Requested = eAction.EquipItem;
-                //if (Game.Mode == eMode.COMBAT)
-                //    Action.PC = Game.CurrentParty.ActivePC;
-                //else
-                //    Action.PC = Game.CurrentParty.CurrentPC;
-                //Action.Item = c;
-                //Action.InventoryFrom = this;
                 new Action(data == PopUpMenuData.EQUIP ? eAction.EquipItem : eAction.TakeItem)
                 {
                     PC = Game.Mode == eMode.COMBAT ? Game.CurrentParty.ActivePC : Game.CurrentParty.CurrentPC,

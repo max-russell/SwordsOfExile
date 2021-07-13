@@ -1,24 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+﻿using System.Collections.Generic;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
 {
     class HealerShopWindow : GuiWindow
     {
-        //char *heal_types[] = {"Heal Damage","Cure Poison","Cure Disease","Cure Paralysis",
-        //"Uncurse Items","Cure Stoned Character","Raise Dead","Resurrection","Cure Dumbfounding"};
-        //short heal_costs[9] = {50,30,80,100,250,500,1000,3000,100};
 
         ConversationWindow cameFrom;
         int priceMod;
@@ -41,7 +27,7 @@ namespace SwordsOfExileGame
 
             foreach (PCType pc in Party.PCList)
             {
-                XnaRect sr = new XnaRect(0, 0, Gfx.PCPORTRAITWIDTH, Gfx.PCPORTRAITHEIGHT);// pc.GetGraphicRect(true);
+                XnaRect sr = new XnaRect(0, 0, Gfx.PCPORTRAITWIDTH, Gfx.PCPORTRAITHEIGHT);
                 var opt = AddPictureButton(pressPC, sr, pc.PortraitTexture, dr);
                 pc_buttons.Add(opt);
                 pcs.Add(pc);
@@ -153,9 +139,8 @@ namespace SwordsOfExileGame
             if (cameFrom != null)
             {
                 cameFrom.Visible = true;
-                //Gui.KeyFocusWindow = cameFrom;
             }
-            Action.LockActions = eAction.NONE;//false;
+            Action.LockActions = eAction.NONE;
         }
 
 

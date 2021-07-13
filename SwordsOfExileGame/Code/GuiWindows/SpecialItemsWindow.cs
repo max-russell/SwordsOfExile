@@ -1,15 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+﻿using Microsoft.Xna.Framework;
 
 namespace SwordsOfExileGame
 {
@@ -53,11 +42,8 @@ namespace SwordsOfExileGame
             controls.Add(descBox);
 
             useButton = new Button(this, pressUse, "Use", 210, 320, -1, -1, -1);
-            //useButton.Position(210, -10, -1, 1);
             controls.Add(useButton);
             useButton.Visible = false;
-
-            //itemList.SelectedItem = itemList.Items[0];
             Position(-2, -2);
             Gui.BringToFront(this);
         }
@@ -66,7 +52,6 @@ namespace SwordsOfExileGame
         {
             base.Close();
             instance = null;
-            //Visible = false;fp-
         }
 
         public static void Refresh()
@@ -95,7 +80,6 @@ namespace SwordsOfExileGame
         void pressUse(Control b)
         {
             SpecialItem s = (SpecialItem)itemList.SelectedItem.Tag;
-            //new Script(s.UseFunc, eCallOrigin.USING_SPECIAL_ITEM);
             Script.New_UseSpecialItem(s.UseFunc, s);
             KillMe = true;
         }

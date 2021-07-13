@@ -1,15 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -250,9 +244,6 @@ namespace SwordsOfExileGame
             PCType pc2 = null;
             eAction action = eAction.NONE;
 
-            //Action.PC2 = null;
-            //Action.Item = null; //This being null tells the game the spell hasn't come from an item
-
             switch (selectedSpell.Target)
             {
                 case eSpellTarget.CASTER:
@@ -271,8 +262,6 @@ namespace SwordsOfExileGame
                     action = eAction.SpellTargeting;
                     break;
             }
-            //Action.PC = Caster;
-            //Action.Spell = selectedSpell;
             new Action(action) { PC = Caster, Spell = selectedSpell, PC2 = pc2 };
 
             LastPCCaster = Caster;
@@ -315,21 +304,6 @@ namespace SwordsOfExileGame
                 }
         }
 
-        //void pressToggle(Button b)
-        //{
-        //    displayFavs = !displayFavs;
-        //    updateSpellList();
-        //    updateToggleButton();
-        //}
-
-        //void updateToggleButton()
-        //{
-        //    if (displayFavs)
-        //        toggleFavourites.Caption = Caster.Name + ": Favourite Spells";
-        //    else
-        //        toggleFavourites.Caption = Caster.Name + ": All Known Spells";
-        //}
-
         public void UpdateCaster(PCType caster)
         {
             Caster = caster;
@@ -348,33 +322,8 @@ namespace SwordsOfExileGame
 
             casterInfo.FormatText("@b" + Caster.Name + "@e@n" + q + (m > 0 || p > 0 ? "@nSpell Points: @b" + Caster.SP + "@e \\ @b" + Caster.MaxSP + "@e" : ""));
 
-            //for (int n = 1; n <= Game.MAX_SPELL_LEVEL; n++)
-            //    spellLevelButtons[n - 1].Enabled = (mageButton.Pressed && Caster.GetSkill(eSkill.MAGE_SPELLS) >= n)
-            //                                       || (priestButton.Pressed && Caster.GetSkill(eSkill.PRIEST_SPELLS) >= n);
-
-            //mageButton.Enabled = (Caster.GetSkill(eSkill.MAGE_SPELLS)) > 0;
-            //priestButton.Enabled = (Caster.GetSkill(eSkill.PRIEST_SPELLS)) > 0;
-
             updateSpellList();
         }
-
-        //string getCasterInfo(PCType pc)
-        //{
-        //    var sb = new StringBuilder();
-        //    sb.AppendLine(pc.Name);
-        //    if (pc.IsAlive() && (pc.GetSkill(eSkill.MAGE_SPELLS) > 0 || pc.GetSkill(eSkill.PRIEST_SPELLS) > 0))
-        //    {
-        //        sb.AppendLine("Mana: " + pc.SP + "/" + pc.MaxSP);
-        //        sb.Append("M:" + pc.GetSkill(eSkill.MAGE_SPELLS) + "  P:" + pc.GetSkill(eSkill.PRIEST_SPELLS));
-        //    }
-        //    else
-        //    {
-        //        if (!pc.IsAlive()) sb.Append(pc.MainStatusMessage());
-        //        else
-        //            sb.Append("No Magic");
-        //    }
-        //    return sb.ToString();
-        //}
 
         void updateSpellList()
         {
@@ -395,7 +344,7 @@ namespace SwordsOfExileGame
 
             if (PCSelectedSpell[Caster.Slot] == null)
             {
-                spellListBox.SelectedItem = null;//spellListBox.Items[0];
+                spellListBox.SelectedItem = null;
                 spellListBox.RevealItem(null);
             }
             else
@@ -461,36 +410,6 @@ namespace SwordsOfExileGame
                             break;
                     }
                 }
-
-
-
-
-                //foreach (MagicSpell m in MagicSpell.List.Values)
-                //{
-                //    if (m.KeyShortcut == keys[0])
-                //    {
-                //        if (Caster.KnownSpells.ContainsKey(m.ID))
-                //        {
-                //            //currentSpellLevel = m.Level;
-                //            currentIsMage = m.Mage;
-                //            spellLevelButtons[m.Level - 1].OptionPress(true);
-
-                //            //updateSpellList();
-                //            foreach (ListBoxItem i in spellListBox.Items)
-                //            {
-                //                if (i.Tag == m)
-                //                {
-                //                    spellListBox.SelectedItem = i;
-                //                    //changedSelected(true, i);
-                //                    break;
-                //                }
-                //            }
-                //            return true;
-                //        }
-                //        else
-                //            break;
-                //    }
-                //}
             }
 
             return interacted;

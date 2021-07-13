@@ -1,16 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+
 
 using System.Threading;
 
@@ -33,7 +28,6 @@ namespace SwordsOfExileGame
         }
         public static bool ErrorFlagged = false;
         static string errorType, errorMessage;
-        //public static string TestMessage = "";
         public static bool Quit = false;
 
         //Loading status flags.
@@ -44,11 +38,9 @@ namespace SwordsOfExileGame
         public static string BaseDirectory, ScenarioDirectory, SavesDirectory; //The directory for the 'Base' data.
 
         public static bool InMainMenu = true;
-        //public static bool EndScenario = true;
         
         //Should be set to the designated placeholder entries in the enum. Eg, Set to INVENTORY_LOCKED_ACTIONS, when a Loot Window or Shop window is open, to stop any actions except inventory ones
         public static bool PartyDead = false, GameOver = false;
-        //public static bool DoneLeaveScript = false;
 
         public static PartyType CurrentParty;
         public static IMap CurrentMap;
@@ -63,10 +55,8 @@ namespace SwordsOfExileGame
             }
         }
         static eMode mode = eMode.TOWN;
-        //public static bool Outside() { return mode == eMode.OUTSIDE; }
 
         //Cheats / Testing
-        //public static bool debugMode = false; //If true, enemies don't move
         public static bool DebugLoad = false; //Sets to true when press '`' at the same time as load button. Resets original scenario terrain on load.
         public static bool Invincible = false, //PCs can't be harmed
                            OneHitKill = false, //One hit kills enemies
@@ -91,31 +81,15 @@ namespace SwordsOfExileGame
         public static int AnimTicks = 0;
         static int tickSpeed = 250, nextTick = 0;
         public static eTurn Turn { get { if (gameState == eState.BEGIN_PC_TURN || gameState == eState.PICK_NEXT_PC || gameState == eState.PC_TURN_PROCESS_ACTION || gameState == eState.TARGET_MODE) return eTurn.PLAYER; else return eTurn.NPCS; } }//= eTurn.PLAYER;
-        static bool turnBegin;//, PCMoveStart;
+        static bool turnBegin;
 
         public static bool PlayerTargeting { get { return gameState == eState.TARGET_MODE; } }
 
-        //public static bool /*PlayerTargeting = false,*/ TargetDrawLine = false, TargetNumbersOn = false;
-        //public static bool PlayerTargeting { get { return gameState == eState.TARGET_MODE; } }
-        //public static eAction TargetWhat;
-        //public static int TargetRange;
-        //static Item TargetItem;
-        //public static PCType TargetPC;
-        //public static MagicSpell TargetSpell;
-        //public static int TargetTotalTargets; //How many targets player needs to select
-        //public static int TargetSelectCount;  //Keep track of how many targets we've picked so far.
-        //public static List<Location> TargetSelectList; //All targets will be stored here.
-        //public static bool TargetNPCsOnly;    //Only allow targeting tiles occupied by NPCs
-        //public static Pattern TargetPattern;
-
-        //public static ActionType Action;
-
-        static List<PortraitWindow> portraitWindows;// = new List<PortraitWindow>();
+        static List<PortraitWindow> portraitWindows;
         static InventoryWindow inventoryWindow;
         static StatsWindow statsWindow;
         static InfoListWindow messageWindow;
         static MenuBarWindow menuBarWindow;
-        //static MagicWindow magicWindow;
 
         static eState gameState = eState.BEGIN_PC_TURN;
 
@@ -129,7 +103,6 @@ namespace SwordsOfExileGame
 #endif
             RootDirectory = Directory.GetCurrentDirectory();
             BaseDirectory = Path.Combine(RootDirectory, "Base");
-            //ScenarioDirectory = Path.Combine(RootDirectory, "Scenarios");
             SavesDirectory = Path.Combine(RootDirectory, "Saves");
             Gfx.Initialise(this);
         }
@@ -370,16 +343,6 @@ namespace SwordsOfExileGame
                                 Mode = eMode.TOWN;
                                 switch (CurrentParty.Direction.Dir)
                                 {
-                                    //**This is ideally the new town entry behaviour - but it may break BoE scenarios - as in Za-Khazi Run town 18
-                                    //case eDir.S: CurrentParty.Pos = town.EnterPos[0]; break;
-                                    //case eDir.SE: if (Maths.Rand(1, 0, 1) == 0) CurrentParty.Pos = town.EnterPos[0]; else CurrentParty.Pos = town.EnterPos[3]; break;
-                                    //case eDir.E: CurrentParty.Pos = town.EnterPos[3]; break;
-                                    //case eDir.NE: if (Maths.Rand(1, 0, 1) == 0) CurrentParty.Pos = town.EnterPos[3]; else CurrentParty.Pos = town.EnterPos[2]; break;
-                                    //case eDir.N: CurrentParty.Pos = town.EnterPos[2]; break;
-                                    //case eDir.NW: if (Maths.Rand(1, 0, 1) == 0) CurrentParty.Pos = town.EnterPos[2]; else CurrentParty.Pos = town.EnterPos[1]; break;
-                                    //case eDir.W: CurrentParty.Pos = town.EnterPos[1]; break;
-                                    //case eDir.SW: if (Maths.Rand(1, 0, 1) == 0) CurrentParty.Pos = town.EnterPos[1]; else CurrentParty.Pos = town.EnterPos[0]; break;
-
                                     case eDir.S: CurrentParty.Pos = town.EnterPos[0]; break;
                                     case eDir.SE:
                                     case eDir.E:
@@ -436,7 +399,6 @@ namespace SwordsOfExileGame
 
                                 //Change to combat map!
                                 initiateOutdoorCombat(WorldMap.PCAttacker.Record);
-                                //Gfx.StartFade(300, true);
                                 new Animation_FadeUp(300);
 
                                 //Also, delete this outdoor wandering group now.
@@ -453,17 +415,13 @@ namespace SwordsOfExileGame
                                     gameState = eState.BEGIN_PC_TURN;
                                     CurrentParty.Pos = CurrentParty.OutsidePos;
                                     CurrentParty.MoveToMap(WorldMap);
-                                    //Reset things
-                                    //Turn = eTurn.PLAYER;
                                     Mode = eMode.OUTSIDE;
 
                                 }
                                 else
                                 {
                                     gameState = eState.BEGIN_NPC_TURN;
-                                    Mode = eMode.TOWN;//awaitModeChange;
-                                    //Turn = eTurn.NPCS;
-                                    //turnBegin = true;
+                                    Mode = eMode.TOWN;
                                 }
                                 break;
 
@@ -518,77 +476,6 @@ namespace SwordsOfExileGame
                     //If we don't want to give a chance to animations or scripts to run before changing state, this should be set.
                     } while (immediate_state_switch);
                 }
-
-
-                //if (GameOver && Animation.NoAnimationsRunning())
-                //{
-                //    Game.GameOver = false;
-
-                //    Gui.GuiWindows.Clear();
-                //    if (PartyDead) 
-                //        new GameOverWindow();
-                //    else
-                //    {
-                //        CurrentParty.Restore();
-                //        new LoadGameWindow(false, true, true, doAfterWin);
-                //    }
-                //}
-                //else if (Script.IsRunning /*SpecialNode.SpecialsRunning*/ && Animation.NoAnimationsRunning() && Action.Requested == eAction.NONE)
-                //{
-                //    Script.RunNext();//SpecialNode.run_specials();
-                //}
-                //else
-                //{
-                //    KeyHandler.GetActionKeys();
-
-                //    checkForLeavingMap();
-
-                //    //Delay doing anything after combat ends to give a chance for the animation to run properly.
-                //    if (combatIsEnding)
-                //    {
-                //        if (Animation.NoAnimationsRunning())
-                //        {
-                //            if (CurrentTown is CombatMap) //We've finished fighting on a combat map, back to world map.
-                //            {
-                //                foreach (PCType pc in CurrentParty.PCList)
-                //                    if (pc.LifeStatus == eLifeStatus.FLED) pc.LifeStatus = eLifeStatus.ALIVE;
-
-                //                CurrentParty.Pos = CurrentParty.OutsidePos;
-                //                CurrentParty.MoveToMap(WorldMap);
-                //                //Reset things
-                //                Turn = eTurn.PLAYER;
-                //                Mode = eMode.OUTSIDE;
-                //                combatIsEnding = false;
-                //            }
-                //            else
-                //            {
-                //                Mode = eMode.TOWN;//awaitModeChange;
-                //                Turn = eTurn.NPCS;
-                //                turnBegin = true;
-                //                combatIsEnding = false;
-                //            }
-                //        }
-                //    }
-
-                //    if (!combatIsEnding)
-                //    {
-                //        if (Turn == eTurn.PLAYER && Animation.NoAnimationsRunning())
-                //        {
-                //            DoPlayersTurn();
-                //        }
-                //        else if (Turn == eTurn.NPCS)
-                //        {
-                //            DoNPCsTurn();
-                //        }
-
-                //    }
-                //}
-                //Gfx.DoMapScroll(gameTime.ElapsedGameTime.Milliseconds);
-                //Gfx.DoMapZoom(gameTime.ElapsedGameTime.Milliseconds);
-                //Animation.AdvanceAll(gameTime.ElapsedGameTime.Milliseconds);
-
-
-
             }
         }
 
@@ -599,7 +486,6 @@ namespace SwordsOfExileGame
         protected override void Draw(GameTime gameTime)
         {
             Gfx.Draw();
-            //base.Draw(gameTime);
         }
 
         public static void doLoadSave(int option, string filename)
@@ -620,90 +506,6 @@ namespace SwordsOfExileGame
                 SaveGame(filename, false);
             }
         }
-
-        //public static void DoPlayersTurn()
-        //{
-        //    if (!PlayerTargeting)
-        //    {
-        //        if (turnBegin == true)
-        //        {
-        //            //Process 'stood on' Triggers here.
-        //            if (CurrentMap.DoStoodOnTriggers()) return;
-        //            CurrentParty.StartNewTurn();//if (CurrentParty.StartNewTurn())
-        //        }
-        //        //turnBegin = false;
-        //        //PCMoveStart = true;
-
-        //        bool advanceturn = false, endturn = false;
-
-        //        if (turnBegin || CurrentParty.ActivePC == null || CurrentParty.ActivePC.AP <= 0)
-        //        {
-        //            if (PartyDead)
-        //            {
-        //                Sound.Play("013_partydeath");
-        //                new Animation_FadeDown(1000);
-        //                //PartyDead = false;
-        //                GameOver = true;
-        //                return;
-        //            }
-
-        //            if (CurrentParty.PartyFled())
-        //            {
-        //                if (Gfx.FadeMode == 0)
-        //                {
-        //                    //The entire party has run away from combat. Put back on world map.
-        //                    //Gfx.StartFade(300, false);
-        //                    new Animation_FadeDown(300);
-        //                    //new Script(((CombatMap)CurrentMap).NPCGroup.FuncOnFlee, eCallOrigin.FLEE_ENCOUNTER);
-        //                    Script.New_NPCGroup(((CombatMap)CurrentMap).NPCGroup.FuncOnFlee, eCallOrigin.FLEE_ENCOUNTER, ((CombatMap)CurrentMap).NPCGroup);
-        //                }
-        //                else
-        //                {
-        //                    foreach (PCType pc in CurrentParty.PCList)
-        //                    {
-        //                        if (pc.LifeStatus == eLifeStatus.FLED) pc.LifeStatus = eLifeStatus.ALIVE;
-        //                    }
-
-        //                    CurrentParty.Pos = CurrentParty.OutsidePos;
-        //                    CurrentParty.MoveToMap(WorldMap);
-        //                    //Reset things
-        //                    Turn = eTurn.PLAYER;
-        //                    Mode = eMode.OUTSIDE;
-        //                    turnBegin = true;
-        //                    Gfx.CentreView(CurrentParty.Pos, true);
-        //                }
-        //                return;
-        //            }
-
-
-
-        //            if (CurrentParty.PickNextPC())
-        //            {
-        //                endturn = true;
-        //            }
-        //            else Gfx.CentreView(CurrentParty.ActivePC.Pos, false); //PCMoveStart = false; 
-        //        } //else
-
-        //        turnBegin = false;
-        //        //advanceturn = SpecialNode.PendingPCHasMoved;//.run_specials();
-        //        //SpecialNode.PendingPCHasMoved = false;
-
-        //        if (!endturn)
-        //            advanceturn = HandleAction();
-
-        //        if (endturn || (advanceturn && Game.Mode != eMode.COMBAT))
-        //        {
-        //            CurrentParty.IncreaseAge();
-
-        //            Turn = eTurn.NPCS;
-        //            turnBegin = true;
-        //        }
-        //    }
-        //    else //Player targeting. Don't do anything until the player has chosen a square on the map for the action.
-        //    {
-        //        HandleTargeting();
-        //    }
-        //}
 
         public static void DoNPCsTurn()
         {
@@ -734,7 +536,6 @@ namespace SwordsOfExileGame
                                 {
                                     //Change to combat map!
                                     initiateOutdoorCombat(WorldMap.PCAttacker.Record);
-                                    //Gfx.StartFade(300, true);
                                     new Animation_FadeUp(300);
 
                                     //Also, delete this outdoor wandering group now.
@@ -752,29 +553,17 @@ namespace SwordsOfExileGame
                 }
                 else if (CurrentMap.DoNPCTurn())
                 {
-                    //Turn = eTurn.PLAYER;
                     turnBegin = true;
                 }
             }
         }
 
-        //static void CancelTargetting()
-        //{
-        //    NewsLine.Clear();
-        //    AddMessage("  Action cancelled.");
-        //    //PlayerTargeting = false;
-        //    if (Game.Mode != eMode.OUTSIDE) CurrentTown.UpdateVisible();
-        //    return;
-        //}
-
         static void LoadingThread()
         {
             if (loadingStartNew)
             {
-                if (!Scenario.Load()) return ; //KLUDGE.EXS2"); 
+                if (!Scenario.Load()) return ;
                 if (!Script.Initialise()) return;
-                //if (!MagicSpell.LoadSpellData()) return;
-                //if (!Recipe.LoadAlchemyData()) return;
             }
             else
             {
@@ -875,7 +664,6 @@ namespace SwordsOfExileGame
         static void initiateOutdoorCombat(EncounterRecord group)
         {
             Mode = eMode.COMBAT;
-            //Turn = eTurn.PLAYER;
             CurrentParty.ActivePC = CurrentParty.LeaderPC;
             turnBegin = true;
             CurrentParty.OutsidePos = CurrentParty.Pos; //Store this re
@@ -890,7 +678,6 @@ namespace SwordsOfExileGame
 
             CurrentMap = new CombatMap(group, unders, overs);
 
-
             //TODO: Like in BoE - dump freshly dead PCs belongings on the combat map - in case he's been
             //killed in a special just prior to combat???
         }
@@ -900,32 +687,9 @@ namespace SwordsOfExileGame
             CurrentParty.SingleActingPC = null;
             ((TownMap)CurrentMap).PlacePartyForCombat(CurrentParty.Direction.Dir);
             Sound.Play("093_sheathe");
-
-            //if (BoE.current_pc == null) BoE.current_pc = BoE.Party.first_active_pc();
-
-            //GameScreen.center = BoE.current_pc.Pos;// pc_pos[current_pc];
-
             Mode = eMode.COMBAT;
-
             CurrentTown.UpdateVisible();
-
-            //BoE.which_combat_type = 1;
-            //BoE.overall_mode = 10;
-
-            //BoE.combat_active_pc = null;// 6;
-
-            //BoE.FormerCurrentPC = BoE.current_pc;
-            //BoE.current_pc = null;
-            //foreach (pc_record_type pc in BoE.Party.EachPC()) pc.set_pc_moves();
-
-            //CurrentParty.StartNewTurn();
             turnBegin = true;
-
-            //GameScreen.center = BoE.current_pc.Pos;
-            //Gfx.draw_buttons(0);
-            //GameScreen.put_pc_screen();
-            //GameScreen.set_stat_window(BoE.current_pc.Slot);
-            //BoE.give_help(48, 49);
         }
 
         public static bool EndCombat(bool death_during_split = false)
@@ -941,9 +705,6 @@ namespace SwordsOfExileGame
                     }
 
                     Script.New_NPCGroup(((CombatMap)CurrentTown).NPCGroup.FuncOnWin, eCallOrigin.WIN_ENCOUNTER, ((CombatMap)CurrentTown).NPCGroup);
-
-                    //new Script(((CombatMap)CurrentTown).NPCGroup.FuncOnWin, eCallOrigin.WIN_ENCOUNTER);
-                    //Gfx.StartFade(300, false);
                     new Animation_FadeDown(300);
                 }
                 CurrentParty.EndCombat();
@@ -953,90 +714,6 @@ namespace SwordsOfExileGame
             //combatIsEnding = true;
             return true;
         }
-
-        ///// <summary>
-        ///// Check if the player has left the map (off the edges / up stairs etc for a town, or onto a town entrance for outdoors)
-        ///// </summary>
-        //static void checkForLeavingMap()
-        //{
-        //    //if (PartyDead/* || !Animation.NoAnimationsRunning()*/) return;
-
-        //    //If we're in a town, see if a PC has left the boundary of the town.
-        //    if (Mode == eMode.TOWN && !CurrentTown.InActArea(CurrentParty.Pos))
-        //    {
-        //        if (Gfx.FadeMode == 0) //Not yet started fade
-        //        {
-        //            //If there's a town exit script, set it up to run before the fade (the fade will be done when the script is finished)
-        //            if (DoneLeaveScript || !CurrentTown.SetUpExitFunc())
-        //            {
-        //                new Animation_FadeDown(300);
-        //            }
-        //            DoneLeaveScript = true;
-
-
-        //        }
-        //        else if (Gfx.FadeMode == 2) //Completely faded to black
-        //        {
-        //            CurrentParty.OutsidePos += CurrentTown.GetDepartDirection(CurrentParty.Pos);
-        //            CurrentParty.Pos = CurrentParty.OutsidePos;
-        //            CurrentParty.MoveToMap(WorldMap);
-
-        //            //Reset things
-        //            //Turn = eTurn.PLAYER;
-        //        }
-        //        //etc...
-        //    }
-
-        //    //Check if outside Party has stepped onto a town to enter
-        //    else if (Mode == eMode.OUTSIDE)
-        //    {
-        //        TownMap town = WorldMap.TownEntranceHere(CurrentParty.Pos);
-
-        //        if (town != null)
-        //        {
-        //            if (Gfx.FadeMode == 0)
-        //            {
-        //                if (town.LightType > 0) Sound.Play("095_enterdungeon");
-        //                else Sound.Play("016_townentry");
-
-        //                new Animation_FadeDown(300);
-        //                //Gfx.StartFade(300, false);
-        //            }
-        //            else
-        //            {
-        //                CurrentParty.OutsidePos = CurrentParty.Pos;
-        //                //Turn = eTurn.PLAYER;
-        //                Mode = eMode.TOWN;
-        //                switch (CurrentParty.Direction.Dir)
-        //                {
-        //                    //**This is ideally the new town entry behaviour - but it may break BoE scenarios - as in Za-Khazi Run town 18
-        //                    //case eDir.S: CurrentParty.Pos = town.EnterPos[0]; break;
-        //                    //case eDir.SE: if (Maths.Rand(1, 0, 1) == 0) CurrentParty.Pos = town.EnterPos[0]; else CurrentParty.Pos = town.EnterPos[3]; break;
-        //                    //case eDir.E: CurrentParty.Pos = town.EnterPos[3]; break;
-        //                    //case eDir.NE: if (Maths.Rand(1, 0, 1) == 0) CurrentParty.Pos = town.EnterPos[3]; else CurrentParty.Pos = town.EnterPos[2]; break;
-        //                    //case eDir.N: CurrentParty.Pos = town.EnterPos[2]; break;
-        //                    //case eDir.NW: if (Maths.Rand(1, 0, 1) == 0) CurrentParty.Pos = town.EnterPos[2]; else CurrentParty.Pos = town.EnterPos[1]; break;
-        //                    //case eDir.W: CurrentParty.Pos = town.EnterPos[1]; break;
-        //                    //case eDir.SW: if (Maths.Rand(1, 0, 1) == 0) CurrentParty.Pos = town.EnterPos[1]; else CurrentParty.Pos = town.EnterPos[0]; break;
-
-        //                    case eDir.S: CurrentParty.Pos = town.EnterPos[0]; break;
-        //                    case eDir.SE: 
-        //                    case eDir.E:
-        //                    case eDir.NE: CurrentParty.Pos = town.EnterPos[3]; break;
-        //                    case eDir.N: CurrentParty.Pos = town.EnterPos[2]; break;
-        //                    case eDir.NW: 
-        //                    case eDir.W:
-        //                    case eDir.SW: CurrentParty.Pos = town.EnterPos[1]; break;
-
-        //                }
-        //                CurrentParty.MoveToMap(town);
-        //                //CurrentMap = town;
-        //            }
-        //        }
-
-        //    }
-
-        //}
 
         /// <summary>
         /// Sets the Drag item to the one selected
@@ -1124,7 +801,6 @@ namespace SwordsOfExileGame
             statsWindow = null;
             messageWindow = null;
             menuBarWindow = null;
-            //magicWindow = null;
             Gui.GuiWindows.Clear();
             Script.CleanUp();
             Gfx.Load(GraphicsDevice, true);
@@ -1201,20 +877,6 @@ namespace SwordsOfExileGame
             else
             {
                 SaveSettings();
-                ////No settings file exists yet. Make a new one.
-                //XmlWriterSettings settings = new XmlWriterSettings();
-                //settings.Indent = true;
-                //settings.OmitXmlDeclaration = true;
-                //settings.ConformanceLevel = ConformanceLevel.Fragment;
-
-                //using (XmlWriter writer = XmlWriter.Create(fn, settings))
-                //{
-                //    writer.WriteStartElement("Settings");
-                //    writer.WriteElementString("LastSave", LastSaveFile);
-                //    writer.WriteElementString("Volume", Convert.ToString(10));
-                //    writer.WriteEndElement();
-                //    //We'll have to set the graphics settings when the graphics have been loaded.
-                //}
             }
         }
         public static void SaveSettings(int w = -1, int h = -1, int fullscreen = -1)
@@ -1284,13 +946,6 @@ namespace SwordsOfExileGame
 
             BackToMainMenu();
         }
-
-
-        //public static short[] hit_chance = {20,30,40,45,50,55,60,65,69,73,
-		//					77,81,84,87,90,92,94,96,97,98,99
-		//					,99,99,99,99,99,99,99,99,99,99
-		//					,99,99,99,99,99,99,99,99,99,99,
-		//					99,99,99,99,99,99,99,99,99,99};
     }
 
 }

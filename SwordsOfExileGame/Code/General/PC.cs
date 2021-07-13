@@ -4,14 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -87,7 +81,7 @@ namespace SwordsOfExileGame
         }
 
 
-        string name = ""; //char[] name = new char[20];
+        string name = "";
         public string Name { get { return name; } set { name = value; } }
         int[] skills = new int[30];
         int max_health, max_sp, experience;
@@ -234,18 +228,11 @@ namespace SwordsOfExileGame
         }
 
         public bool IsVisible() { return true; }
-
-        //item_record_type[] items = new item_record_type[24];
-
         public List<Item> ItemList = new List<Item>();
-        //public List<Item> equip = new List<Item>(); //Which items in items are equipped.
         public Item[] EquippedItemSlots = new Item[13];
         public Item PoisonedWeapon;
-
-        //public Boolean[] priest_spells = new Boolean[62], mage_spells = new Boolean[62];
         public Dictionary<string, MagicSpell> KnownSpells = new Dictionary<string, MagicSpell>();
-        //public Dictionary<string, MagicSpell> FavouriteSpells = new Dictionary<string, MagicSpell>(); //The spells from above list player has marked as favourite for easy access
-
+ 
         public void LearnSpell(string id)
         {
             MagicSpell m;
@@ -261,42 +248,11 @@ namespace SwordsOfExileGame
             }
         }
 
-        //List<string> knownSpellIDList = new List<string>(); //IDs of all known spells - includes spell ids from other scenarios that aren't in the currently loaded one - stored here so the
-        //spells the characters know are preserved.
-
         public int which_graphic;
-        
-
-
-        //static string[] traitNames = {
-        //                                 "Toughness",
-        //                                 "Magically Apt",
-        //                                 "Ambidextrous",
-        //                                 "Nimble Fingers",
-        //                                 "Cave Lore",
-        //                                 "Woodsman",
-        //                                 "Good Constitution",
-        //                                 "Highly Alert",
-        ////                                 "Exceptional Strength",
-        //                                 "Recuperation",
-        //                                 "Sluggish",
-        //                                 "Magically Inept",
-        //                                 "Frail",
-        //                                 "Chronic Disease",
-        //                                 "Bad Back",
-        //                                 "Pacifist",
-        //                                 "Human",
-        //                                 "Slitherzakai",
-        //                                 "Nephilim"
-        //                             }
-        //List<eTrait> Traits = new List<eTrait>();//new Boolean[15];
-        //public bool HasTrait(eTrait t) { return Traits.Contains(t);}
-
-        public List<Trait> Traits = new List<Trait>();//new Boolean[15];
+        public List<Trait> Traits = new List<Trait>();
         public bool HasTrait(Trait t) { return Traits.Contains(t); }
 
         public int exp_adj;
-        //public ePCRace race; //Race is now a trait
         Direction direction;
 
         static short[] hitChance = {20,30,40,45,50,55,60,65,69,73,
@@ -304,8 +260,6 @@ namespace SwordsOfExileGame
 							,99,99,99,99,99,99,99,99,99,99
 							,99,99,99,99,99,99,99,99,99,99,
 							99,99,99,99,99,99,99,99,99,99};
-
-        //public bool IsNotHere() { return false; }
 
         public Direction Dir
         { get { return direction; } set 
@@ -334,22 +288,12 @@ namespace SwordsOfExileGame
             foreach (Item i in EquippedItemSlots) if (i != null) yield return i;
         }
 
-        //ICharacter stuff
         public Location Pos { get { return pos; } set { pos = value; } } //PC's current position 
         Location pos;
-        //public void StartMovingAnim(Direction dir) { moveChar = new MovingCharacter(this, dir); }
-        //public void AdvanceMovingAnim() { if (moveChar != null && moveChar.AdvanceMove()) moveChar = null; }
-        //public Vector2 MovingAnimAdjustment {get { if (moveChar != null) return moveChar.GetMovePosAdjustment(); else return Vector2.Zero; }}
-        //public bool MoveAnimInProgress() { return moveChar != null; }
-        //MovingCharacter moveChar;
         IAnimCharacter animAction;
         public IAnimCharacter AnimAction { get { return animAction; } set { animAction = value; } }
         IAnimCharacter animFlash;
         public IAnimCharacter AnimFlash { get { return animFlash; } set { animFlash = value; } }
-
-
-        //public bool DoingMovingAnim { get { return MoveChar != null; } }
-        //public void SetMovingAnim(MovingCharacter mc) { moveChar = mc; }
         TownMap curTown { get { return Game.CurrentMap as TownMap; } }
 
         public string TooltipInfo(bool brief)
@@ -370,40 +314,6 @@ namespace SwordsOfExileGame
             return txt;
         }
 
-        //public bool GiveItem(Item item, bool ignore_weight, bool print)
-        //{
-        //    if (item.Variety == eVariety.Gold)
-        //    {
-        //        Party.gold += item.Level;
-        //        Game.AddMessage("You get some gold.");
-        //        return true;
-        //    }
-        //    if (item.Variety == eVariety.Food)
-        //    {
-        //        Party.food += item.Level;
-        //        Game.AddMessage("You get some food.");
-        //        return true;
-        //    }
-        //    //if (ItemList.Count >= INVENTORY_MAXIMUM || !IsAlive())
-        //    //    return false;
-        //    //if (!ignore_weight && item.Weight > carryLimit - pc_carry_weight())
-        //    //{
-        //    //    if (print)
-        //    //    {
-        //    //        Sound.SysBeep(20);
-        //    //        Game.AddMessage("Item too heavy to carry.");
-        //    //    }
-        //    //    return false;
-        //    //}
-        //    AddItem(item, true);
-        //    if (print)
-        //    {
-        //        Game.AddMessage(String.Format("  {0} gets {1}.", name, item.KnownName));
-        //        Party.CurrentPC = this;
-        //    }
-        //    return true;
-        //}
-
         public void GiveNewItem(string item_id, bool identified = false, int charges = -1)
         {
             Item item;
@@ -423,57 +333,7 @@ namespace SwordsOfExileGame
             }
         }
 
-        ///// <summary>
-        ///// Removes all items that the specified SpecialClass. This is called by certain Special Nodes.
-        ///// </summary>
-        ///// <param name="_class">SpecialClass</param>
-        ///// <param name="equipped">Only if the item is equipped.</param>
-        ///// <returns>Number of items that were taken (including stacked items)</returns>
-        //public int TakeAllItemsOfClass(int _class, bool equipped = false)
-        //{
-        //    int tally = 0;
-        //    //List<Item> list = equipped ? equip : items;
-        //    if (!equipped)
-        //    {
-        //        for (int i = ItemList.Count - 1; i >= 0; i--)
-        //        {
-        //            if (ItemList[i].SpecialClass == _class)
-        //            {
-        //                if (ItemList[i].Charges > 1)
-        //                    tally += ItemList[i].Charges;
-        //                else
-        //                    tally++;
-        //                RemoveItem(ItemList[i]);
-        //            }
-        //        }
-        //    }
-
-        //    int slot = 0;
-        //    foreach (Item t in EquippedItemSlots)
-        //    {
-        //        if (t == null) continue;
-        //        if (t.SpecialClass == _class)
-        //        {
-        //            if (t.Charges > 1) tally += t.Charges;
-        //            else tally++;
-        //            EquippedItemSlots[slot] = null;
-        //        }
-
-        //        slot++;
-        //    }
-        //    return tally;
-        //}
-
         #region INVENTORY STUFF
-
-        //IInventory Stuff
-        //public IEnumerable<Item> MyInventory()
-        //{
-        //    foreach (Item i in items) /*if (!equip.Contains(i))*/ yield return i;
-        //}
-            //List<Item> MyInventory { get { return items; } /*set { items = value; }*/ }
-        
-
 
         /// <summary>
         /// Returns all items in the inventory, and the slot number too
@@ -569,11 +429,6 @@ namespace SwordsOfExileGame
 
                 if (!ItemList.Contains(item)) //Don't add it again if it's already in this inventory
                     ItemList.Add(item);
-                //lastSlot = -1;
-                //foreach (Item i in ItemList) lastSlot = i.Pos.x > lastSlot ? i.Pos.x : lastSlot;
-
-
-
             }
             return replaces;
         }
@@ -630,8 +485,6 @@ namespace SwordsOfExileGame
             }
             item.NotYourProperty = false;
             ItemList.Add(item);
-            //lastSlot = -1;
-            //foreach (Item i in ItemList) lastSlot = i.Pos.x > lastSlot ? i.Pos.x : lastSlot;
             return true;
         }
 
@@ -722,7 +575,6 @@ namespace SwordsOfExileGame
                     if (PoisonedWeapon == budged) budged_poisoned = true;
                     Unequip(budged);
                     AddItem(budged,false);
-                    //StartItemDrag(budged, Action.PC);
                 }
 
             if (failed == null)
@@ -856,11 +708,6 @@ namespace SwordsOfExileGame
             return CanUnequip(HasEquipped(item));
         }
 
-        //public bool EquipAt(Item item, eEquipSlot slot, out Item replaced_item, bool regardless_of_curse = false)
-        //{
-        //    
-        //}
-
         public void UnequipCursed()
         {
             foreach (Item i in EachEquippedItem())
@@ -951,21 +798,17 @@ namespace SwordsOfExileGame
             return null;
         }
 
-        //public int LastSlot { get { return lastSlot; } }
-
         /// <summary>
         /// Removes item from inventory (not from Equipped Items)
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
-        public bool RemoveItem(Item i)//, bool regardless_of_curse=false)
+        public bool RemoveItem(Item i)
         {
             if (ItemList.Contains(i))
             {
 
                 ItemList.Remove(i);
-                //lastSlot = -1;
-                //foreach (Item item in ItemList) lastSlot = item.Pos.x > lastSlot ? item.Pos.x : lastSlot;
                 return true;
             }
 
@@ -974,57 +817,29 @@ namespace SwordsOfExileGame
         }
 
         void handlePopUp(object o, object o2, int data)
-        {//string option) {
-            Item c = (Item)o;//owner.GetSlot(popupSlot);//carryables.Find(cFind => cFind.Pos.X == popupSlot);
-
-            //PCType pc = Party.CurrentPC;//owner as PCType;
+        {
+            Item c = (Item)o;
             switch (data)
             {
             case PopUpMenuData.EQUIP:
                     new Action(eAction.EquipItem) { PC = this, Item = c, InventoryFrom = this };
-                //Action.Requested = eAction.EquipItem; 
-                //Action.PC = this;  
-                //Action.Item = c;
-                //Action.InventoryFrom = this;
                 break;
             case PopUpMenuData.UNEQUIP:
                 new Action(eAction.UnequipItem) { PC = this, Item = c};
-                //Action.Requested = eAction.UnequipItem; 
-                //Action.PC = this; 
-                //Action.Item = c; 
                 break;
             case PopUpMenuData.DROP:
-                //if (LootWindow.IsOpen)//Gui.GetWindowOfType(typeof(LootWindow)) != null)
-                //    Action.Requested = eAction.DropItemToLootSpot;
-                //else
-                //    Action.Requested = eAction.TargetDropItem;
-                //Action.PC = this;
-                //Action.Item = c;
                 new Action(LootWindow.IsOpen ? eAction.DropItemToLootSpot : eAction.TargetDropItem) { PC = this, Item = c};
                 break;
             case PopUpMenuData.GIVE: 
-                //Action.Requested = eAction.GiveItem; 
-                //Action.PC = this; 
-                //Action.PC2 = o2 as PCType; 
-                //Action.Item = c;
                 new Action(eAction.GiveItem) { PC = this, PC2 = o2 as PCType, Item = c };
                 break;
             case PopUpMenuData.USE:
-                //Action.Requested = eAction.UseItem;
-                //Action.PC = this;
-                //Action.Item = c;
                 new Action(eAction.UseItem) { PC = this, Item = c };
                 break;
             case PopUpMenuData.SELL:
-                //Action.Requested = eAction.SellItem;
-                //Action.PC = this;
-                //Action.Item = c;
-                //Action.InventoryFrom = this;
-                //Action.InventoryTo = (IInventory)o2;
                 var a = new Action(eAction.SellItem) { PC = this, Item = c, InventoryFrom = this, InventoryTo = (IInventory)o2 };
                 a.PlaceDraggedItem(eAction.PlaceInInventory);
                 new Action(eAction.NONE);
-                //Action.Requested = eAction.NONE;
                 break;
             case PopUpMenuData.IDENTIFY:
                 c.Identify((o2 as IdentifyWindow.IdentifyBox).Price);
@@ -1033,14 +848,11 @@ namespace SwordsOfExileGame
                 EnchantingWindow.EnchantingBox e = o2 as EnchantingWindow.EnchantingBox;
                 c.Enchant(e.Enchantment,e.EnchantCost(c));
                 break;
-
             }
         }
 
-        public void MakeItemToolTip(Item i, XnaRect r)//int slotno)
+        public void MakeItemToolTip(Item i, XnaRect r)
         {
-            //Item i = GetSlot(slotno);
-
             if (i != null)
             {
                 var tt = new StringBuilder();
@@ -1122,11 +934,11 @@ namespace SwordsOfExileGame
                     tt.Append(" gold");
                 }
 
-                new ToolTipV2(false, r, tt.ToString(), -1);//ToolTip(tt.ToString(), -1, false);
+                new ToolTipV2(false, r, tt.ToString(), -1);
             }
         }
 
-        public void MakeInventoryPopUpWindow(Item c)//int slot)
+        public void MakeInventoryPopUpWindow(Item c)
         {
             if (Game.Mode == eMode.COMBAT && this != Party.ActivePC)
             {
@@ -1152,7 +964,7 @@ namespace SwordsOfExileGame
                         popupoptions.Add(new PopUpMenuData("Enchant for " + ((EnchantingWindow.EnchantingBox)Gui.ServiceBoxOpen).EnchantCost(c) + " gold", c, Gui.ServiceBoxOpen, PopUpMenuData.ENCHANT));
                 }
 
-                if (c.IsEquippable)//CanEquip(c))
+                if (c.IsEquippable)
                     if (HasEquipped(c) != eEquipSlot.None) popupoptions.Add(new PopUpMenuData("Unequip", c, null, PopUpMenuData.UNEQUIP));
                     else popupoptions.Add(new PopUpMenuData("Equip", c, null, PopUpMenuData.EQUIP));
                 if (c.IsUseable())
@@ -1273,49 +1085,9 @@ namespace SwordsOfExileGame
                 {
                     Game.AddMessage("  Pick breaks.                ");
                     UseItemCharge(which_item);
-                    //which_item.remove_charge();//(pc_num,which_item);
                 }
                 Sound.Play(41);
             }
-
-            //int r1 = Maths.Rand(1, 0, 100) + which_item.AbilityStrength * 7;
-
-            //if (r1 < 75) will_break = true;
-
-            //r1 = Maths.Rand(1, 0, 100) - 5 * stat_adj(eSkill.DEXTERITY) + curTown.Difficulty * 7
-            // - 5 * GetSkill(eSkill.LOCKPICKING) - which_item.AbilityStrength * 7;
-
-            //// Nimble?
-            //if (!HasTrait(eTrait.NIMBLE)) r1 -= 8;
-
-            //if (pc_has_abil_equip(eItemAbil.THIEVING) != null) r1 = r1 - 12;
-
-            //switch (curTown.PickorBashDoor(r1, 30, loc))
-            //{
-            //case 0:
-            //    Game.AddMessage("  Wrong terrain type.           ");
-            //    break;
-            //case 1:
-            //    Game.AddMessage("  Didn't work.                ");
-            //    if (will_break)
-            //    {
-            //        Game.AddMessage("  Pick breaks.                ");
-            //        which_item.Charges--;
-            //        if (which_item.Charges < 1)
-            //        {
-            //            //items.Remove(which_item);
-            //            //equip.Remove(which_item);
-            //            Unequip(which_item, false);
-            //        }
-            //        //which_item.remove_charge();//(pc_num,which_item);
-            //    }
-            //    Snd.play_sound(41);
-            //    break;
-            //case 2:
-            //    Game.AddMessage("  Door unlocked.                ");
-            //    Snd.play_sound(9);
-            //    break;
-            //}
         }
 
         public int BashDoorChance(Location loc)
@@ -1334,8 +1106,6 @@ namespace SwordsOfExileGame
 
         public void BashDoor(Location loc)
         {
-            //int r1 = Maths.Rand(1, 0, 100) - 15 * stat_adj(eSkill.STRENGTH) + curTown.Difficulty * 4;
-
             int chance = BashDoorChance(loc);
 
             if (chance == -2)
@@ -1433,7 +1203,6 @@ namespace SwordsOfExileGame
                         CounteractStatus(eAffliction.WEBS, 2);
                     }
                     Parry = 100;
-                    //AP = 0;
                     if (map is TownMap) curTown.InflictFields(this);
                 }
                 else
@@ -1477,9 +1246,6 @@ namespace SwordsOfExileGame
                     else if (npc.Record.Width == 1 && npc.Record.Height == 2) p = eDialogPic.CREATURE1x2;
                     else if (npc.Record.Width == 2 && npc.Record.Height == 2) p = eDialogPic.CREATURE2x2;
                     new MessageWindow(confirmFriendAttack, "The target is not hostile. Are you sure you want to attack?", p, npc.Record.Picture, "Yes", "No!");
-
-                    //Action.PC = this;
-                    //Action.NPC = npc;
                     new Action(eAction.Attack) { PC = this, NPC = npc };
                 }
             }
@@ -1516,10 +1282,6 @@ namespace SwordsOfExileGame
                     {
                         new MessageWindow(confirmBoatLanding, "You have come to a dock/bridge. Pilot under it or land?", eDialogPic.NONE, 0, "Land", "Go under");
                         new Action(eAction.NONE) { PC = this, Loc = newpos, Dir = newdir };
-
-                        //Action.PC = this;
-                        //Action.Loc = newpos;
-                        //Action.Dir = newdir;
                         return false;
                     }
 
@@ -1593,8 +1355,6 @@ namespace SwordsOfExileGame
 
         void confirmFriendAttack(int button_index)
         {
-            //if (button_index == 0)
-            //    Action.Requested = eAction.Attack;
             if (button_index != 0)
                 new Action(eAction.NONE);
             
@@ -1602,28 +1362,14 @@ namespace SwordsOfExileGame
         void confirmBoatLanding(int button_index)
         {
             var a = Action.GetCurrent();
-            //new Action(eAction.NONE);
 
             if (button_index == 0)
             {
                 if (!Game.CurrentMap.TriggerStepOnSpecials(a.Loc, a.Dir, this, true))
-                    //Action.Requested = eAction.BoatLanding;
                     new Action(eAction.BoatLanding) { PC = this, Loc = a.Loc, Dir = a.Dir };
             }
             else
                 new Action(eAction.CompleteMove) { PC = this, Loc = a.Loc, Dir = a.Dir };
-            //    Action.Requested = eAction.CompleteMove;
-
-
-           /*     if (!map.TriggerStepOnSpecials(Action.Loc, Action.Dir, this))
-                {
-                    Party.Vehicle = null;
-                    return CompleteMove(Action.Loc, Action.Dir);
-                }
-            }
-            else
-                return CompleteMove(Action.Loc, Action.Dir);            
-            */
         }
 
         public bool DoParry()
@@ -1636,8 +1382,6 @@ namespace SwordsOfExileGame
 
         public bool ForceMove(Location newpos, Direction newdir)
         {
-            //new Action(eAction.CompleteMove) { Dir = newdir, Loc = newpos, PC = this };
-            //return true;
             IMap map = Game.CurrentMap;
             if (Party.Vehicle != null) new Animation_VehicleMove(Party.Vehicle, pos, newpos, false);
             else new Animation_Move(this, pos, newpos, false, false);
@@ -1741,7 +1485,7 @@ namespace SwordsOfExileGame
                     }
 
                     //On an outside combat if the move is out of the area, the character get a chance to flee. If flee fails the move is blocked.
-                    if (map is CombatMap && !((TownMap)map).InActArea(newpos))//map.TerrainAt(newpos).IsPit)
+                    if (map is CombatMap && !((TownMap)map).InActArea(newpos))
                     {
                         if (Maths.Rand(1, 0, 99) < Constants.FLEE_PROBABILITY)///3)
                         {
@@ -1809,16 +1553,6 @@ namespace SwordsOfExileGame
 
                     return true;
                 }
-                else //if (map is TownMap)
-                {
-                    //TownMap town = (TownMap)map;
-                    //if (town.IsDoor(newpos))
-                    //    Game.AddMessage("Door locked: " + newdir.ToString() + "               ");
-                    //els
-
-                        //Game.AddMessage("Blocked: " + newdir.ToString() + "               ");
-                }
-                //}
             }
             return false;
         }
@@ -1828,23 +1562,8 @@ namespace SwordsOfExileGame
 	        Boolean take_charge = true,inept_ok = false;
 	        int item_use_code;
             eAffliction which_stat=eAffliction.BLESS_CURSE;
-	        //char to_draw[60];
-	        //location user_loc;
-        //creature_data_type *which_m;
-        //effect_pat_type s = {{{0,0,0,0,0,0,0,0,0},
-        //                        {0,0,0,0,0,0,0,0,0},
-        //                        {0,0,0,0,0,0,0,0,0},
-        //                        {0,0,0,0,0,0,0,0,0},
-        //                        {0,0,0,0,1,0,0,0,0},
-        //                        {0,0,0,0,0,0,0,0,0},
-        //                        {0,0,0,0,0,0,0,0,0},
-        //                        {0,0,0,0,0,0,0,0,0},
-        //                        {0,0,0,0,0,0,0,0,0}}};
-
-            //OLD -                               0 - everywhere 1 - combat only 2 - town only                         3 - town & combat only  5 - outdoor      4 - can't use 
 
             ////NEW (same as for SPELLS) - Where= 0 - everywhere 1 - combat only 2 - town only 3 - town & outdoor only 4 - town & combat only  5 - outdoor only  6 - never
-
             // + 10 - mag. inept can use
             short[] abil_chart = {6,6,6,6,6,6,6,6,6,6,
 	            6,6,6,6,6,6,6,6,6,6,
@@ -1876,10 +1595,6 @@ namespace SwordsOfExileGame
 		        item_use_code -= 10;
 		        inept_ok = true;
 		    }
-
-	        //if (is_out()) user_loc = party.p_loc;
-	        //if (is_town()) user_loc = c_town.p_loc;
-	        //if (is_combat()) user_loc = pc_pos[current_pc];
 
 	        if (item_use_code == 6) {
 		        Game.AddMessage("Use: Can't use this item.");
@@ -1914,7 +1629,8 @@ namespace SwordsOfExileGame
 				    take_charge = false;
 				}
 		    }
-	        if (take_charge == true) {
+	        if (take_charge == true) 
+            {
 
                  Game.AddMessage(String.Format("Use: {0}", item.KnownName));
 
@@ -1922,7 +1638,6 @@ namespace SwordsOfExileGame
 		      	        Sound.Play(56);
 
 		        int str = item.AbilityStrength;
-		        //store_item_spell_level = str * 2 + 1;
 
 		        int type = item.MagicUseType;
 
@@ -2168,39 +1883,12 @@ namespace SwordsOfExileGame
 					        }
 				        break;
 			        case eItemAbil.CALL_SPECIAL:
-
-                        //switch(type){
-                        //    case 0:
-                        //        if((is_town()) || ((is_combat()) && (which_combat_type == 1)))
-                        //            run_special(SPEC_USE_SPEC_ITEM,2,str,location(),&i,&j,&r1);// Call town special
-                        //        else
-                        //            run_special(SPEC_USE_SPEC_ITEM,1,str,location(),&i,&j,&r1);// Call outdoor special
-                        //    break;
-                        //    case 1:
-                        //        if((is_town()) || ((is_combat()) && (which_combat_type == 1)))
-                        //            run_special(SPEC_USE_SPEC_ITEM,2,str,location(),&i,&j,&r1);// Call town special
-                        //        else
-                        //            run_special(SPEC_USE_SPEC_ITEM,0,str,location(),&i,&j,&r1);// Call scenario special
-                        //    break;
-                        //    case 2:
-                        //        if((is_town()) || ((is_combat()) && (which_combat_type == 1)))
-                        //            run_special(SPEC_USE_SPEC_ITEM,0,str,location(),&i,&j,&r1);// Call scenario special
-                        //        else
-                        //            run_special(SPEC_USE_SPEC_ITEM,1,str,location(),&i,&j,&r1);// Call outdoor special
-                        //    break;
-                        //    case 3:
-                        //        run_special(SPEC_USE_SPEC_ITEM,0,str,location(),&i,&j,&r1);// Call scenario special
-                        //    break;
-                        //}
                         break;
 
                     case eItemAbil.CAST_SPELL:
 
                         if (MagicSpell.List.Contains(item.SpellID))
                         {
-                            //Action.Spell = MagicSpell.List[item.SpellID];
-                            //Action.Item = item;
-
                             eAction ac = eAction.NONE;
                             PCType pc2 = null;
                             switch (MagicSpell.List[item.SpellID].Target)
@@ -2209,7 +1897,6 @@ namespace SwordsOfExileGame
                                 ac = eAction.CastSpell;
                                 break;
                             case eSpellTarget.LIVING_PC: case eSpellTarget.DEAD_PC: //Use item spells can't target another specific PC
-                                //Action.PC2 = this;
                                 pc2 = this;
                                 ac = eAction.CastSpell;
                                 break;
@@ -2217,162 +1904,13 @@ namespace SwordsOfExileGame
                                 ac = eAction.ItemSpellTargeting;
                                 break;
                             }
-                            //Action.PC = this;
-
                             new Action(ac) { Spell = MagicSpell.List[item.SpellID], Item = item, PC = this, PC2 = pc2 };
                         }
                         break;
-
-                    //// spell effects
-                    //case eItemAbil.SPELL_FLAME:
-                    //    Game.AddMessage("  It fires a bolt of flame.");
-                    //    start_spell_targeting(1011);
-                    //    break;
-                    //case eItemAbil.SPELL_FIREBALL:
-                    //    Game.AddMessage("  It shoots a fireball.         ");
-                    //    start_spell_targeting(1022);
-                    //    break;
-                    //case eItemAbil.SPELL_FIRESTORM:
-                    //    Game.AddMessage("  It shoots a huge fireball. ");
-                    //    start_spell_targeting(1040);
-                    //    break;
-                    //case eItemAbil.SPELL_KILL:
-                    //    Game.AddMessage("  It shoots a black ray.  ");
-                    //    start_spell_targeting(1048);
-                    //    break;
-                    //case eItemAbil.SPELL_ICE_BOLT:
-                    //    Game.AddMessage("  It fires a ball of ice.   ");
-                    //    start_spell_targeting(1031);
-                    //    break;
-                    //case eItemAbil.SPELL_SLOW:
-                    //    Game.AddMessage("  It fires a purple ray.   ");
-                    //    start_spell_targeting(1012);
-                    //    break;
-                    //case eItemAbil.SPELL_SHOCKWAVE:
-                    //    Game.AddMessage("  The ground shakes!        ");
-                    //    do_shockwave(pc_pos[current_pc]);
-                    //    break;
-                    //case eItemAbil.SPELL_DISPEL_UNDEAD:
-                    //    Game.AddMessage("  It shoots a white ray.   ");
-                    //    start_spell_targeting(1132);
-                    //    break;
-                    //case eItemAbil.SPELL_RAVAGE_SPIRIT:
-                    //    Game.AddMessage("  It shoots a golden ray.   ");
-                    //    start_spell_targeting(1155);
-                    //    break;
-                    //case eItemAbil.SPELL_SUMMONING:
-                    //    if (summon_monster(str,user_loc,50,2) == false)
-                    //        Game.AddMessage("  Summon failed.");
-                    //    break;
-                    //case eItemAbil.SPELL_MASS_SUMMONING:
-                    //    r1 = get_ran(6,1,4);
-                    //    j = get_ran(1,3,5);
-                    //    for (i = 0; i < j; i++)
-                    //        if (summon_monster(str,user_loc,r1,2) == false)
-                    //            Game.AddMessage("  Summon failed.");
-                    //    break;
-                    //case eItemAbil.SPELL_ACID_SPRAY:
-                    //    Game.AddMessage("  Acid sprays from the tip!   ");
-                    //    start_spell_targeting(1068);
-                    //    break;
-                    //case eItemAbil.SPELL_STINKING_CLOUD:
-                    //    Game.AddMessage("  It creates a cloud of gas.   ");
-                    //    start_spell_targeting(1066);
-                    //    break;
-                    //case eItemAbil.SPELL_SLEEP_FIELD:
-                    //    Game.AddMessage("  It creates a shimmering cloud.   ");
-                    //    start_spell_targeting(1019);
-                    //    break;
-                    //case eItemAbil.SPELL_VENOM:
-                    //    Game.AddMessage("  A green ray emerges.        ");
-                    //    start_spell_targeting(1030);
-                    //    break;
-                    //case eItemAbil.SPELL_SHOCKSTORM:
-                    //    Game.AddMessage("  Sparks fly.");
-                    //    start_spell_targeting(1044);
-                    //    break;
-                    //case eItemAbil.SPELL_PARALYSIS:
-                    //    Game.AddMessage("  It shoots a silvery beam.   ");
-                    //    start_spell_targeting(1069);
-                    //    break;
-                    //case eItemAbil.SPELL_WEB_SPELL:
-                    //    Game.AddMessage("  It explodes!");
-                    //    start_spell_targeting(1065);
-                    //    break;
-                    //case eItemAbil.SPELL_STRENGTHEN_TARGET:
-                    //    Game.AddMessage("  It shoots a fiery red ray.   ");
-                    //    start_spell_targeting(1062);
-                    //    break;
-                    //case eItemAbil.SPELL_QUICKFIRE:
-                    //    Game.AddMessage("Fire pours out!");
-                    //    make_quickfire(user_loc.x,user_loc.y);
-                    //    break;
-                    //case eItemAbil.SPELL_MASS_CHARM:
-                    //    Game.AddMessage("It throbs, and emits odd rays.");
-                    //    for (i = 0; i < T_M; i++) {
-                    //            if ((c_town.monst.dudes[i].active != 0) && (c_town.monst.dudes[i].attitude % 2 == 1)
-                    //             && (dist(pc_pos[current_pc],c_town.monst.dudes[i].m_loc) <= 8)
-                    //             && (can_see(pc_pos[current_pc],c_town.monst.dudes[i].m_loc,0) < 5))
-                    //                {
-                    //                    c_town.monst.dudes[i].charm(0,0,8);
-                    //                }
-                    //            }
-                    //    break;
-                    //case eItemAbil.SPELL_MAGIC_MAP:
-                    //    if ((c_town.town.defy_scrying == 1) && (c_town.town.defy_mapping == 1)) {
-                    //        Game.AddMessage("  It doesn't work.");
-                    //        break;
-                    //        }
-                    //    Game.AddMessage("  You have a vision.            ");
-                    //    for (i = 0; i < town_size[town_type]; i++)
-                    //        for (j = 0; j < town_size[town_type]; j++)
-                    //            make_explored(i,j);
-                    //    clear_map();
-                    //    break;
-                    //case eItemAbil.SPELL_DISPEL_BARRIER:
-                    //    Game.AddMessage("  It fires a blinding ray.");
-                    //    Game.AddMessage("  Target spell.    ");
-                    //    overall_mode = MODE_TOWN_TARGET;
-                    //    current_pat = s;
-                    //    set_town_spell(1041,current_pc);
-                    //break;
-                    //case eItemAbil.SPELL_MAKE_ICE_WALL:
-                    //    Game.AddMessage("  It shoots a blue sphere.   ");
-                    //    start_spell_targeting(1064);
-                    //    break;
-                    //case eItemAbil.SPELL_CHARM_SPELL:
-                    //    Game.AddMessage("  It fires a lovely, sparkling beam.");
-                    //    start_spell_targeting(1117);
-                    //    break;
-                    //case eItemAbil.SPELL_ANTIMAGIC_CLOUD:
-                    //    Game.AddMessage("  Your hair stands on end.   ");
-                    //    start_spell_targeting(1051);
-                    //    break;
 			        }
-        // Special spells:
-        //   62 - Carrunos
-        //	 63 - Summon Rat <= doesn't exist anymore
-        //	 64 - Ice Wall Balls
-        //	 65 - Goo Bomb
-        //   66 - Foul Vapors
-        //   67 - Sleep cloud <= doesn't exist anymore
-        //	 68 - Spray Acid
-        //	 69 - Paralyze
-        //   70 - mass sleep <= doesn't exist anymore
-		        }
-
-	        //put_pc_screen();
+		    }
             if (take_charge && item.Charges > 0) UseItemCharge(item);
         }
-
-
-        //public void Equip(Item i) {
-        //    equip.Add(i);
-        //}
-
-        //public void Unequip(Item i) {
-        //    equip.Remove(i);
-        //}
 
         /// <summary>
         /// Returns whether the PC is suitably equipped to fire a ranged weapon.
@@ -2386,7 +1924,6 @@ namespace SwordsOfExileGame
             if (ranged == null) return false;
 
             //Got the right ammo?
-
             switch (ranged.Variety)
             {
             case eVariety.Bow:
@@ -2413,7 +1950,7 @@ namespace SwordsOfExileGame
         }
 
         public eEquipSlot HasEquipped(Item item)
-        { //return item != null && EquippedItems.Contains(item); }
+        { 
             if (item != null) 
                 for (int n = 0; n < EquippedItemSlots.Length; n++)
                     if (item == EquippedItemSlots[n]) return (eEquipSlot)n;
@@ -2566,7 +2103,6 @@ namespace SwordsOfExileGame
                     else
                     {
                         new Animation_Attack(this, "002_swordswish");
-                        //GameScreen.draw_terrain(2);
                         Game.AddMessage(name + " misses. ");
                     }
                 }
@@ -2816,20 +2352,6 @@ namespace SwordsOfExileGame
                     if (hitting_item.Charges <= 0)
                         Unequip(hitting_item, true);
                 }
-
-                //if (ammo != null && (rangedwp == null || (rangedwp != null && rangedwp.Variety != eVariety.RangedNoAmmo)))
-                //{
-                //    if (ammo.Ability != eItemAbil.MISSILE_RETURNING)
-                //        ammo.Charges--;
-                //    else
-                //        ammo.Charges = 1;
-
-                //    if (HasItemEquippedWithAbility(eItemAbil.DRAIN_MISSILES) != null && ammo.Ability != eItemAbil.MISSILE_RETURNING)
-                //        ammo.Charges--;
-
-                //    if (ammo.Charges <= 0)
-                //        Unequip(ammo, true);
-                //}
             }
 
             if (!exploding) CounteractStatus(eAffliction.POISONED_WEAPON);
@@ -2860,8 +2382,7 @@ namespace SwordsOfExileGame
             if (dam_type == eDamageType.WEAPON || dam_type == eDamageType.UNDEAD || dam_type == eDamageType.DEMON)
             {
                 how_much -= Maths.MinMax(-5, 5, Status(eAffliction.BLESS_CURSE));
-                foreach (Item item in EachEquippedItem())// (i = 0; i < 24; i++)
-                //if ((items[i].Variety != 0) && (equip[i] == true))
+                foreach (Item item in EachEquippedItem())
                 {
                     if (item.IsArmour())
                     {
@@ -2889,12 +2410,9 @@ namespace SwordsOfExileGame
             if ((dam_type == eDamageType.WEAPON) && (Parry < 100))
                 how_much -= Parry / 4;
 
-            //if (Party.vogelsExtraShit[6, 7] > 0) //EASY MODE
-            //    how_much -= 3;
-            // toughness
             if (HasTrait(Trait.Tough))
                 how_much--;
-            // luck
+
             if (Maths.Rand(1, 0, 100) < 2 * (hitChance[skills[18]] - 20))
                 how_much -= 1;
 
@@ -2937,52 +2455,19 @@ namespace SwordsOfExileGame
              && (level = get_prot_level(eItemAbil.FULL_PROTECTION)) > 0)
                 how_much = how_much / ((level >= 7) ? 4 : 2);
 
-            //if (BoE.boom_anim_active == true)
-            //{
-            //    if (how_much < 0)
-            //        how_much = 0;
-            //    MarkedDamage += how_much;
-            //    if (BoE.is_town())
-            //        new store_boom_type(BoE.Party.Pos, how_much, 0, (damage_type > eDamageType.POISON) ? 2 : 0, 0, 0);
-            //    else
-            //        new store_boom_type(Pos, how_much, 0, (damage_type > eDamageType.POISON) ? 2 : 0, 0, 0);
-            //    if (how_much == 0)
-            //        return false;
-            //    else return true;
-            //}
-
             if (Game.Invincible) how_much = 0;
 
             if (how_much <= 0)
             {
-                //if (dam_type == eDamageType.WEAPON || dam_type == eDamageType.UNDEAD || dam_type == eDamageType.DEMON)  
-                //    Sound.Play(2);
                 Game.AddMessage("  No damage.");
                 return false;
             }
-            //else
-            //{
-                // if asleep, get bonus
+            // if asleep, get bonus
             if (Status(eAffliction.ASLEEP) > 0)
-                DecStatus(eAffliction.ASLEEP, 1, 0);// status[11]--;
+                DecStatus(eAffliction.ASLEEP, 1, 0);
 
-            //sprintf((char*)c_line, "  %s takes %d. ", (char*)name, how_much);
-            //if (do_print)
             Game.AddMessage(String.Format("  {0} takes {1}. ", name, how_much));
-            //if (dam_type != eDamageType.WEAPON_MARKED)
-            //{
-            //    if (BoE.is_combat())
-            //        Gfx.boom_space(Pos, Gfx.boom_gr[(int)damage_type], how_much, sound_type);
-            //    else if (BoE.is_town())
-            //        Gfx.boom_space(Party.Pos, Gfx.boom_gr[(int)damage_type], how_much, sound_type);
-            //    else Gfx.boom_space(Party.Pos, Gfx.boom_gr[(int)damage_type], how_much, sound_type);
-            //}
-            //if (BoE.overall_mode != 0) 
-            //FlushEvents(1);
-            //FlushEvents(0);
 
-            
-            //}
             new Animation_Damage(Pos.ToVector2(), how_much, 0, dam_type, sound_type);
             Party.total_dam_taken += how_much;
 
@@ -2999,37 +2484,21 @@ namespace SwordsOfExileGame
             else // Check if PC can die
                 if (how_much > 25)
                 {
-                    //sprintf((char*)c_line, "  %s is obliterated.  ", (char*)name);
                     Game.AddMessage(String.Format("  {0} is obliterated.  ", name));
                     Kill(attacker, eLifeStatus.DUST);
                 }
                 else
                 {
                     Game.AddMessage(String.Format("  {0} is killed.  ", name));
-                    //add_string_to_buf((char*)c_line);
                     Kill(attacker, eLifeStatus.DEAD);
                 }
-            //if (cur_health == 0 && IsAlive())
-            //    Sound.Play(3);
-
             return true;
         }
 
         public Boolean RunTrap(eTrapType trap_type, int trap_level, int diff)
-        //short pc_num; // 6 - BOOM!  7 - pick here
-        //short trap_type; // 0 - random  1 - blade  2 - dart  3 - gas  4 - boom  5,6  - no   
-        // 7 - level drain  8 - alert  9 - big flames 10 - dumbfound 11 - town hostile
-        //	20 + *  - trap *, but nasty 
         {
-            //int r1, skill, i, i_level;
             short[] trap_odds = {5,30,35,42,48, 55,63,69,75,77,
 							        78,80,82,84,86, 88,90,92,94,96,98,99,99,99,99,99,99,99,99,99};
-
-            //if (pc_num == 7) {
-            //    pc_num = select_pc(1,0);
-            //    if (pc_num == 6)
-            //        return FALSE;
-            //    }
 
             int num_hits = 1 + trap_level;
 
@@ -3038,7 +2507,6 @@ namespace SwordsOfExileGame
             if (trap_type == eTrapType.FALSE_ALARM)
                 return true;
 
-            //if (pc_num < 6) {
             int i = GetSkillBonus(eSkill.DEXTERITY);
             int i_level = get_prot_level(eItemAbil.THIEVING);
             if (i_level > 0) i = i + i_level / 2;
@@ -3142,89 +2610,46 @@ namespace SwordsOfExileGame
 
         public void ForceWallMe(IExpRecipient perp) 
         { 
-            //if (Game.Mode == eMode.COMBAT)
-                Damage(perp, Maths.Rand(2, 1, 6), 0, eDamageType.MAGIC); 
-            //else
-            //    foreach (PCType pc in Party.EachAlivePC()) 
-            //        pc.Damage(perp, Maths.Rand(2, 1, 6), 0, eDamageType.MAGIC);
+            Damage(perp, Maths.Rand(2, 1, 6), 0, eDamageType.MAGIC); 
         }
         public void FireWallMe(IExpRecipient perp) 
         {
-            //if (Game.Mode == eMode.COMBAT)
-                Damage(perp, Maths.Rand(1, 1, 6) + 1, 0, eDamageType.FIRE);
-            //else
-            //    foreach (PCType pc in Party.EachAlivePC())
-            //        pc.Damage(perp, Maths.Rand(1, 1, 6) + 1, 0, eDamageType.FIRE);
- 
+
+            Damage(perp, Maths.Rand(1, 1, 6) + 1, 0, eDamageType.FIRE);
         }
         public void IceWallMe(IExpRecipient perp) 
         {
-            //if (Game.Mode == eMode.COMBAT)
-                Damage(perp, Maths.Rand(2, 1, 6), 0, eDamageType.COLD); 
-            //else
-            //    foreach (PCType pc in Party.EachAlivePC())
-            //        pc.Damage(perp, Maths.Rand(2, 1, 6), 0, eDamageType.COLD);    
+            Damage(perp, Maths.Rand(2, 1, 6), 0, eDamageType.COLD);    
         }
         public void BladeWallMe(IExpRecipient perp) 
         {
-            //if (Game.Mode == eMode.COMBAT)
-                Damage(perp, Maths.Rand(4, 1, 8), 0, eDamageType.WEAPON); 
-            //else
-            //    foreach (PCType pc in Party.EachAlivePC())
-            //        pc.Damage(perp, Maths.Rand(4, 1, 8), 0, eDamageType.WEAPON); 
+            Damage(perp, Maths.Rand(4, 1, 8), 0, eDamageType.WEAPON);  
         }
         public void StinkCloudMe() 
         {
-            //if (Game.Mode == eMode.COMBAT)
-                Curse(Maths.Rand(1, 1, 2)); 
-            //else
-            //    foreach (PCType pc in Party.EachAlivePC())
-            //        pc.Curse(Maths.Rand(1, 1, 2)); 
+            Curse(Maths.Rand(1, 1, 2));  
         }
         public void SleepCloudMe() 
         {
-            //if (Game.Mode == eMode.COMBAT)
-                Sleep(3, 0);
-            //else
-            //    foreach (PCType pc in Party.EachAlivePC())
-            //        pc.Sleep(3, 0);
+            Sleep(3, 0);
         }
         public void QuickfireMe()
         {
-            //if (Game.Mode == eMode.COMBAT)
-                Damage(null, Maths.Rand(2, 1, 8), 0, eDamageType.FIRE);
-            //else
-            //    foreach (PCType pc in Party.EachAlivePC())
-            //        pc.Damage(null, Maths.Rand(2, 1, 8), 0, eDamageType.FIRE);
+            Damage(null, Maths.Rand(2, 1, 8), 0, eDamageType.FIRE);
         }
         public void FireBarrierMe()
         {
-            //if (Game.Mode == eMode.COMBAT)
-                Damage(null, Maths.Rand(2, 1, 10), 0, eDamageType.MAGIC);
-            //else
-            //    foreach (PCType pc in Party.EachAlivePC())
-            //        pc.Damage(null, Maths.Rand(2, 1, 10), 0, eDamageType.MAGIC, false);
+            Damage(null, Maths.Rand(2, 1, 10), 0, eDamageType.MAGIC);
         }
         public void WebSpaceMe()
         {
-            //if (Game.Mode == eMode.COMBAT)
-                Web(Maths.Rand(1, 2, 3));
-            //else foreach (PCType pc in Party.EachAlivePC())
-            //{
-            //    pc.Web(Maths.Rand(1, 2, 3));
-            //}
+            Web(Maths.Rand(1, 2, 3));
         }
 
 
         public bool Kill(IExpRecipient who_killed, eLifeStatus type, bool no_save = false)
         {
             Item i = null;
-
-            //if (type >= 10)
-            //{
-            //    type -= 10;
-            //    no_save = true;
-            //}
 
             if (type != eLifeStatus.STONE) i = HasItemEquippedWithAbility(eItemAbil.LIFE_SAVING);
 
@@ -3237,20 +2662,6 @@ namespace SwordsOfExileGame
             }
             else if (i == null || type == eLifeStatus.ABSENT)
             {
-                //We failed to save the PC from death.
-                //if (BoE.combat_active_pc == this)
-                //    BoE.combat_active_pc = null;
-
-                //for (i = 0; i < 24; i++)
-                //    adven[which_pc].equip[i] = FALSE;
-
-                //foreach (Item item in EachEquippedItem())
-                //{
-                //    Unequip(item);
-                //    AddItem(item, true);
-                //}
-                //equip.Clear();
-
                 if (Game.Mode != eMode.OUTSIDE)
                 {
                     Location item_loc = Pos;//(BoE.overall_mode >= 10) ? Pos : Party.Pos;
@@ -3259,22 +2670,12 @@ namespace SwordsOfExileGame
                     else if (type == eLifeStatus.DUST)
                         curTown.MakeCrater(item_loc);
 
-                    //for (int x = ItemList.Count - 1; x >= 0; x--)// (i = 0; i < 24; i++)
-                    //{
-                    //    curTown.PlaceItem(ItemList[x], item_loc);//, true);
-                    //    ItemList.RemoveAt(x);
-                    //}
                 }
                 if (type == eLifeStatus.DEAD || type == eLifeStatus.DUST)
                 {
                     new Animation_Hold();
                     new Animation_Death(this);
                     Dying = true;
-                    //if (Party.IsSplit)
-                    //{
-                    //    Party.Reunite();
-                    //    if (Game.Mode == eMode.COMBAT) Game.EndCombat(true);
-                    //}
                 }
                 for (int a = 0; a < status.Length; a++) status[a] = 0;
                 LifeStatus = type;
@@ -3308,44 +2709,8 @@ namespace SwordsOfExileGame
             Dying = false;
         }
 
-        //public void take_ap(int amount) {
-        //    AP -= amount;
-        //    if (AP < 0) AP = 0;
-        //}
-
-        //public Boolean take_sp(int amt)
-        //{
-        //    if (cur_sp < amt)
-        //        return false;
-        //    cur_sp -= amt;
-        //    return true;
-        //}
-
-        //public void restore_sp_pc(int amt)
-        //{
-        //    if (cur_sp > max_sp)
-        //        return;
-        //    cur_sp += amt;
-        //    if (cur_sp > max_sp)
-        //        cur_sp = max_sp;
-        //}
-
-        //public void heal_pc(int amt) //Deprecated - use Health property
-        //{
-        //    if (cur_health > max_health || IsAlive() == false) return;
-        //    cur_health += amt;
-        //    if (cur_health > max_health) cur_health = max_health;
-        //}
-
-        //public void drain_pc(int how_much)
-        //{
-        //    if (!IsAlive()) return;           
-        //    experience = Math.Max(experience - how_much, 0);
-        //    Game.AddMessage("  " + name + " drained.");
-        //}
 
         public bool PoisonWeapon(int how_much, bool always_succeeds = true)
-        //short safe; // 1 - always succeeds
         {
             short[] p_chance = {40,72,81,85,88,89,90,
 							    91,92,93,94,94,95,95,96,97,98,100,100,100,100};
@@ -3385,9 +2750,9 @@ namespace SwordsOfExileGame
 
             if (IsAlive())
             {
-                if ((_level = get_prot_level(eItemAbil.POISON_PROTECTION)) > 0)////
+                if ((_level = get_prot_level(eItemAbil.POISON_PROTECTION)) > 0)
                     how_much -= Level / 2;
-                if ((_level = get_prot_level(eItemAbil.FULL_PROTECTION)) > 0)////
+                if ((_level = get_prot_level(eItemAbil.FULL_PROTECTION)) > 0)
                     how_much -= _level / 3;
                 if (HasTrait(Trait.Frail) && how_much > 1)
                     how_much++;
@@ -3398,11 +2763,7 @@ namespace SwordsOfExileGame
                 {
                     status[2] = Math.Min(status[2] + how_much, 8);
                     if (!silent) Game.AddMessage("  " + name + " poisoned.");
-                    //if (!silent) Sound.one_sound(17);
-
                     new Animation_CharFlash(this, Color.LimeGreen, "017_shortcough");
-
-                    //Game.give_help(33, 0);
                 }
             }
         }
@@ -3433,7 +2794,6 @@ namespace SwordsOfExileGame
             if (status[2] <= amt)
                 status[2] = 0;
             else status[2] -= amt;
-            //Sound.one_sound(51);
             new Animation_CharFlash(this, Color.LemonChiffon, "051_magic1");
         }
 
@@ -3444,8 +2804,6 @@ namespace SwordsOfExileGame
             if (!silent)
                 Game.AddMessage("  " + name + " cursed.");
             new Animation_CharFlash(this, Color.Black, "043_stoning");
-
-            //Game.give_help(59, 0);
         }
         public void Bless(int how_much, bool silent = false)
         {
@@ -3456,7 +2814,6 @@ namespace SwordsOfExileGame
                 Game.AddMessage("  " + name + " blessed.");
 
             new Animation_CharFlash(this, Color.Gold, "004_bless");
-            //Game.give_help(59, 0);
         }
 
         public void Dumbfound(int how_much, bool silent = false)
@@ -3479,9 +2836,7 @@ namespace SwordsOfExileGame
             }
             status[9] = Math.Min(status[9] + how_much, 8);
             if (!silent) Game.AddMessage("  " + name + " dumbfounded.");
-            //if (!silent) Sound.one_sound(67);
             new Animation_CharFlash(this, Color.DarkSlateBlue, "067_huh");
-            //adjust_spell_menus(); TODO
             Game.give_help(28, 0);
         }
         public void Disease(int how_much, bool silent = false)
@@ -3506,7 +2861,6 @@ namespace SwordsOfExileGame
             SetStatus(eAffliction.DISEASE, Math.Min(Status(eAffliction.DISEASE) + how_much, 8));
             if (!silent) Game.AddMessage("  " + name + " diseased.");
 
-            //if (!silent) Sound.one_sound(66);
             new Animation_CharFlash(this, Color.DarkOrange, "066_disease");
 
             Game.give_help(29, 0);
@@ -3573,52 +2927,6 @@ namespace SwordsOfExileGame
             Game.give_help(32, 0);
         }
 
-        //public void Charm(int how_much, eAffliction what_type, int adjust) //Used to be Sleep but changed to tie in with NPCs
-        //// higher adjust, less chance of saving
-        //{
-        //    int r1, _level;
-        //    if (!IsAlive()) return;
-        //    if (how_much == 0)
-        //        return;
-        //    if (what_type != eAffliction.ASLEEP && what_type != eAffliction.PARALYZED) return;
-
-        //    if ((_level = get_prot_level(eItemAbil.WILL)) > 0)
-        //        how_much -= _level / 2;
-        //    if ((_level = get_prot_level(eItemAbil.FREE_ACTION)) > 0)
-        //        how_much -= (what_type == eAffliction.ASLEEP) ? _level : _level * 300;
-
-        //    r1 = Maths.Rand(1, 0, 100) + adjust;
-        //    if (r1 < 30 + Level * 2)
-        //        how_much = -1;
-        //    if (what_type == eAffliction.ASLEEP && (HasTrait(Trait.Alert) || Status(eAffliction.ASLEEP) < 0))
-        //        how_much = -1;
-        //    if (how_much <= 0)
-        //    {
-        //        Game.AddMessage("  " + name + " resisted.");
-        //        return;
-        //    }
-
-        //    SetStatus(what_type, how_much);
-
-        //    if (what_type == eAffliction.ASLEEP)
-        //    {
-        //        Game.AddMessage("  " + name + " falls asleep.");
-        //        new Animation_CharFlash(this, Color.MidnightBlue, "096_sleep");
-        //    }
-        //    else
-        //    {
-        //        Game.AddMessage("  " + name + " paralyzed.");
-        //        new Animation_CharFlash(this, Color.Olive, "090_paralyze");
-        //    }
-
-        //    AP = 0;
-
-        //    if (what_type == eAffliction.ASLEEP)
-        //        Game.give_help(30, 0);
-        //    else
-        //        Game.give_help(32, 0);
-        //}
-
         public void Slow(int how_much, bool silent = false)
         {
             if (!IsAlive()) return;
@@ -3666,7 +2974,6 @@ namespace SwordsOfExileGame
 
             status[6] = Math.Min(status[6] + how_much, 8);
             if (!silent) Game.AddMessage("  " + name + " webbed.");
-            //if (!silent) Sound.one_sound(17);
             new Animation_CharFlash(this, Color.Gray, "017_shortcough");
             Game.give_help(31, 0);
         }
@@ -3681,7 +2988,6 @@ namespace SwordsOfExileGame
             }
             SetStatus(eAffliction.ACID, Maths.Min(8,Status(eAffliction.ACID) + how_much));// += how_much;
             if (!silent) Game.AddMessage("  " + name + " covered with acid!");
-            //if (!silent) Sound.one_sound(42);
             new Animation_CharFlash(this, Color.GreenYellow, "042_dang");
         }
 
@@ -3709,17 +3015,11 @@ namespace SwordsOfExileGame
                 return;
             }
             if (amount > 200)
-            { // debug
-                //Snd.SysBeep(50); Snd.SysBeep(50);
-                //MessageFeed.add_string_to_buf("Oops! Too much xp!");
-                //MessageFeed.add_string_to_buf("Report this!");
+            { 
                 return;
             }
             if (amount < 0)
-            { // debug
-                //Snd.SysBeep(50); Snd.SysBeep(50);
-                //MessageFeed.add_string_to_buf("Oops! Negative xp!");
-                //MessageFeed.add_string_to_buf("Report this!");
+            { 
                 return;
             }
             if (!IsAlive()) return;
@@ -3742,9 +3042,6 @@ namespace SwordsOfExileGame
 
             if (experience < 0)
             {
-                //Snd.SysBeep(50); Snd.SysBeep(50);
-                //MessageFeed.add_string_to_buf("Oops! Xp became negative somehow!");
-                //MessageFeed.add_string_to_buf("Report this!");
                 experience = Level * GetExperienceModifier() - 1;
                 return;
             }
@@ -3881,7 +3178,6 @@ namespace SwordsOfExileGame
                 break;
             }
             short[] pc_graphics = { 3, 32, 29, 16, 23, 14 };
-            //[] pc_race = { 0, 2, 1, 0, 0, 0 };
             byte[,] pc_t = {{0,0,1,0,0,0,1,0,0,0, 0,1,0,0,0},		
 						        {1,0,0,0,0,1,0,0,0,0, 1,0,0,0,0},	
 						        {0,0,0,1,0,0,0,0,0,0, 0,0,1,0,0},	
@@ -3890,7 +3186,7 @@ namespace SwordsOfExileGame
 						        {0,1,0,0,0,0,0,0,0,0, 0,0,0,0,0}};
             Slot = slotno;
             which_graphic = 0;
-            PoisonedWeapon = null;// 24;
+            PoisonedWeapon = null;
             Traits.Clear();
             for (int i = 0; i < 30; i++)
                 skills[i] = (i < 3) ? 1 : 0;
@@ -3905,7 +3201,6 @@ namespace SwordsOfExileGame
             else if (slotno == 2) Traits.Add(Trait.Nephilim);
             else Traits.Add(Trait.Human);
 
-            //race = (ePCRace)pc_race[slotno];
             which_graphic = pc_graphics[slotno];
             
 #if SUPER_DEFAULT_PCS
@@ -3985,9 +3280,6 @@ namespace SwordsOfExileGame
             Equip(item, eEquipSlot.None, out dummy);
             item = Item.GetStartItem((int)race * 2 + 1);
             Equip(item, eEquipSlot.None, out dummy);
-
-            //SkillPoints = 10;
-
         }
 
         /// <summary>
@@ -3995,18 +3287,10 @@ namespace SwordsOfExileGame
         /// </summary>
         public void SetupKnownSpells()
         {
-
             for (int n = 0; n < KnownSpells.Count; n++)
             {
-                //foreach (string s in KnownSpells.Keys)
-                //{
                 string s = KnownSpells.ElementAt(n).Key;
-                //MagicSpell spell;
-                //if ((spell = MagicSpell.Spells.Find(n => n.ID == s)) != null)
-                //    KnownSpellList.Add(spell);
-
-                if (MagicSpell.List.Contains(s)) KnownSpells[s] = MagicSpell.List[s];//.Add(MagicSpell.Spells[s]);
-
+                if (MagicSpell.List.Contains(s)) KnownSpells[s] = MagicSpell.List[s];
             }
         }
 
@@ -4019,21 +3303,11 @@ namespace SwordsOfExileGame
 							        2,2,3,3,3,3,4,4,4,5,5};
         public static short[] skill_max = {20,20,20,20,20,20,20,20,20,7,
 						7,20,20,10,20,20,20,20,20};
-        //public static short[] spell_level = {1,1,1,1,1,1,1,1,1,1, 2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,3,3,
-        //                        4,4,4,4,4,4,4,4, 5,5,5,5,5,5,5,5, 6,6,6,6,6,6,6,6, 7,7,7,7,7,7,7,7};
-        //public static short[,] spell_cost = {{1,1,1,1,1,2,50,2,1,3, 2,3,2,2,2,2,4,4,2,6, 3,3,5,3,3,5,6,4,6,4,
-        //                            4,5,4,8,30,-1,8,6, 5,8,8,6,9,10,6,6, 7,6,8,7,12,10,12,20, 12,8,20,10,14,10,50,10},
-        //                            {1,1,1,2,1,1,3,5,50,1, 2,2,2,2,3,5,8,6,4,2, 3,4,3,3,3,10,5,3,4,6,
-        //                             5,5,5,15,6,5,5,8, 6,7,25,8,10,12,12,6, 8,7,8,8,14,17,8,7, 10,10,35,10,12,12,30,10}};
 
         public void ResetCombatVars() {
-            LastAttacked = null;//T_M + 10;
-            Parry = 0;// pc_parry[i] = 0;
-            //direction = Party.Direction;////pc_dir[i] = direction;
-
+            LastAttacked = null;
+            Parry = 0;
             Provocation = Math.Max(Provocation - 1, 0); //Provocation score automatically decays every turn
-
-            //adven[current_pc].direction = direction;
         }
 
         public void set_pc_moves() //This is called for each pc at the start of each combat turn
@@ -4080,8 +3354,7 @@ namespace SwordsOfExileGame
             {
                 int store = 0, what_val;
 
-                foreach (Item item in EachEquippedItem())// (i = 0; i < 16; i++)
-                //if (adven[pc_num].equip[i] == true)
+                foreach (Item item in EachEquippedItem())
                 {
                     what_val = item.Awkward;
                     if ((what_val == 1) && (Maths.Rand(1, 0, 130) < hitChance[skills[8]]))
@@ -4114,8 +3387,6 @@ namespace SwordsOfExileGame
             { //Skill is Intelligence
                 if (HasTrait(Trait.MagicallyApt)) //Boost if Magically apt
                     tr++;
-                //if (pc_has_abil_equip(99) < 16) //DUNNO WHAt THIS IS ABOUT
-                //    tr++;
             }
             if (which == eSkill.STRENGTH)
             { //Skill is strength
@@ -4132,7 +3403,7 @@ namespace SwordsOfExileGame
             TerrainRecord ter = curTown.TerrainAt(target);
 
             switch (ter.Special)
-            { ////
+            { 
             case eTerSpec.UNLOCKABLE_TERRAIN:
             case eTerSpec.UNLOCKABLE_BASHABLE:
                 int r1 = Maths.Rand(1, 0, 100) - 5 * GetSkillBonus(eSkill.INTELLIGENCE) + 5 * curTown.Difficulty;
@@ -4159,9 +3430,5 @@ namespace SwordsOfExileGame
                 break;
             }
         }
-
-
-
     }
-
 }

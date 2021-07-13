@@ -7,7 +7,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <ApplicationIcon>SwordsOfExile3.ico</ApplicationIcon>
     <StartupObject>SwordsOfExileGame.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
@@ -36,8 +36,5 @@
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Code\" />
   </ItemGroup>
 </Project>

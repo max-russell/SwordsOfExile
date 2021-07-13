@@ -1,15 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -19,8 +9,6 @@ namespace SwordsOfExileGame
     /// </summary>
     abstract class Control
     {
-        //static int idcount = 0;
-        //public int ID = 0;
         public int TabNo = -1; //Which tab the control is on (-1 for always show regardless of tab)
         public bool Enabled = true;
         public bool Visible = true;
@@ -38,8 +26,6 @@ namespace SwordsOfExileGame
             Width = w;
             Height = h;
             TabNo = tno;
-            //ID = idno;// idcount;
-            //idcount++;
         }
 
         public virtual void Draw(SpriteBatch sb, int xOffset, int yOffset) { }

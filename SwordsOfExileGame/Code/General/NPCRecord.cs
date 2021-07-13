@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -104,7 +94,7 @@ namespace SwordsOfExileGame
         public int Treasure;
         public int Poison;
         public int DropItemChance;
-        public eGenus Genus;/*(was m_type)*/
+        public eGenus Genus;
         public eCSS SpecialSkill;
         public Item DropItem = null;
         string DeathSoundA, DeathSoundB;
@@ -128,7 +118,6 @@ namespace SwordsOfExileGame
         }
 
         public void Load(BinaryReader In) { } //Needed for interface, not called.
-
         public static void LoadAll(BinaryReader In)
         {
             Dictionary<string, string> summonList = new Dictionary<string, string>();

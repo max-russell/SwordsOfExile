@@ -1,15 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -54,15 +47,11 @@ namespace SwordsOfExileGame
 
             sb.Draw(PC.PortraitTexture, new XnaRect((int)wpos.X + 16, (int)wpos.Y + 14, 64, 64),PC.LifeStatus == eLifeStatus.ALIVE ? Color.White : Color.DarkGray);// new XnaRect((num % 10) * 32, (num / 10) * 32, 32, 32), col);
 
-            //Gfx.DrawPortrait(new XnaRect((int)wpos.X + 16, (int)wpos.Y + 14, 64, 64), PC.Portrait, PC.LifeStatus == eLifeStatus.ALIVE ? Color.White : Color.DarkGray);
-
             if (PC.IsAlive())
             {
                 if (PC.Health < PC.MaxHealth)
                 {
                     int h = 64 - (int)(((float)PC.Health / (float)PC.MaxHealth) * 64f);
-
-                    //sb.Draw(Gfx.NewGui, wpos + new Vector2(13, 42), new XnaRect(67, 37, width, 5), Color.White);
                     Gfx.DrawRect((int)wpos.X + 16, (int)wpos.Y + 14 + (64 - h), 64, h, new Color(255, 0, 0, 128), true);
                 }
                 if ((PC.GetSkill(eSkill.MAGE_SPELLS) > 0 || PC.GetSkill(eSkill.PRIEST_SPELLS) > 0))
@@ -103,54 +92,47 @@ namespace SwordsOfExileGame
         {
             bool interacted = base.Handle();
 
-            //int apos = 0, bpos = 0;
             int cbox = 0;
-            //                  Inv     web     Ivs         asl   
             int[] xp = { 12, 24, 0, 0, 24, 0, 12, 24, 0, 12, 24, 0, 12, 24 };
             int[] yp = { 67, 55, 55, 79, 67, 91, 91, 91, 103, 103, 103, 115, 115, 115 };
 
-            //if (!PC.IsAlive())
             foreach (var pb in afflictBoxes) pb.Visible = false;
-            //else
-            //{ 
-                for (int a = 0; a < 14; a++)
+
+            for (int a = 0; a < 14; a++)
+            {
+                int s = PC.Status((eAffliction)a);
+
+                if (s > 0)
                 {
-                    int s = PC.Status((eAffliction)a);
+                    afflictBoxes[cbox].Visible = true;
 
-                    if (s > 0)
+                    string tooltip = String.Format("@b{0}@e@n@i{1}", PCType.StatusMsg(PC, (eAffliction)a), PC.AfflictionHlp[a]);
+
+                    afflictBoxes[cbox].SetStandardToolTip(tooltip, 150);
+                    if ((eAffliction)a == eAffliction.POISON && s >= 4)
                     {
-                        afflictBoxes[cbox].Visible = true;
-
-                        string tooltip = String.Format("@b{0}@e@n@i{1}", PCType.StatusMsg(PC, (eAffliction)a), PC.AfflictionHlp[a]);
-
-                        afflictBoxes[cbox].SetStandardToolTip(tooltip, 150);
-                        if ((eAffliction)a == eAffliction.POISON && s >= 4)
-                        {
-                            afflictBoxes[cbox].SetPicture(Gfx.MixedGfx, new XnaRect(12, 55, 12, 12));
-                            cbox++;
-                        }
-                        else
-                        {
-                            afflictBoxes[cbox].SetPicture(Gfx.MixedGfx, new XnaRect(xp[a], yp[a], 12, 12));
-                            cbox++;
-                        }
-                    }
-                    else if (((eAffliction)a == eAffliction.HASTE_SLOW || (eAffliction)a == eAffliction.BLESS_CURSE) && s < 0)
-                    {
-                        afflictBoxes[cbox].Visible = true;
-                        string tooltip = String.Format("@b{0}@e@n@i{1}", PCType.StatusMsg(PC, (eAffliction)a), PC.AfflictionHlp[a]);
-                        afflictBoxes[cbox].SetStandardToolTip(tooltip, 150);
-
-                        if ((eAffliction)a == eAffliction.HASTE_SLOW)
-                            afflictBoxes[cbox].SetPicture(Gfx.MixedGfx, new XnaRect(24, 79, 12, 12));
-                        else
-                            afflictBoxes[cbox].SetPicture(Gfx.MixedGfx, new XnaRect(0, 67, 12, 12));
+                        afflictBoxes[cbox].SetPicture(Gfx.MixedGfx, new XnaRect(12, 55, 12, 12));
                         cbox++;
                     }
-                    //else
-                    //    afflictBoxes[cbox].Visible = false;
+                    else
+                    {
+                        afflictBoxes[cbox].SetPicture(Gfx.MixedGfx, new XnaRect(xp[a], yp[a], 12, 12));
+                        cbox++;
+                    }
                 }
-            //}
+                else if (((eAffliction)a == eAffliction.HASTE_SLOW || (eAffliction)a == eAffliction.BLESS_CURSE) && s < 0)
+                {
+                    afflictBoxes[cbox].Visible = true;
+                    string tooltip = String.Format("@b{0}@e@n@i{1}", PCType.StatusMsg(PC, (eAffliction)a), PC.AfflictionHlp[a]);
+                    afflictBoxes[cbox].SetStandardToolTip(tooltip, 150);
+
+                    if ((eAffliction)a == eAffliction.HASTE_SLOW)
+                        afflictBoxes[cbox].SetPicture(Gfx.MixedGfx, new XnaRect(24, 79, 12, 12));
+                    else
+                        afflictBoxes[cbox].SetPicture(Gfx.MixedGfx, new XnaRect(0, 67, 12, 12));
+                    cbox++;
+                }
+            }
 
             int dx = X + 13, dy = Y + 11;
             if (Gui.Ms.X >= dx && Gui.Ms.Y >= dy && Gui.Ms.X < dx + 64 && Gui.Ms.Y < dy + 64) //Mouse within bounds of face box?
@@ -207,7 +189,6 @@ namespace SwordsOfExileGame
                             else
                             {
                                 new Action(eAction.ChangeCurrentPC) { PC = PC };
-                               // Action.PC = PC;
                             }
                         }
                         return true;
@@ -232,31 +213,12 @@ namespace SwordsOfExileGame
 
         void pressInventory(Control b)
         {
-            //if (PC.LifeStatus == eLifeStatus.ALIVE)
-            //{
-            //InventoryWindow.SwitchPC(PC);
-            /*if (Game.Mode != eMode.COMBAT)*/
-
-            //Action.Requested = eAction.ShowInventoryWin;
-            //Action.PC = PC;
-
             new Action(eAction.ShowInventoryWin) { PC = PC };
-
-            //Party.CurrentPC = PC;
-            //InventoryWindow.Reveal();
-            //}
         }
 
         void pressStats(Control b)
         {
-            //if (PC.LifeStatus == eLifeStatus.ALIVE)
-            //{
-            //StatsWindow.SwitchPC(PC);
-            //if (Game.Mode != eMode.COMBAT) Party.CurrentPC = PC;
-            //Party.CurrentPC = PC;
-            //StatsWindow.Reveal();
             new Action(eAction.ShowCharacterWin) { PC = PC };
-            //}
         }
 
         void popupMenuHandler(object o_pc, object nuttin, int what)
@@ -269,13 +231,9 @@ namespace SwordsOfExileGame
                     break;
                 case PopUpMenuData.INVENTORY:
                     new Action(eAction.ShowInventoryWin) { PC = PC };
-                    //Action.Requested = eAction.ShowInventoryWin;
-                    //Action.PC = PC;
                     break;
                 case PopUpMenuData.STATS:
                     new Action(eAction.ShowCharacterWin) { PC = PC };
-                    //Action.Requested = eAction.ShowCharacterWin;
-                    //Action.PC = PC;
                     break;
             }
         }

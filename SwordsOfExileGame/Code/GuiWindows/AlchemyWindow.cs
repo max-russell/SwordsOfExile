@@ -1,15 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -66,11 +56,6 @@ namespace SwordsOfExileGame
 
             UpdateCaster(Party.CurrentPC);
         }
-
-        //public override void Draw(SpriteBatch sb, int partial = 0)
-        //{
-        //    base.Draw(sb, partial);
-        //}
 
         void changedSelected(bool user_caused, ListBoxItem item)
         {

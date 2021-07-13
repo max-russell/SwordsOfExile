@@ -1,97 +1,37 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
 {
     public partial class WorldMapType : IMap
     {
-        //const int SECTOR_WIDTH = 48, SECTOR_HEIGHT = 48;
         PartyType Party { get { return Game.CurrentParty; } }
 
         public int Width, Height; //Size in tiles of the whole world
-        //           SectorWidth, SectorHeight; //Size in Sectors
-        //OutsideSector[,] Sectors;
         public List<Encounter> NPCGroupList = new List<Encounter>();
 
         public Encounter PCAttacker = null; //Used to store which NPC group has just tried to attack the party
 
-        //public WorldMapType(BinaryReader In)
-        //{
-        //    int num1 = In.ReadUInt16();
-        //    OutsideSector.List = new ExileList<OutsideSector>();
-
-        //    for (int x = 0; x < num1; x++)
-        //    {
-        //        new OutsideSector(In);
-        //    }
-
-        //    //Sectors = new OutsideSector[w, h];
-        //    //SectorWidth = Sectors.GetLength(0);
-        //    //SectorHeight = Sectors.GetLength(1);
-
-        //    //Width = SectorWidth * SECTOR_WIDTH;
-        //    //Height = SectorHeight * SECTOR_HEIGHT;
-        //}
-
-        //public void LoadSectorHeaders(BinaryReader In)
-        //{
-        //    for (int x = 0; x < SectorWidth; x++)
-        //        for (int y = 0; y < SectorHeight; y++)
-        //            Sectors[x, y] = new OutsideSector(In, x, y);
-        //}
         public void LoadFull(BinaryReader In)
         {
             foreach (OutsideSector o in OutsideSector.List)//Sectors)
                 o.LoadFull(In);
         }
 
-
-        //public WorldMapType(OutsideSector[,] sectors)
-        //{
-        //    Sectors = sectors;
-        //    SectorWidth = sectors.GetLength(0);
-        //    SectorHeight = sectors.GetLength(1);
-
-        //    Width = SectorWidth * SECTOR_WIDTH;
-        //    Height = SectorHeight * SECTOR_HEIGHT;
-        //}
-
-        //public Location GetSectorTileCoord(OutsideSector op)
-        //{
-        //    for (int y = 0; y < SectorHeight; y++)
-        //        for (int x = 0; x < SectorWidth; x++)
-        //        {
-        //            if (Sectors[x, y] == op)
-        //            {
-        //                return new Location(x * SECTOR_WIDTH, y * SECTOR_HEIGHT);
-        //            }
-        //        }
-        //    return Location.Zero;
-        //}
-
         bool Explored(int x, int y)
         {
-            //if (x < 0 || y < 0 || x >= Width || y >= Height) return false;
-            //OutsideSector s = Sectors[x / Constants.SECTOR_WIDTH, y / Constants.SECTOR_HEIGHT];
             Location pos = new Location(x / Constants.SECTOR_WIDTH, y / Constants.SECTOR_HEIGHT);
             foreach (OutsideSector s in OutsideSector.List)
             {
                 if (s.SectorPos == pos)
                 {
                     int tx = x % Constants.SECTOR_WIDTH, ty = y % Constants.SECTOR_HEIGHT;
-                    return s.Explored[tx, ty];//Sectors[sx, sy].;
-                    //return s;
+                    return s.Explored[tx, ty];
                 }
             }
             return false;
@@ -109,16 +49,10 @@ namespace SwordsOfExileGame
                     return;
                 }
             }
-            //OutsideSector s = Sectors[x / Constants.SECTOR_WIDTH, y / Constants.SECTOR_HEIGHT];
-            //int tx = x % Constants.SECTOR_WIDTH, ty = y % Constants.SECTOR_HEIGHT;
-            //s.Explored[tx, ty] = value;
         }
 
         public OutsideSector SectorAt(Location pos)
         {
-            //pos = new Location(pos.X / SECTOR_WIDTH, pos.Y / SECTOR_HEIGHT);
-            //if (pos.X >= 0 && pos.X < SectorWidth && pos.Y >= 0 && pos.Y < SectorHeight) return Sectors[pos.X, pos.Y];
-            //return null;
             pos = new Location(pos.X / Constants.SECTOR_WIDTH, pos.Y / Constants.SECTOR_HEIGHT);
             foreach (OutsideSector s in OutsideSector.List)
             {
@@ -150,11 +84,9 @@ namespace SwordsOfExileGame
                 o.SetTrigger(toLocal(pos), true);
         }
 
-        //public int this[int x, int y] { get { return 0; } }
         public bool Visible(Location loc) { return true; }
         public string Name { get { return SectorAt(Party.Pos).Name; } }
 
-        //public void Load(BinaryReader In) { }
         public void Draw(SpriteBatch sb)
         {
             float VW = (float)Gfx.WinW / Gfx.ZoomSizeW;
@@ -169,8 +101,6 @@ namespace SwordsOfExileGame
             int charzoomw = (int)((float)Gfx.ZoomSizeW * Gfx.CHARWIDTH);
             int charoffx = (int)((float)(Gfx.ZoomSizeW - charzoomw) / 2f);
 
-            //int dy = -offy;
-
             //Draw terrain
             sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
@@ -181,19 +111,19 @@ namespace SwordsOfExileGame
                     OutsideSector s = SectorAtGlobal(sector_x, sector_y);
                     if (s == null) continue;
 
-                    int y_from = Maths.Max(sy, sector_y * Constants.SECTOR_HEIGHT);// % SECTOR_HEIGHT;
-                    int y_to = Maths.Min(th, ((sector_y + 1) * Constants.SECTOR_HEIGHT) - 1);// % SECTOR_HEIGHT;
-                    int x_from = Maths.Max(sx, sector_x * Constants.SECTOR_WIDTH);// % SECTOR_WIDTH;
-                    int x_to = Maths.Min(tw, ((sector_x + 1) * Constants.SECTOR_WIDTH) - 1);// % SECTOR_WIDTH;
+                    int y_from = Maths.Max(sy, sector_y * Constants.SECTOR_HEIGHT);
+                    int y_to = Maths.Min(th, ((sector_y + 1) * Constants.SECTOR_HEIGHT) - 1);
+                    int x_from = Maths.Max(sx, sector_x * Constants.SECTOR_WIDTH);
+                    int x_to = Maths.Min(tw, ((sector_x + 1) * Constants.SECTOR_WIDTH) - 1);
 
                     int kx = -offx - Maths.Min(sx, sector_x * Constants.SECTOR_WIDTH) * Gfx.ZoomSizeW + (Gfx.ZoomSizeW * sector_x * Constants.SECTOR_WIDTH);
                     int ky = -offy - Maths.Min(sy, sector_y * Constants.SECTOR_HEIGHT) * Gfx.ZoomSizeH + (Gfx.ZoomSizeH * sector_y * Constants.SECTOR_HEIGHT);
 
-                    int dy = ky;//-offy - Maths.Min(sy, sector_y * SECTOR_HEIGHT) * Gfx.ZoomSizeH + (Gfx.ZoomSizeH * sector_y * SECTOR_HEIGHT);
+                    int dy = ky;
 
                     for (int y = y_from; y <= y_to; y++)
                     {
-                        int dx = kx;// (-offx - Maths.Min(sx, sector_x * SECTOR_WIDTH) * Gfx.ZoomSizeW) + (Gfx.ZoomSizeW * sector_x * SECTOR_WIDTH);
+                        int dx = kx;
 
                         for (int x = x_from; x <= x_to; x++)
                         {
@@ -227,48 +157,6 @@ namespace SwordsOfExileGame
                 }
             }
 
-            //for (int y = sy; y < th; y++)
-            //{
-            //    int dx = -offx;
-            //    if (y >= 0 && y < Height)
-            //        for (int x = sx; x < tw; x++)
-            //        {
-            //            if (x >= 0 && x < Width)
-            //            {
-            //                OutsideSector s = Sectors[x / Constants.SECTOR_WIDTH, y / Constants.SECTOR_HEIGHT];
-            //                int tx = x % Constants.SECTOR_WIDTH, ty = y % Constants.SECTOR_HEIGHT;
-
-            //                if (s.Explored[tx, ty])
-            //                {
-            //                    XnaRect r_dst = new XnaRect(dx, dy, Gfx.ZoomSizeW, Gfx.ZoomSizeH);
-            //                    TerrainRecord ter = TerrainRecord.UnderlayList[s[tx, ty] & 0x00FF];//TerrainRecord.List[s[tx, ty]];
-
-            //                    if ((s.MapExtra[tx,ty] & eMapOutExtraBit.ENTRANCE) != 0) //ter.Special == eTerSpec.TOWN_ENTRANCE) //Display alternate terrain for hidden town entrances
-            //                    {
-            //                        TownEntrance towne = s.TownEntranceHere(new Location(tx, ty), true);
-            //                        if (towne != null && towne.DestTown != null && towne.DestTown.Hidden) ter = towne.TerrainIfHidden;//TerrainRecord.List[ter.Flag1];
-            //                    }
-
-            //                    //TerrainRecord to_n = ty > 0 ? TerrainRecord.List[s[tx, ty - 1]] : terrainAt(x, y - 1);
-            //                    //TerrainRecord to_s = ty < SECTOR_WIDTH - 1 ? TerrainRecord.List[s[tx, ty + 1]] : terrainAt(x, y + 1);
-            //                    //TerrainRecord to_e = tx < SECTOR_HEIGHT - 1 ? TerrainRecord.List[s[tx + 1, ty]] : terrainAt(x + 1, y);
-            //                    //TerrainRecord to_w = tx > 0 ? TerrainRecord.List[s[tx - 1, ty]] : terrainAt(x - 1, y);
-            //                    ter.Draw(sb, r_dst, true);//, to_n, to_s, to_w, to_e);//_Visible[x, y]);
-
-            //                    int overlay = s[tx, ty] & 0xFF00;
-            //                    if (overlay != 0)
-            //                    {
-            //                        ter = TerrainRecord.OverlayList[overlay >> 8];
-            //                        ter.Draw(sb, r_dst, true);///*_Visible[x, y]*/, to_n, to_s, to_w, to_e);
-            //                    }
-
-            //                }
-            //            }
-            //            dx += Gfx.ZoomSizeW;
-            //        }
-            //    dy += Gfx.ZoomSizeH;
-            //}
-
             foreach (Encounter gr in NPCGroupList)
             {
                 bool vis = false;
@@ -289,7 +177,7 @@ namespace SwordsOfExileGame
                     XnaRect dr = new XnaRect((gr.Pos.X - sx) * Gfx.ZoomSizeW - offx + charoffx,
                              (gr.Pos.Y - sy) * Gfx.ZoomSizeH - offy,
                              charzoomw, Gfx.ZoomSizeH);
-                    gr.Draw(sb, dr, Color.White);//sx, sy, offx, offy);
+                    gr.Draw(sb, dr, Color.White);
                 }
             }
 
@@ -316,35 +204,23 @@ namespace SwordsOfExileGame
                         OutsideSector s = SectorAtGlobal(sector_x, sector_y);
                         if (s == null) continue;
 
-                        int y_from = Maths.Max(sy, sector_y * Constants.SECTOR_HEIGHT);// % SECTOR_HEIGHT;
-                        int y_to = Maths.Min(th, ((sector_y + 1) * Constants.SECTOR_HEIGHT) - 1);// % SECTOR_HEIGHT;
-                        int x_from = Maths.Max(sx, sector_x * Constants.SECTOR_WIDTH);// % SECTOR_WIDTH;
-                        int x_to = Maths.Min(tw, ((sector_x + 1) * Constants.SECTOR_WIDTH) - 1);// % SECTOR_WIDTH;
+                        int y_from = Maths.Max(sy, sector_y * Constants.SECTOR_HEIGHT);
+                        int y_to = Maths.Min(th, ((sector_y + 1) * Constants.SECTOR_HEIGHT) - 1);
+                        int x_from = Maths.Max(sx, sector_x * Constants.SECTOR_WIDTH);
+                        int x_to = Maths.Min(tw, ((sector_x + 1) * Constants.SECTOR_WIDTH) - 1);
 
                         int kx = -offx - Maths.Min(sx, sector_x * Constants.SECTOR_WIDTH) * Gfx.ZoomSizeW + (Gfx.ZoomSizeW * sector_x * Constants.SECTOR_WIDTH);
                         int ky = -offy - Maths.Min(sy, sector_y * Constants.SECTOR_HEIGHT) * Gfx.ZoomSizeH + (Gfx.ZoomSizeH * sector_y * Constants.SECTOR_HEIGHT);
 
-                        int dy = ky;//-offy - Maths.Min(sy, sector_y * SECTOR_HEIGHT) * Gfx.ZoomSizeH + (Gfx.ZoomSizeH * sector_y * SECTOR_HEIGHT);
+                        int dy = ky;
 
                         for (int y = y_from; y <= y_to; y++)
                         {
-                            int dx = kx;// (-offx - Maths.Min(sx, sector_x * SECTOR_WIDTH) * Gfx.ZoomSizeW) + (Gfx.ZoomSizeW * sector_x * SECTOR_WIDTH);
+                            int dx = kx;
 
                             for (int x = x_from; x <= x_to; x++)
                             {
                                 int tx = x % Constants.SECTOR_WIDTH, ty = y % Constants.SECTOR_HEIGHT;
-
-                                //dy = -offy;
-                                //for (int y = sy; y < th; y++)
-                                //{
-                                //    int dx = -offx;
-                                //    if (y >= 0 && y < Height)
-                                //        for (int x = sx; x < tw; x++)
-                                //        {
-                                //            if (x >= 0 && x < Width)
-                                //            {
-                                //                OutsideSector s = Sectors[x / Constants.SECTOR_WIDTH, y / Constants.SECTOR_HEIGHT];
-                                //                int tx = x % Constants.SECTOR_WIDTH, ty = y % Constants.SECTOR_HEIGHT;
 
                                 if (s.Explored[tx, ty])
                                 {
@@ -431,16 +307,9 @@ namespace SwordsOfExileGame
             {
                 bool drawnpc = false;
 
-                //XnaRect pdr = new XnaRect((Party.Pos.x - sx) * Gfx.ZoomSizeW - offx + charoffx,
-                //                     (Party.Pos.y - sy) * Gfx.ZoomSizeH - offy,
-                //                     charzoomw, Gfx.ZoomSizeH);
-
                 foreach (PCType pc in Party.PCList)
-                    if (!(pc.AnimAction == null))//Animation_Death)
+                    if (!(pc.AnimAction == null))
                     {
-                        //if (pc.AnimAction is Animation_Death)
-                        //{ }
-
                         XnaRect pdr = new XnaRect((pc.Pos.X - sx) * Gfx.ZoomSizeW - offx + charoffx,
                             (pc.Pos.Y - sy) * Gfx.ZoomSizeH - offy,
                             charzoomw, Gfx.ZoomSizeH);
@@ -467,22 +336,11 @@ namespace SwordsOfExileGame
 
                 if (p.Inside(sx, sy, tw, th) && Visible(p))
                 {
-                    //XnaRect dr = new XnaRect((int)((overlay.Pos.X - sx) * Gfx.ZoomW - offx),
-                    //                     (int)((overlay.Pos.Y - sy) * Gfx.ZoomH - offy),
-                    //                     Gfx.ZoomW, Gfx.ZoomH);
                     Vector2 pos = new Vector2((overlay.Pos.X - sx) * Gfx.ZoomSizeW - offx,
                                          (overlay.Pos.Y - sy) * Gfx.ZoomSizeH - offy);
                     overlay.DrawOverlay(sb, pos);
                 }
             }
-
-            //if (Party.LeaderPC.AnimAction != null || (Party.LeaderPC.IsAlive() && Party.Vehicle == null))
-            //{
-            //    XnaRect pdr = new XnaRect((Party.Pos.x - sx) * Gfx.ZoomSizeW - offx + charoffx,
-            //                         (Party.Pos.y - sy) * Gfx.ZoomSizeH - offy,
-            //                         charzoomw, Gfx.ZoomSizeH);
-            //    Party.LeaderPC.Draw(sb, pdr, Color.White);
-            //}
 
             //Draw targeting (Just for searching for the outside map)
             if (Game.PlayerTargeting)
@@ -517,19 +375,18 @@ namespace SwordsOfExileGame
             Timer.ResetLocalTimers(this);
             Game.AutoSave(); 
         }
-        //public void Enter() { }
 
-        public void UpdateVisible()//params Location[] locs)
+        public void UpdateVisible()
         {
             //Outside we can only see as far as 4 spaces around the Party
             if (Script.suspendMapUpdate) return;
 
             Location l = Party.Pos;
 
-            int ymin = /*Math.Max(*/Party.Pos.Y - 4,//, 0),
-                ymax = /*Math.Min(*/Party.Pos.Y + 4;//, Height - 1);
-            int xmin = /*Math.Max(*/Party.Pos.X - 4,//, 0),
-                xmax = /*Math.Min(*/Party.Pos.X + 4;//, Width - 1);
+            int ymin = Party.Pos.Y - 4,
+                ymax = Party.Pos.Y + 4;
+            int xmin = Party.Pos.X - 4,
+                xmax = Party.Pos.X + 4;
 
             for (int y = ymin; y <= ymax; y++)
                 for (int x = xmin; x <= xmax; x++)
@@ -560,13 +417,6 @@ namespace SwordsOfExileGame
             return false;
         }
 
-        //public bool TerrainBlocked(Location pos)
-        //{
-        //    TerrainRecord ter = terrainAt(pos.x, pos.y);//(is_town()) ? t_d.terrain[to_check.x][to_check.y] : combat_terrain[to_check.x][to_check.y];                
-        //    if (ter.Blockage > eBlock.CLEAR_WALK_PC) return true;
-        //    return false;
-        //}
-
         public bool CheckSpecialTerrainPC(Location pos, PCType ch)
         {
             TerrainRecord ter = terrainAt(pos.X, pos.Y);
@@ -574,7 +424,7 @@ namespace SwordsOfExileGame
             if (ter.Special == eTerSpec.CHANGE_WHEN_STEP_ON) //Change when step on (eg, Non-locked doors)
             {
                 TerrainRecord to = ter.Flag1 as TerrainRecord;
-                if (to != null)//TerrainRecord.List.TryGetValue(ter.Flag1, out to))
+                if (to != null)
                 {
                     AlterTerrain(pos, ter.Layer, to);
                     UpdateVisible();
@@ -590,7 +440,7 @@ namespace SwordsOfExileGame
 
         public void AlterTerrain(Location pos, int layer, TerrainRecord newter)
         {
-            OutsideSector s = SectorAt(pos);// Sectors[pos.x / SECTOR_WIDTH, pos.y / SECTOR_HEIGHT];
+            OutsideSector s = SectorAt(pos);
             pos = toLocal(pos);
 
             if (layer == 0) //Underlay
@@ -655,10 +505,6 @@ namespace SwordsOfExileGame
             return false;
         }
 
-        //public ICharacter CharacterThere(Location pos, bool dummy1 = true, bool dummy2 = true)
-        //{
-        //    return null;
-        //}
         public bool CharacterCanBeThere(Location loc, ICharacter m_num, bool allow_leave_map = false)
         {
             if (m_num is PCType)
@@ -669,16 +515,8 @@ namespace SwordsOfExileGame
             }
 
             return true;
-            //if (m_num is NPCGroupType && TerrainAt(loc).BlocksNPCGroup) return false;
-
-            //if (Party.Pos == loc && !(m_num is PCType)) return false;
-
-            //foreach (NPCGroupType npc in NPCGroupList)
-            //    if (npc.Pos == loc && npc != m_num) return false; 
-
-            //return true; 
         }
-        //public Location GetTileAtMouse(MouseState ms) { return Location.Zero; }
+
         public string GetToolTipMessage(Location loc)
         {
             OutsideSector sec = SectorAt(loc);
@@ -690,7 +528,7 @@ namespace SwordsOfExileGame
             {
                 if (npc.Pos == loc)
                 {
-                    sb.AppendLine("Wandering encounter");// (" + npc.Record.GetDifficultyDesc() + ")");
+                    sb.AppendLine("Wandering encounter");
                 }
             }
 
@@ -713,8 +551,6 @@ namespace SwordsOfExileGame
             return sb.ToString();
 
         }
-        //public Sign SignAtLoc(Location loc) { return null; }
-
         public List<PopUpMenuData> GetPopUpMenuOptions(Location loc, Location frompos)
         {
             if (SectorAt(loc) == null || !Visible(loc)) return null; //Tile must be visible and on the map
@@ -738,24 +574,15 @@ namespace SwordsOfExileGame
             switch (data)
             {
                 case PopUpMenuData.SEARCH:
-                    //Action.Requested = eAction.Search;
-                    //if (Game.Mode == eMode.COMBAT)
-                    //    Action.PC = Party.ActivePC;
-                    //else
-                    //    Action.PC = Party.CurrentPC;
-                    //Action.Loc = (Location)o;
-
                     new Action(eAction.Search) { PC = (Game.Mode == eMode.COMBAT) ? Party.ActivePC : Party.CurrentPC, Loc = (Location)o };
-
                     break;
             }
         }
 
         public bool DoNPCTurn()
         {
-
             //For the outside area, all NPC Groups moved in StartNPCTurn, so just possibly spawn new groups here
-            if (Maths.Rand(1, 1, Constants.OUTSIDE_WANDERING_SPAWN_CHANCE) /*+ Party.vogelsExtraShit[6, 8] * 200*/ == 1)//== 10)
+            if (Maths.Rand(1, 1, Constants.OUTSIDE_WANDERING_SPAWN_CHANCE)  == 1)
             {
                 SpawnWanderingGroup();
             }
@@ -883,9 +710,6 @@ namespace SwordsOfExileGame
         }
 
         public int CanSee(Location p1, Location p2, int dummy)
-        //short mode; // 0 - normal  1 - counts 1 for blocked spaces or lava (used for party placement in
-        //				   town combat)
-        // 2 - no light check
         {
             int dx, dy, count, storage = 0;
 
@@ -896,7 +720,7 @@ namespace SwordsOfExileGame
                     for (count = p2.X + 1; count < p1.X; count++)
                     {
                         TerrainRecord ter = terrainAt(count, p1.Y);
-                        storage += ter.Obscurity;//.get_obscurity();
+                        storage += ter.Obscurity;
                     }
                 }
                 else
@@ -987,7 +811,7 @@ namespace SwordsOfExileGame
 
         TerrainRecord terrainAt(int x, int y)
         {
-            OutsideSector s = SectorAt(new Location(x, y));//Sectors[x / SECTOR_WIDTH, y / SECTOR_HEIGHT];
+            OutsideSector s = SectorAt(new Location(x, y));
             if (s == null) return null;
             int tx = x % Constants.SECTOR_WIDTH, ty = y % Constants.SECTOR_HEIGHT;
 
@@ -998,12 +822,12 @@ namespace SwordsOfExileGame
             else
                 ter = TerrainRecord.UnderlayList[s[tx, ty] & 0x00FF];
 
-            if ((s.MapExtra[tx,ty] & eMapOutExtraBit.ENTRANCE) != 0)//ter.Special == eTerSpec.TOWN_ENTRANCE)
+            if ((s.MapExtra[tx,ty] & eMapOutExtraBit.ENTRANCE) != 0)
             {
                 TownEntrance towne = TownEntranceHere(new Location(x,y), true);
                 if (towne != null && towne.DestTown.Hidden)
                 {
-                    ter = towne.TerrainIfHidden;//TerrainRecord.List[ter.Flag1];
+                    ter = towne.TerrainIfHidden;
                 }
             }
 
@@ -1013,7 +837,7 @@ namespace SwordsOfExileGame
 
         public TerrainRecord TerrainAt(Location pos)
         {
-            OutsideSector s = SectorAt(pos);//Sectors[x / SECTOR_WIDTH, y / SECTOR_HEIGHT];
+            OutsideSector s = SectorAt(pos);
             if (s == null) return null;
             int tx = pos.X % Constants.SECTOR_WIDTH, ty = pos.Y % Constants.SECTOR_HEIGHT;
 
@@ -1029,7 +853,7 @@ namespace SwordsOfExileGame
                 TownEntrance towne = TownEntranceHere(pos, true);
                 if (towne != null && towne.DestTown.Hidden)
                 {
-                    ter = towne.TerrainIfHidden;//TerrainRecord.List[ter.Flag1];
+                    ter = towne.TerrainIfHidden;
                 }
             }
 
@@ -1056,42 +880,23 @@ namespace SwordsOfExileGame
             under = TerrainRecord.UnderlayList[s[tx, ty] & 0x00FF];
         }
 
-
-        //OutsideSector getSectorFromCoord(Location pos)
-        //{
-        //    return Sectors[x / SECTOR_WIDTH, y / SECTOR_HEIGHT];
-        //}
-
-        //public List<SpecialNode> SpecialNodeList { get { return null; } }
-
         public bool PCCanTryToWalkThere(Location pos, PCType pc)
         {
             TerrainRecord ter = terrainAt(pos.X, pos.Y);
-
-            //|| ((Party.isFlying()) &&  (TerrainRecord.List[ter].FlyOver == true)))
 
             //Blocking terrain
             if (ter.BlocksPC && Party.Flying == 0)
             {
                 //If there is a special encounter node type 4 (Secret passage) PCs can be here
 
-                //int sx = pos.X / Constants.SECTOR_WIDTH;
-                //int sy = pos.Y / Constants.SECTOR_WIDTH;
-                OutsideSector o = SectorAtGlobal(pos.X, pos.Y);// Sectors[sx, sy];
-                //Location basecoord = new Location(sx * Constants.SECTOR_WIDTH, sy * Constants.SECTOR_HEIGHT);
+                OutsideSector o = SectorAtGlobal(pos.X, pos.Y);
                 if (o == null) return false;
 
                 int sx = pos.X / Constants.SECTOR_WIDTH;
                 int sy = pos.Y / Constants.SECTOR_WIDTH;
                 Location basecoord = new Location(sx * Constants.SECTOR_WIDTH, sy * Constants.SECTOR_HEIGHT);
                 if ((o.MapExtra[pos.X - basecoord.X, pos.Y - basecoord.Y] & eMapOutExtraBit.SECRET) != 0) return true;
-                //if (secretPassageThere(pos)) { return true; }
                 if (Vehicle.IsThere(this, pos) != null) return true;
-
-                //foreach (SpecialEncounter se in o.SpecialEncounterList)
-                //{
-                //    if (basecoord + se.Pos == pos && se.NodeToRun.type == 4) { return true; }
-                //}
                 return false;
             }
 
@@ -1113,10 +918,8 @@ namespace SwordsOfExileGame
 
         public bool TriggerStepOnSpecials(Location gpos, Direction dir, PCType pc, bool boat_landing)
         {
-            //SpecialNode foundnode = null;
             string foundfunc = null;
             TriggerSpot foundspot = null;
-            //bool globalnode = false;
 
             OutsideSector o = SectorAt(gpos);
             Location pos = new Location(gpos.X % Constants.SECTOR_WIDTH, gpos.Y % Constants.SECTOR_HEIGHT);
@@ -1127,7 +930,7 @@ namespace SwordsOfExileGame
                 if (se.Pos == pos && se.TriggeredBy(eTriggerSpot.STEP_ON) && se.TriggeredBy(eTriggerSpot.PCS_TRIGGER))
                 {
                     foundspot = se;
-                    foundfunc = se.Func;//se.NodeToRun;
+                    foundfunc = se.Func;
                     break;
                 }
             }
@@ -1142,29 +945,14 @@ namespace SwordsOfExileGame
                     foundfunc = ter.Trigger.Func;
                     foundspot = ter.Trigger;
                 }
-
-                //if (ter.Special == eTerSpec.CALL_LOCAL_SPECIAL && ter.FuncOutside[o.SectorPos.x, o.SectorPos.y] != "") 
-                //{
-                //    foundfunc = ter.FuncOutside[o.SectorPos.x, o.SectorPos.y];
-                //}
-                //else if (ter.Special == eTerSpec.CALL_SCENARIO_SPECIAL && ter.FuncGlobal != "")
-                //{
-                //    foundfunc = ter.FuncGlobal;
-                //}
             }
 
             //Quit if no special node triggers found.
             if (foundfunc == null) return false;
 
-            //eScriptCallOrigin origin = eScriptCallOrigin.MOVING;//Game.Mode == eMode.COMBAT ? eScriptCallOrigin.COMBAT_MOVING : eScriptCallOrigin.TOWN_MOVING;
-
             //Set up the special
             Script.New_MapTrigger(foundfunc, eCallOrigin.MOVING, foundspot, pc, gpos, dir);
 
-
-            //new Script(foundfunc, eCallOrigin.MOVING, pc, dir, gpos);
-
-            //SpecialNode.SetUpPendingMoveNodeChain(origin, globalnode, list, foundnode, gpos, dir, pc);
             return true;
         }
 
@@ -1184,7 +972,7 @@ namespace SwordsOfExileGame
             {
                 if (se.Pos == local_spot && se.TriggeredBy(eTriggerSpot.SEARCH) && se.TriggeredBy(eTriggerSpot.PCS_TRIGGER))
                 {
-                    foundfunc = se.Func;//foundnode = se.NodeToRun;
+                    foundfunc = se.Func;
                     foundspot = se;
                     break;
                 }
@@ -1200,7 +988,6 @@ namespace SwordsOfExileGame
             }
 
             if (foundfunc != null)
-                //new Script(foundfunc, eCallOrigin.SEARCHING, spot);
                 Script.New_MapTrigger(foundfunc, eCallOrigin.SEARCHING, foundspot, pc, spot, pc.Dir);
             else
             {
@@ -1208,9 +995,5 @@ namespace SwordsOfExileGame
             }
                 
         }
-
-
-
     }
-
 }

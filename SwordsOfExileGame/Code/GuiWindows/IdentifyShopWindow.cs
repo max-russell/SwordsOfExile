@@ -1,15 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -22,14 +12,14 @@ namespace SwordsOfExileGame
         public IdentifyWindow(ConversationWindow calledfromtalk, string msg, int price)
             : base(0, 0, 272, 200, true, true, false, true, true)
         {
-            Action.LockActions = eAction.INVENTORY_LOCKED_ACTIONS;//true; //Don't pause the world, but prevent the player doing anything not inventory related
+            Action.LockActions = eAction.INVENTORY_LOCKED_ACTIONS; //Don't pause the world, but prevent the player doing anything not inventory related
             Position(-2, -2);
             calledFromTalk = calledfromtalk;
 
             int y = 5;
             Label l = AddLabel(msg, 5, y, 240, -1, true);
             y += l.Height + 10;
-            IdentifyBox i = new IdentifyBox(this, new XnaRect(5, y, 240, 100), price, -1);//AddIdentifyBox(new XnaRect(5, y, 240, 100), price);
+            IdentifyBox i = new IdentifyBox(this, new XnaRect(5, y, 240, 100), price, -1);
             controls.Add(i);
             Gui.ServiceBoxOpen = i;
             y += i.Height + 10;
@@ -37,8 +27,7 @@ namespace SwordsOfExileGame
             y += b.Height + 5;
             Resize(272, y + Gfx.FRAME_HEIGHT * 2);
 
-            OKKeyControl = b;//b.KeyShortcut = Keys.Enter;
-            //Gui.KeyFocusWindow = this;
+            OKKeyControl = b;
 
             InventoryWindow.Reveal(Party.CurrentPC);
 
@@ -52,14 +41,12 @@ namespace SwordsOfExileGame
             if (calledFromTalk != null)
             {
                 calledFromTalk.Visible = true;
-                //Gui.KeyFocusWindow = calledFromTalk;
             }
-            Action.LockActions = eAction.NONE;// false;
+            Action.LockActions = eAction.NONE;
         }
 
         void pressDone(Control b)
         {
-            //Close();
             KillMe = true;
         }
 
@@ -116,7 +103,6 @@ namespace SwordsOfExileGame
                                 if (Gui.DragItem.Identified) { Msg = "Item is already identified"; return false; }
                                 if (Game.CurrentParty.Gold < Price) { Msg = "You don't have " + Price + " gold"; return false; }
 
-                                //rowScrollPos = vScroll.Handle(dx, dy);
                                 if (Gui.LMBHitUp)
                                 {
                                     Gui.DragItem.Identify(Price);

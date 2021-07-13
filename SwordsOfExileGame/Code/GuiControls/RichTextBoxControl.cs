@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -41,8 +33,8 @@ namespace SwordsOfExileGame
         enum eFormat { Normal, Bold, Italic, Link };
         struct TextZone
         {
-            public XnaRect Rect;// = XnaRect.Empty;
-            public eFormat Style;// = eFormat.Normal;
+            public XnaRect Rect;
+            public eFormat Style;
             public Color Colour;
             public string Text;
             public string ToolTipText;
@@ -83,17 +75,6 @@ namespace SwordsOfExileGame
             if (h == -1) Height = r.Height;
             else Height = h;
         }
-
-        //public RichTextBox(GuiWindow p, string txt, string[] tooltips, int x, int y, int tno)
-        //    : base(p, x, y, 0, 0, tno)
-        //{
-        //    hasHypertext = true;
-        //    SetFonts(1);
-        //    XnaRect r = FormatText(txt, true, tooltips);
-        //    Width = r.Width;
-        //    Height = r.Height;
-        //}
-
 
         public void SetFonts(int s)
         {
@@ -136,7 +117,6 @@ namespace SwordsOfExileGame
 
                     sb.DrawString(font, z.Text, new Vector2(dx + z.Rect.X, dy + z.Rect.Y), col);
                 }
-                //Gfx.DrawRect(X + xOffset, Y + yOffset, Width, Height, Color.Red, false, 1);
             }
         }
 
@@ -147,8 +127,6 @@ namespace SwordsOfExileGame
             if (!Enabled || !Visible) return false;
 
             //Is mouse inside bounds of word link?
-
-            //if (!hasHypertext) return interacted;
 
             int dx = Gui.Ms.X - X - xOffset - padding, dy = Gui.Ms.Y - Y - yOffset - padding;
             int index = 0;
@@ -177,14 +155,8 @@ namespace SwordsOfExileGame
                     {
                         if (z.ToolTipText != "")
                             new ToolTipV2(false, new XnaRect(z.Rect.X + X + xOffset, z.Rect.Y + Y + yOffset, z.Rect.Width, z.Rect.Height), z.ToolTipText, 200);
-                        //if (ToolTip.WaitForToolTip())
-                        //{
-                        //    ToolTip.New(z.ToolTipText, 200);
-                        //}
                     }
                 }
-                //else
-                //    mousePressed = false;
                 if (z.Style == eFormat.Link) index++;
             }
             return interacted;
@@ -206,7 +178,7 @@ namespace SwordsOfExileGame
         {
             const char DENOTE_CHAR = '±';
 
-            zoneList.Clear();// = new List<TextZone>();
+            zoneList.Clear();
             BitmapFont curfont = fontNormal;
             txt = txt.Replace("\n", "@n");
             rawText = txt;
@@ -249,18 +221,6 @@ namespace SwordsOfExileGame
                         do
                         {
                             if (pos >= rawText.Length) { string_ended = true; break; }
-
-                            //if (rawText[pos] == '[')
-                            //{
-                            //    word.Append('[');
-                            //    do
-                            //    {
-                            //        pos++;
-                            //        if (pos >= rawText.Length) { throw new Exception("Can't format Rich text: No matching ']'"); }
-                            //        word.Append(rawText[pos]);
-                            //    } while (rawText[pos] != ']');
-                            //    pos++;
-                            //}
                             
                             if (rawText[pos] == '@')
                             {
@@ -276,23 +236,23 @@ namespace SwordsOfExileGame
 
                                 if (char.IsDigit(rawText[pos])) //Check for colour code
                                 {
-                                    word.Append(DENOTE_CHAR/*'@'*/); word.Append(rawText[pos]);
+                                    word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
                                 }
                                 else if (rawText[pos] == 'b')
                                 {
-                                    curfont = fontBold; word.Append(DENOTE_CHAR /*'@'*/); word.Append(rawText[pos]);
+                                    curfont = fontBold; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
                                 }
                                 else if (rawText[pos] == 'i')
                                 {
-                                    curfont = fontItalic; word.Append(DENOTE_CHAR /*'@'*/); word.Append(rawText[pos]);
+                                    curfont = fontItalic; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
                                 }
                                 else if (rawText[pos] == 'e')
                                 {
-                                    curfont = fontNormal; word.Append(DENOTE_CHAR /*'@'*/); word.Append(rawText[pos]);
+                                    curfont = fontNormal; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
                                 }
                                 else if (rawText[pos] == 'l')
                                 {
-                                    curfont = fontNormal; word.Append(DENOTE_CHAR /*'@'*/); word.Append(rawText[pos]);
+                                    curfont = fontNormal; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
                                 }
 
                                 else if (rawText[pos] == '[')
@@ -322,7 +282,6 @@ namespace SwordsOfExileGame
                                 }
                                 pos++;
                                 if (pos >= rawText.Length) string_ended = true;
-                                //break;
                             }
                             else if (!char.IsWhiteSpace(rawText[pos]))
                             {
@@ -338,27 +297,24 @@ namespace SwordsOfExileGame
                         linelength += wordlength;
                     }
 
-                    if (linelength >= boxwidth)//Gfx.GuiFont1.MeasureString(rawText.Substring(linestartpos, pos - linestartpos)).X > Width)
+                    if (linelength >= boxwidth)
                     {
                         lines.Add(sb.ToString());
                         sb.Clear();
                         linestartpos = wordstartpos;
-                        //sb.Append(word);
                         linelength = wordlength;
-                        //sb.Append(rawText.Substring(wordstartpos, pos - wordstartpos).TrimStart(' '));
                     }
-                    /*else*/
                     if (newline)
                     {
                         sb.Append(word);
                         lines.Add(sb.ToString());
                         sb.Clear();
-                        linestartpos = pos;// wordstartpos;
+                        linestartpos = pos;
                         linelength = 0;
                     }
                     else
                     {
-                        sb.Append(word);//(rawText.Substring(wordstartpos, pos - wordstartpos));
+                        sb.Append(word);
                     }
                 }
 

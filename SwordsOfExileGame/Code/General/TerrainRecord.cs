@@ -1,32 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 
 namespace SwordsOfExileGame
 {
-    public class TerrainRecord : IListEntity //terrain_type_type
+    public class TerrainRecord : IListEntity 
     {
         PartyType Party { get { return Game.CurrentParty; } }
         public static TerrainRecord NoOverlay = new TerrainRecord();
-
-        //public static List<TerrainRecord> UnderlayList = new List<TerrainRecord>();
-        //public static List<TerrainRecord> OverlayList = new List<TerrainRecord>();
-        public static TerrainRecord[] UnderlayList = new TerrainRecord[256];//List<TerrainRecord> UnderlayList = new List<TerrainRecord>();
+        public static TerrainRecord[] UnderlayList = new TerrainRecord[256];
         public static TerrainRecord[] OverlayList = new TerrainRecord[256];
         public static ExileList<TerrainRecord> List = new ExileList<TerrainRecord>(); 
-
-        //List<TerrainRecord> myList { get { return Layer == 1 ? OverlayList : UnderlayList; } }
 
         const int CAVE_WALKWAY = 82;
         const int GRASS_WALKWAY = 83;
@@ -47,7 +35,7 @@ namespace SwordsOfExileGame
         public int Obscurity;
         public int Layer;
 
-        public object Flag1, Flag2;//, trans_to_what;//, boat_over;
+        public object Flag1, Flag2;
         public TerrainRecord TransformTo;
         public eTerSpec Special;
         public bool FlyOver, BoatOver, BlocksHorse, DestroysBarrels;
@@ -55,17 +43,12 @@ namespace SwordsOfExileGame
 
         public TriggerSpot Trigger;
 
-        //public string FuncGlobal = null;
-        //public string[] FuncTowns = null; //Need to list all map-specific function this terrain type may trigger
-        //public string[,] FuncOutside = null;
-
         public string Name; //Not in Vogel's original
 
         public string TooltipInfo(Location pos, Location from)
         {
             return Name;
         }
-
 
         public void Load(BinaryReader In) { }
         public static void LoadAll(BinaryReader In)
@@ -109,53 +92,6 @@ namespace SwordsOfExileGame
 
         public TerrainRecord() { Num = -1; Picture = -1; }
 
-        //public TerrainRecord(BinaryReader In, bool overlay)
-        //{
-        //    Layer = overlay ? 1 : 0;
-        //    Num = overlay ? OverlayList.Count : UnderlayList.Count;
-        //    id = In.ReadString();
-        //    Name = In.ReadString();
-        //    Picture = In.ReadInt32();
-        //    Blockag = (eBlock2)In.ReadByte();
-        //    Obscurity = In.ReadByte();
-
-        //    byte b = In.ReadByte();
-        //    BlocksHorse = (b & 1) != 0;
-        //    BoatOver = (b & 2) != 0;
-        //    FlyOver = (b & 4) != 0;
-        //    DestroysBarrels = In.ReadBoolean();
-        //    step_sound = In.ReadByte();
-        //    light_radius = In.ReadByte();
-        //    In.ReadByte(); //Editor Icon - not used in game
-        //    Special = (eTerSpec)In.ReadByte();
-        //    trans_to_what = In.ReadString();
-
-        //    if (Special == eTerSpec.CHANGE_WHEN_STEP_ON || Special == eTerSpec.CRUMBLING_TERRAIN || Special == eTerSpec.LOCKABLE_TERRAIN
-        //        || Special == eTerSpec.UNLOCKABLE_TERRAIN || Special == eTerSpec.UNLOCKABLE_BASHABLE || Special == eTerSpec.CHANGE_WHEN_USED)// || Special == eTerSpec.TOWN_ENTRANCE)
-        //        Flag1 = In.ReadString();
-        //    else
-        //        Flag1 = Convert.ToString(In.ReadInt16());
-
-        //    if (Special == eTerSpec.CHANGE_WHEN_STEP_ON)
-        //        Flag2 = In.ReadString();
-        //    else
-        //        Flag2 = Convert.ToString(In.ReadInt16());
-
-        //    if (In.ReadBoolean()) //Does this terrain have a script trigger?
-        //    {
-        //        Trigger = new TriggerSpot(In, true); //Read the trigger, but it has no map location
-        //    }
-
-        //    In.ReadString(); //EditorScript - not used in game.
-
-        //    if (overlay)
-        //        OverlayList.Add(this);
-        //    else
-        //        UnderlayList.Add(this);
-
-        //    List.Add(this);
-        //}
-
         public TerrainRecord(BinaryReader In, List<string> trans_to_id)
         {
             ID = In.ReadString();
@@ -179,7 +115,6 @@ namespace SwordsOfExileGame
             Special = (eTerSpec)In.ReadByte();
 
             trans_to_id.Add(In.ReadString());
-            //trans_to_what = In.ReadString();
 
             if (Special == eTerSpec.CHANGE_WHEN_STEP_ON || Special == eTerSpec.CRUMBLING_TERRAIN || Special == eTerSpec.LOCKABLE_TERRAIN
                 || Special == eTerSpec.UNLOCKABLE_TERRAIN || Special == eTerSpec.UNLOCKABLE_BASHABLE || Special == eTerSpec.CHANGE_WHEN_USED)
@@ -199,7 +134,7 @@ namespace SwordsOfExileGame
 
             In.ReadString(); //EditorScript - not used in game.
 
-            if (Layer == 1 && Num >= 1 && Num <= 255) OverlayList[Num] = this;//.Add(this);
+            if (Layer == 1 && Num >= 1 && Num <= 255) OverlayList[Num] = this;
             else if (Layer == 0 && Num >= 0 && Num <= 255) UnderlayList[Num] = this;
             List.Add(this);
         }
@@ -229,52 +164,7 @@ namespace SwordsOfExileGame
                 sb.Draw(Gfx.TerrainGfx[sheet], r_dst, rs, fullbright ? Color.White : Color.Gray);
             }
             return;
-
-
-            //int p = picture;
-
-            //if (p >= 2000)
-            //{
-            //    //Custom animated
-            //    var r_src = Gfx.GetCustomRect((p % 2000) + Game.AnimTicks);
-            //    sb.Draw(Gfx.CustomGfx, r_dst, r_src, fullbright ? Color.White : Color.Gray);
-            //    return;
-            //}
-            //if (p >= 1000)
-            //{
-            //    //Custom
-            //    var r_src = Gfx.GetCustomRect(p % 1000);
-            //    sb.Draw(Gfx.CustomGfx, r_dst, r_src, fullbright ? Color.White : Color.Gray);
-            //    return;
-            //}
-            //if (p >= 400)
-            //{
-            //    //Animated
-            //    var r_src = new XnaRect((p - 400) / 5 * 4 * Gfx.SRCTILEWIDTH + Game.AnimTicks * Gfx.SRCTILEWIDTH,
-            //                              (p - 400) % 5 * Gfx.SRCTILEHEIGHT,
-            //                              Gfx.SRCTILEWIDTH, Gfx.SRCTILEHEIGHT);
-            //    sb.Draw(Gfx.AnimTerrainGfx, r_dst, r_src, fullbright ? Color.White : Color.Gray);
-            //    return;
-            //}
-
-
-            ////int sheet = p / 50;
-            //int col = p % 10;
-            //int row = p / 10;//(p % 50) / 10;
-            //XnaRect rs = new XnaRect(col * Gfx.SRCTILEWIDTH, row * Gfx.SRCTILEHEIGHT, Gfx.SRCTILEWIDTH, Gfx.SRCTILEHEIGHT);
-            //sb.Draw(Gfx.TerrainGfx/*[sheet]*/, r_dst, rs, fullbright ? Color.White : Color.Gray);
-
         }
-
-        //public TerrainRecord GetTransformed()
-        //{
-        //    if (trans_to_what == null)
-        //        if (Layer == 0) 
-        //            return UnderlayList[0];
-        //        else
-        //            return null;// OverlayList[0];
-        //    return trans_to_what;//List[trans_to_what];
-        //}
 
         public TerrainRecord GetLocked()
         {
@@ -341,22 +231,12 @@ namespace SwordsOfExileGame
                         dam_type = eDamageType.MAGIC; pic_type = 1;
                     }
                     int r1 = Maths.Rand(Convert.ToInt32(Flag2), 1/*(int)dam_type*/, Convert.ToInt32(Flag1));
-                    //if (mode < 2)
-                    //    BoE.Party.damage(r1, eDamageType.WEAPON);
-                    //BoE.fast_bang = 1;
-                    //if (mode == 2)
                     pc.Damage(null, r1, 0, dam_type);
-                    //new Animation_Hold();
-                    //which_pc.damage_pc(r1, dam_type);
-                    //if (BoE.overall_mode < 10)
-                    //    Gfx.boom_space(BoE.Party.Pos, pic_type, r1, 12);
-                    //BoE.fast_bang = 0;
                     break;
                 case eTerSpec.POISON_LAND:
                 case eTerSpec.DISEASED_LAND:
                     if (Party.Flying > 0) break;
                     if (Party.IsInABoat()) break; ;
-                    //Sound.Play(17);//.one_sound(17);
 
                     if (Maths.Rand(1, 1, 100) <= Convert.ToInt32(Flag2))
                     {

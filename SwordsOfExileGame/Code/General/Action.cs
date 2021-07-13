@@ -1,15 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -34,7 +24,6 @@ namespace SwordsOfExileGame
         {
             current.Requested = eAction.NONE;
         }
-
         public Action(eAction what)
         {
             if (current != null && current.Requested > eAction.BLOCKABLE_ACTIONS)
@@ -81,7 +70,6 @@ namespace SwordsOfExileGame
          public eState _Handle()
         {
             eAction action = Requested;
-            //Action.Cancel();//.Requested = eAction.NONE;
             Requested = eAction.NONE;
 
             if (action == eAction.NONE) return eState.PC_TURN_PROCESS_ACTION; //gameState;
@@ -91,13 +79,13 @@ namespace SwordsOfExileGame
 
             //Ignore everything except specific inventory actions if a loot/shop window is open or the player is dragging an item on the mouse pointer.
             //BUT Actions disallowed while a loot window is open just causes the loot window to close.
-            if (action < LockActions)// || MagicWindow.Instance != null) 
+            if (action < LockActions)
             {
                 GuiWindow w = Gui.GetWindowOfType(typeof(LootWindow));
                 if (LockActions == eAction.INVENTORY_LOCKED_ACTIONS && w != null)
                     w.Close();
                 else
-                    return eState.PC_TURN_PROCESS_ACTION; //gameState;
+                    return eState.PC_TURN_PROCESS_ACTION;
             }
 
             bool advance = false;
@@ -174,8 +162,6 @@ namespace SwordsOfExileGame
 
                     InventoryFrom.ArrangeItems();
 
-                    //((TownMap)CurrentMap).ItemList.Remove(Action.Item);
-                    //Game.AddMessage(String.Format("{0} takes the {1}", CurrentParty.CurrentPC.Name, Action.Item.Name));
                     if (Mode == eMode.COMBAT) PC.AP -= 2;
                     break;
 
@@ -193,8 +179,6 @@ namespace SwordsOfExileGame
 
                     foreach (Item i in loot.RemoveEach())
                     {
-
-                        //if (i.Filter(Action.InventoryFrom.Filter))
                         if (i.Variety == eVariety.Gold)
                         {
                             hasgold = true;
@@ -405,9 +389,6 @@ namespace SwordsOfExileGame
                 case eAction.StartRest:
                     if (CurrentParty.CanRest())
                     {
-                        //new Action(eAction.DoRest);
-                        //Action.Requested = eAction.DoRest;
-                        //Gfx.FadeMode = 1;
                         new Animation_FadeDown(300);
                         return eState.DO_CAMPING;
                     }
@@ -450,8 +431,8 @@ namespace SwordsOfExileGame
                     TargetTotalTargets = Spell.GetTargetCount(PC, Requested == eAction.ItemSpellTargeting ? Item : null);
                     if (TargetTotalTargets < 1) break;
 
-                    start_target = true;//PlayerTargeting = true;
-                    TargetWhat = action;//eAction.SpellTargeting;
+                    start_target = true;
+                    TargetWhat = action;
                     TargetSpell = Spell;
                     TargetNumbersOn = true;
                     TargetDrawLine = true;
@@ -460,7 +441,7 @@ namespace SwordsOfExileGame
                     TargetSelectCount = 0;
                     TargetNPCsOnly = Spell.Target == eSpellTarget.CHARACTER;
                     TargetSelectList = new List<Location>();
-                    TargetPattern = Spell.TargetPattern;// == 0 ? null : Pattern.FromIndex(Action.Spell.TargetPattern);
+                    TargetPattern = Spell.TargetPattern;
                     TargetSpell.MakeNewsLine(TargetTotalTargets);
                     CurrentTown.WorkOutNPCTargetShortcuts(TargetPC.Pos, TargetRange);
                     CurrentTown.UpdateVisiblePC(TargetPC, true);
@@ -472,7 +453,7 @@ namespace SwordsOfExileGame
                         Item.CursedMessage();
                         break;
                     }
-                    start_target = true;//PlayerTargeting = true;
+                    start_target = true;
                     TargetDrawLine = false;
                     TargetNumbersOn = false;
                     TargetRange = 1;
@@ -559,7 +540,6 @@ namespace SwordsOfExileGame
                     {
                         AddMessage("Nobody who will talk to you is in range.");
                         Requested = eAction.NONE;
-                        //Action.Requested = eAction.NONE;
                         advance = false;
                         break;
                     }
@@ -596,10 +576,10 @@ namespace SwordsOfExileGame
                     break;
 
                 case eAction.ChooseMagicM:
-                    /*magicWindow = */new MagicWindow(true);
+                    new MagicWindow(true);
                     break;
                 case eAction.ChooseMagicP:
-                    /*magicWindow = */new MagicWindow(false);
+                    new MagicWindow(false);
                     break;
 
                 case eAction.DoAlchemy:
@@ -620,19 +600,13 @@ namespace SwordsOfExileGame
                                 Spell.Cast(PC, TargetList, Item);
                             break;
                     }
-                    //Action.Spell.Cast(Action.PC, Action.PC2, null);
                     break;
-
-                //case eAction.CastItemSpell:
-                //Action.Spell.Cast(Action.PC, Action.PC2, Action.Item);
-                //    break;
 
                 case eAction.CompleteMove:
                     advance = PC.CompleteMove(Loc, Dir);
                     break;
 
                 case eAction.BoatLanding:
-                    //Game.CurrentParty.Vehicle = null;
                     CurrentParty.LeaveVehicle();
                     advance = PC.CompleteMove(Loc, Dir);
                     break;
@@ -652,11 +626,6 @@ namespace SwordsOfExileGame
                     break;
 
                 case eAction.Ok:
-                    //    LootWindow lw = (LootWindow) Gui.GetWindowOfType(typeof (LootWindow));
-                    //    if (lw != null)
-                    //    {
-                    //        Gui.KeyFocusWindow = lw;
-                    //    }
                     break;
 
 
@@ -669,7 +638,6 @@ namespace SwordsOfExileGame
                     return eState.BEGIN_NPC_TURN;
             if (start_target) return eState.TARGET_MODE;
             return eState.PC_TURN_PROCESS_ACTION;
-            //return advance;
         }
 
         bool _HandleTargeting()
@@ -690,7 +658,7 @@ namespace SwordsOfExileGame
                 case eAction.DownRight: if (TargetPC != null) target = TargetPC.Pos.Mod(1, 1); break;
                 case eAction.Space:
 
-                    if (TargetSpell != null)// && TargetSpell.TargetPattern >= 6)
+                    if (TargetSpell != null)
                     {
                         if (TargetSpell.MultiTarget)
                             finishspell = true;
@@ -804,8 +772,6 @@ namespace SwordsOfExileGame
                     Requested = eAction.Search;
                     Loc = target;
                     PC = TargetPC;
-
-                    //CurrentMap.Search(target, TargetPC);
                     break;
 
                 case eAction.TargetUse:
@@ -816,8 +782,6 @@ namespace SwordsOfExileGame
                     }
                     Requested = eAction.Use;
                     Loc = target;
-
-                    //CurrentTown.UseTile(target); //Can only 'use' in towns
                     break;
 
                 case eAction.TargetDropItem:
@@ -847,7 +811,6 @@ namespace SwordsOfExileGame
                     break;
 
                 case eAction.TargetFireRanged:
-                    //NewsLine.Clear();
                     Requested = eAction.FireRanged;
                     Loc = target;
                     PC = TargetPC;
@@ -866,29 +829,17 @@ namespace SwordsOfExileGame
                     {
                         Loc = target;
                         TargetList = null;
-                        //TargetSpell.Cast(TargetPC, target, null);
                     }
                     else
                     {
                         Loc = Location.Zero;
                         TargetList = TargetSelectList;
-                        //TargetSpell.Cast(TargetPC, TargetSelectList, null);
                     }
                     break;
-
-                //case eAction.ItemSpellTargeting:
-                //    if (!TargetSpell.MultiTarget)
-                //        TargetSpell.Cast(TargetPC, target, Action.Item);
-                //    else
-                //        TargetSpell.Cast(TargetPC, TargetSelectList, Action.Item);
-                //    break;
-
             }
             NewsLine.Clear();
-            //PlayerTargeting = false;
             if (Game.Mode != eMode.OUTSIDE) CurrentTown.UpdateVisible();
             return true;
-
         }
 
         public void PlaceDraggedItem(eAction action)
@@ -1041,16 +992,15 @@ namespace SwordsOfExileGame
                     }
 
 
-                    if (Item.CompatibleSlot(EquipSlot))//  pcto.CanEquip(Action.Item, Action.EquipSlot) != eEquipSlot.None)
+                    if (Item.CompatibleSlot(EquipSlot))
                     {
 
-                        Item already_equipped;// = pcto.GetEquipped(Action.EquipSlot);
+                        Item already_equipped;
                         pcto.Equip(Item, EquipSlot, out already_equipped);
 
                         pcfrom.Unequip(Item);
                         if (already_equipped != null)
                         {
-                            //pcto.AddItem(already_equipped, false);
                             Game.StartItemDrag(already_equipped, pcto, false);
                         }
                         else
@@ -1067,7 +1017,6 @@ namespace SwordsOfExileGame
                     if (InventoryFrom is Shop)
                     {
                         //Drag from Shop to Equipment slot
-
                         if (Item.CompatibleSlot(EquipSlot))//(pcto.CanEquip(Action.Item, Action.EquipSlot) != eEquipSlot.None)
                         {
 
@@ -1079,7 +1028,6 @@ namespace SwordsOfExileGame
                             CurrentParty.Gold -= ((Shop)InventoryFrom).BuyCost(Item.Value);
                             if (already_equipped != null)
                             {
-                                //pcto.AddItem(already_equipped, false);
                                 Game.StartItemDrag(already_equipped, pcto, false);
                             }
                             else
@@ -1095,7 +1043,7 @@ namespace SwordsOfExileGame
                     {
                         //Drag from inventory to equipment slot
 
-                        if (Item.CompatibleSlot(EquipSlot))//(pcto.CanEquip(Action.Item, Action.EquipSlot) != eEquipSlot.None)//.Equip(Action.Item, Action.EquipSlot, out already_equipped))
+                        if (Item.CompatibleSlot(EquipSlot))
                         {
                             InventoryFrom.RemoveItem(Item);
 
@@ -1104,7 +1052,6 @@ namespace SwordsOfExileGame
 
                             if (already_equipped != null)
                             {
-                                //pcto.AddItem(already_equipped, false);
                                 Game.StartItemDrag(already_equipped, pcto, false);
                             }
                             else
@@ -1121,10 +1068,5 @@ namespace SwordsOfExileGame
 
             Sound.ItemSound();
         }
-
-
     }
-
-
-
 }

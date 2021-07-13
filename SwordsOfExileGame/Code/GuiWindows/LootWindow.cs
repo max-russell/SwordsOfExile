@@ -1,16 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using XnaRect = Microsoft.Xna.Framework.Rectangle;
+﻿using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
 {
@@ -44,19 +32,12 @@ namespace SwordsOfExileGame
                 desc = "Nearby items found:";
 
             AddLabel(desc, 5, 0, -1, -1, false);
-
-            //Title = loot.Gathering ? "Gathering" : "Searching";
-            inventoryBox = AddInventoryBox(Inventory, new XnaRect(5, 20, Gfx.ITEMGFXWIDTH * 9/* 240*/, 252), true);
+            inventoryBox = AddInventoryBox(Inventory, new XnaRect(5, 20, Gfx.ITEMGFXWIDTH * 9, 252), true);
             takeAllButton = AddButton(pressTakeAll, "Take all", 5, 280);
-             
             okButton = AddButton(pressDone, "Done", 221, 280);
-            OKKeyControl = okButton; //b.KeyShortcut = Keys.Enter;
+            OKKeyControl = okButton;
             CancelKeyControl = okButton;
-
             AllowResizing(300,Height, Gfx.WinH);
-
-            //Gui.KeyFocusWindow = this;
-
             InventoryWindow.Reveal(Party.CurrentPC);
         }
 
@@ -80,14 +61,6 @@ namespace SwordsOfExileGame
 
         void pressTakeAll(Control button_pressed)
         {
-            ////TODO: Take All in loot window 
-            //Action.Requested = eAction.TakeAllItems;
-            //Action.InventoryFrom = Inventory;
-            //if (Game.Mode == eMode.COMBAT)
-            //    Action.PC = Game.CurrentParty.ActivePC;
-            //else
-            //    Action.PC = Game.CurrentParty.CurrentPC;
-
             new Action(eAction.TakeAllItems)
             {
                 InventoryFrom = Inventory,
@@ -98,7 +71,6 @@ namespace SwordsOfExileGame
 
         void pressDone(Control b)
         {
-            //Close();
             KillMe = true;
         }
 

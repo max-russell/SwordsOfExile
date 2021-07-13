@@ -1,15 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -19,23 +10,6 @@ namespace SwordsOfExileGame
         public static ExileList<EncounterRecord> List = new ExileList<EncounterRecord>();
         public string ID { get { return id; } set { id = value; } }
         string id;
-
-        //public static void Load(BinaryReader In)
-        //{
-        //    List.Clear();
-
-        //    while (true)
-        //    {
-        //        byte b = In.ReadByte();
-
-        //        if (b == 0) break;
-
-        //        if (b == 1)
-        //            new NPCGroupRecord(In);
-        //        else if (b == 2)
-        //            Scenario.LoadAndDisregardEditorFolder(In);
-        //    }
-        //}
 
         class Component
         {
@@ -67,14 +41,11 @@ namespace SwordsOfExileGame
             }
         }
 
-        //public NPCRecord[] Hostiles = new NPCRecord[7];
-        //public NPCRecord[] Friendlies = new NPCRecord[3];
         public string FuncOnMeet;
         public string FuncOnWin;
         public string FuncOnFlee;
         public bool CantFlee, //If selected, the encounter will not flee, no matter how strong the party is. This should always be set for special encounters.
                     Forced; //The party will fight the encounter as soon as it appears, even if it isnt anywhere near the party. This should always be set for special encounters, but almost never for wandering encounters.
-        //public Location EndSD;
         public string EndVar;
 
 

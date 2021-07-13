@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SoE Converter": {
+      "commandName": "Project",
+      "commandLineArgs": "\"F:\\Games\\Blades of Exile\\scenarios\\busywork.exs\""
+    }
+  }
+}

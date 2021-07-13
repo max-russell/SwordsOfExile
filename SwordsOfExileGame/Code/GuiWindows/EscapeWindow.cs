@@ -1,22 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-
-namespace SwordsOfExileGame
+﻿namespace SwordsOfExileGame
 {
 
     class EscapeMenuWindow : GuiWindow
     {
-        Button[] Buttons;// saveBtn, saveAsBtn, loadLastBtn, loadBtn, optionsBtn, helpBtn, startBtn, quitBtn;
+        Button[] Buttons;
 
         public EscapeMenuWindow()
             : base(0, 0, 200, 353, true, false, true, true, true)
@@ -42,7 +29,6 @@ namespace SwordsOfExileGame
                     switch (n)
                     {
                         case 0: //Quicksave
-                            //Action.Requested = eAction.QuickSave;
                             new Action(eAction.QuickSave);
                             KillMe = true;
                             break;

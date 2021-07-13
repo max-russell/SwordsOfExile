@@ -1,15 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -31,11 +24,10 @@ namespace SwordsOfExileGame
                          BIGVIEWITEMWIDTH = (int)(Gfx.ITEMGFXWIDTH * 9), BIGVIEWITEMHEIGHT = Gfx.ITEMGFXHEIGHT,
                          MENUBARHEIGHT = 24;
 
-        int rows;//, rowScrollPos;
+        int rows;
 
         const int BORDER_WIDTH = 0, BORDER_HEIGHT = 0;
 
-        //List<Item> items;
         IInventory owner;
         VScrollBar vScroll;
         Button viewButton, arrangeButton, filterButton;
@@ -148,9 +140,6 @@ namespace SwordsOfExileGame
             //Copy the current scissor rect so we can restore it after
             XnaRect currentRect = sb.GraphicsDevice.ScissorRectangle;
 
-            //Draw MenuBar
-            //Gfx.DrawRect(dx, dy, Width+16, MENUBARHEIGHT, Color.Plum, true);
-
             sb.GraphicsDevice.ScissorRectangle = new XnaRect(dx, dy + MENUBARHEIGHT, Width - 2 * BORDER_WIDTH, Maths.Min(Gfx.WinH - (dy + MENUBARHEIGHT), Height - (2 * BORDER_HEIGHT) - MENUBARHEIGHT));
 
             if (View == eView.LIST)
@@ -159,8 +148,7 @@ namespace SwordsOfExileGame
             }
 
             //Draw background
-            //sb.Draw(Gfx.GuiBits, new XnaRect(x + xOffset, y + yOffset, width, height ), new XnaRect(25, 1, 1, 1), Color.Blue);//new Color(255, 255, 255, 127));
-            for (int bx = 0; bx <= Width - 24; bx += itemWidth)
+             for (int bx = 0; bx <= Width - 24; bx += itemWidth)
                 for (int by = 0 - (scrollViewPos % itemHeight); by < (Height-MENUBARHEIGHT); by += itemHeight)
                     sb.Draw(Gfx.NewGui, new XnaRect(dx + bx, dy + by + MENUBARHEIGHT, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT), new XnaRect(184, 182, 24, 24), new Color(255, 255, 255, 100));
 
@@ -174,7 +162,7 @@ namespace SwordsOfExileGame
                 {
                     v.Y += MENUBARHEIGHT;
                     v.X += xOffset + X;
-                    v.Y += yOffset + Y;// -scrollViewPos;
+                    v.Y += yOffset + Y;
                     c.Item1.DrawOffMap(sb, v, Color.White);
 
                     if (View == eView.LIST)
@@ -185,7 +173,7 @@ namespace SwordsOfExileGame
                         v.Y += 12;
                         c.Item1.DrawBigViewInfo(sb, v);
 
-                        if (useShortcuts)// && key <= 'z')
+                        if (useShortcuts)
                         {
                             if (owner is LootSpot)
                             {
@@ -211,7 +199,6 @@ namespace SwordsOfExileGame
         public void ScrollBarUpdate(int pos)
         {
             //Invoked by the VScroll control when the player messes wi' it.
-
             scrollViewPos = pos;
             updateView();
         }
@@ -249,13 +236,6 @@ namespace SwordsOfExileGame
                     Item i = (owner as LootSpot).GetItemFromShortcut(k);
                     if (i != null)
                     {
-                        //Action.Requested = eAction.TakeItem;
-                        //if (Game.Mode == eMode.COMBAT)
-                        //    Action.PC = Game.CurrentParty.ActivePC;
-                        //else
-                        //    Action.PC = Game.CurrentParty.CurrentPC;
-                        //Action.Item = i;
-                        //Action.InventoryFrom = owner;
                         new Action(eAction.TakeItem) { PC = Game.Mode == eMode.COMBAT ? Game.CurrentParty.ActivePC : Game.CurrentParty.CurrentPC, Item = i, InventoryFrom = owner };
                         return true;
                     }
@@ -266,7 +246,6 @@ namespace SwordsOfExileGame
                     {
                         KeyHandler.FlushHitKey();
                         parent.KillMe = true;
-                        //Action.Requested = eAction.EndCombat;
                         new Action(eAction.EndCombat);
                     }
                 }
@@ -314,12 +293,6 @@ namespace SwordsOfExileGame
                                     if (Gui.DragItem != null) //Dragging an item to here
                                     {
                                         new Action(eAction.PlaceInInventory) { Item = Gui.DragItem, InventoryTo = owner, InventoryFrom = Gui.DragItemFrom, Loc = new Location(pressedSlot, 0) };
-
-                                        //Action.Requested = eAction.PlaceInInventory;
-                                        //Action.Item = Gui.DragItem;
-                                        //Action.InventoryTo = owner;
-                                        //Action.InventoryFrom = Gui.DragItemFrom;
-                                        //Action.Loc = new Location(pressedSlot, 0);
                                     }
                                     else
                                     {
@@ -329,8 +302,8 @@ namespace SwordsOfExileGame
                                 }
                                 else
                                 { //Right button - bring up menu for object
-                                    if (owner.GetSlot(pressedSlot) != null)// && owner.GetSlot(pressedSlot) != Gui.DragItem)
-                                        owner.MakeInventoryPopUpWindow(owner.GetSlot(pressedSlot));//popupSlot);
+                                    if (owner.GetSlot(pressedSlot) != null)
+                                        owner.MakeInventoryPopUpWindow(owner.GetSlot(pressedSlot));
                                 }
                             }
 
@@ -341,7 +314,6 @@ namespace SwordsOfExileGame
                     }
                 }
             }
-            //pressedSlot = -1;
             tooltipSlot = -1;
             return false;
         }
@@ -349,7 +321,6 @@ namespace SwordsOfExileGame
         public void ChangeOwner(IInventory inv)
         {
             owner = inv;
-            //items = owner.MyInventory;
         }
 
         int getSlotAtMouse(int xOffset, int yOffset)
@@ -361,10 +332,7 @@ namespace SwordsOfExileGame
             if (sx < Width - 16)
             {
                 return (sx / itemWidth) + ((sy / itemHeight) * itemsAcross);
-            } //else {
-            //  if (sy < 16) return -2;
-            //  if (sy >= Height - 16) return -3;
-            //}
+            }
             return -1;
         }
 

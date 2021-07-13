@@ -1,15 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -91,8 +85,8 @@ namespace SwordsOfExileGame
         {
             if (!Game.Instance.IsActive) return;
 
-            LMBStop = LMBDown;// && !LMBStop;
-            RMBStop = RMBDown;// && !RMBStop;
+            LMBStop = LMBDown;
+            RMBStop = RMBDown;
             MMBStop = MMBDown;
             Ms = Mouse.GetState();
             LMBDown = Ms.LeftButton == ButtonState.Pressed;
@@ -137,18 +131,9 @@ namespace SwordsOfExileGame
 
             bool interacted = false;
             bool mouseoverwindow = false;
-            //MapType map = Globals.World.Map;
-            //Character mouseoverchar = null; bool charinrange = false;
-            //IMapInhabitable mouseoverobj = null; bool objinrange = false;
 
             if (doMoveWindow()) return;
             if (doResizingWindow()) return;
-
-            ////Check the KeyFocusWindow is still valid and update it if not.
-            //if ((KeyFocusWindow == null || KeyFocusWindow.Visible == false || !GuiWindows.Contains(KeyFocusWindow)) && GuiWindows.Count > 0)
-            //{
-            //    KeyFocusWindow = GuiWindows[GuiWindows.Count - 1];
-            //}
 
             //Check for interaction with window or control on it
             foreach (GuiWindow win in GuiWindows.Reverse<GuiWindow>()) 
@@ -160,9 +145,9 @@ namespace SwordsOfExileGame
                     win.Close();
 
                     //See if there are any modal windows still visible. If not, we can unpause the world. 
-                    if (win.Modal)// || win.WorldFreeze)
+                    if (win.Modal)
                     {
-                        if (!GuiWindows.Any(n => (n.Modal /*|| n.WorldFreeze*/) && n.Visible))
+                        if (!GuiWindows.Any(n => (n.Modal && n.Visible)))
                             WorldModalPaused = false;
                     }
                 }
@@ -234,8 +219,6 @@ namespace SwordsOfExileGame
                     {
                         if (Game.PlayerTargeting)
                         {
-                            //Action.Requested = eAction.MapClick;
-                            //Action.Loc = mloc;
                             new Action(eAction.MapClick) { Loc = mloc };
                         }
                         else
@@ -245,7 +228,6 @@ namespace SwordsOfExileGame
                             if (Party.ActivePC != null)
                             {
                                 var dir = new Direction(Party.ActivePC.Pos, mloc);
-                                //Action.Requested = dir.ToAction();
                                 new Action(dir.ToAction());
                             }
 
@@ -261,7 +243,6 @@ namespace SwordsOfExileGame
                         }
                         else
                         {
-                            //Action.Requested = eAction.Cancel;
                             new Action(eAction.Cancel);
                         }
                     }
@@ -305,7 +286,6 @@ namespace SwordsOfExileGame
             sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, Gfx.RasterizerWotsit);
 
             foreach (GuiWindow win in GuiWindows) win.Draw(sb);
-            //sb.Draw(Gfx.NewGui, Vector2.Zero, Color.White);
 
             if (ActiveToolTip != null) ActiveToolTip.Draw(sb);
 
@@ -318,7 +298,6 @@ namespace SwordsOfExileGame
                     DragItem.DrawOffMapSimple(sb, new Vector2(Ms.X, Ms.Y), Color.White);
                 else
                     Gfx.DrawCursor(Ms);
-                //sb.Draw(Gfx.NewGui, new Vector2(Ms.X, Ms.Y), new XnaRect(211, 181, 16, 16), Color.White);
             }
             sb.End();
         }
@@ -347,25 +326,4 @@ namespace SwordsOfExileGame
             }
         }
     }
-
-    //#region SLIDER
-
-    //class Slider : Control
-    //{
-    //    public Slider(GuiWindow p, int xb, int yb, int w, int tno)
-    //        : base(p, xb, yb, w, 16, tno)
-    //    { if (Width < 33) Width = 33; }
-
-    //    public override void Draw(SpriteBatch sb, int xOffset, int yOffset)
-    //    {
-    //        if (!Visible) return;
-    //        int dx = X + xOffset, dy = Y + yOffset;
-
-    //        sb.Draw(Gfx.GuiBits, new XnaRect(dx, dy, 16, 16), new XnaRect(16, 32, 16, 16), Color.White);
-    //        sb.Draw(Gfx.GuiBits, new XnaRect(dx + 16, dy, Width - 32, 16), new XnaRect(9, 64, 2, 8), Color.White);
-    //        sb.Draw(Gfx.GuiBits, new XnaRect(dx + Width - 16, dy, 16, 16), new XnaRect(16, 48, 16, 16), Color.White);
-    //    }
-    //}
-
-    //#endregion
 }

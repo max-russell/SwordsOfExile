@@ -1,15 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.BitmapFonts;
 
 namespace SwordsOfExileGame
@@ -37,7 +28,7 @@ namespace SwordsOfExileGame
 
                 //Draw news that is still there
                 int pos = 5;
-                foreach (NewsLine nl in List)//(i = List.Count <= 10 ? 0 : List.Count - 10; i < List.Count; i++)
+                foreach (NewsLine nl in List)
                 {
                     nl.Draw(sb, pos);
                     pos += nl.height + 2;

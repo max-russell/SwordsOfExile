@@ -3,18 +3,44 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwordsOfExileGame", "SwordsOfExileGame\SwordsOfExileGame.csproj", "{E0D498F4-83CF-406B-907D-EE9E1733E164}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwordsOfExileGame", "SwordsOfExileGame\SwordsOfExileGame.csproj", "{E0D498F4-83CF-406B-907D-EE9E1733E164}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoE Converter", "SoE Converter\SoE Converter.csproj", "{A3008328-6599-42CB-A9C2-EA5591203CF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoE Converter GUI", "SoE Converter GUI\SoE Converter GUI.csproj", "{23CE846C-CAE2-4185-9039-E262E4D767E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E0D498F4-83CF-406B-907D-EE9E1733E164}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E0D498F4-83CF-406B-907D-EE9E1733E164}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0D498F4-83CF-406B-907D-EE9E1733E164}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0D498F4-83CF-406B-907D-EE9E1733E164}.Debug|x86.Build.0 = Debug|Any CPU
 		{E0D498F4-83CF-406B-907D-EE9E1733E164}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0D498F4-83CF-406B-907D-EE9E1733E164}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0D498F4-83CF-406B-907D-EE9E1733E164}.Release|x86.ActiveCfg = Release|Any CPU
+		{E0D498F4-83CF-406B-907D-EE9E1733E164}.Release|x86.Build.0 = Release|Any CPU
+		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Debug|x86.Build.0 = Debug|Any CPU
+		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Release|x86.ActiveCfg = Release|Any CPU
+		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Release|x86.Build.0 = Release|Any CPU
+		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Debug|x86.Build.0 = Debug|Any CPU
+		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Release|x86.ActiveCfg = Release|Any CPU
+		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

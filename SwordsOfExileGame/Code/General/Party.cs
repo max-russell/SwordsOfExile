@@ -1,24 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
     public partial class PartyType : IExpRecipient
     {
-        //public static bool CombatMode = false;
         public string Name;//, SaveFileName;
         public DateTime LastSavedDate, CreationDate;
-
         public int Age = 0; //TODO: If age is increased by resting, or a script - make allowances for Timers triggering and interrupting the rest!
           public int Day { get { return Age / Constants.DAY_LENGTH + 1; } }
         int gold = Constants.STARTING_GOLD, food = Constants.STARTING_FOOD;
@@ -30,22 +20,11 @@ namespace SwordsOfExileGame
         public Location OutsidePos; //Temporarily stores Party's outside position when in town mode.
         public Direction outsideDir;
         public int Stealth;
-        public int Firewalk;//, Flying; //TODO
-        public int DetectMonster; //TODO: was in SDF
+        public int Firewalk;
+        public int DetectMonster;
 
         public bool IsSplit = false;
         public Location SplitPos = Location.Zero;
-
-        //Stuff Done Flags. Should it be in Scenario? Possibly.
-        public byte[,] vogelsExtraShit;
-        //public bool sd_legit(int a, int b) {return Maths.MinMax(0, STUFF_DONE_X_RANGE-1, a) == a && Maths.MinMax(0, STUFF_DONE_Y_RANGE-1, b) == b;}
-        //public int StuffDone(int a, int b) {if (sd_legit(a,b)) return stuff_done[a,b]; return 0;}
-        //public const int STUFF_DONE_X_RANGE = 300, STUFF_DONE_Y_RANGE = 10; //Note there are ten extra x rows that Vogel uses internally for some stupid reason.
-        //public void SetStuffDone(int a, int b, byte val)
-        //{
-        //    if (a >= 0 && a < stuff_done.GetUpperBound(0) && b >= 0 && b < stuff_done.GetUpperBound(1))
-        //        stuff_done[a, b] = val;
-        //}
 
         public Dictionary<string, Keys> SpellKeyShortcuts = new Dictionary<string, Keys>();
 
@@ -405,8 +384,6 @@ namespace SwordsOfExileGame
             Age = 0;
             gold = Constants.STARTING_GOLD;
             food = Constants.STARTING_FOOD;
-            vogelsExtraShit = new byte[10, 10];//new int[310, STUFF_DONE_Y_RANGE];
-            //item_taken = new byte[200, 8];
             LightLevel = 0;
 
             //Create default pcs.
@@ -422,7 +399,7 @@ namespace SwordsOfExileGame
             if (Game.Mode != eMode.COMBAT)
             {
                 foreach (PCType pc in PCList)
-                    if (!(pc.AnimAction == null))//Animation_Death)
+                    if (!(pc.AnimAction == null))
                     {
                         yield return pc;
                         yield break;
@@ -538,7 +515,7 @@ namespace SwordsOfExileGame
             foreach (PCType pc2 in EachAlivePC())
             {
                 if (pc2 != pc)
-                {/*pc.CharAnim = */
+                {
                     new Animation_Move(pc2, pc2.Pos, pc.Pos, false);//, 0.1f);
                     pc2.PositionPConPC(pc);
                 }
@@ -655,7 +632,7 @@ namespace SwordsOfExileGame
         /// <returns></returns>
         public void StartNewTurn() {
 
-            if (Game.Mode != eMode.COMBAT)// && !Game.PartyDead)
+            if (Game.Mode != eMode.COMBAT)
             {
                 ActivePC.AP = 1;
                 return;
@@ -666,9 +643,7 @@ namespace SwordsOfExileGame
                 pc.set_pc_moves();
             }
 
-            //Selects the first PC to move, or returns true if there are no more PCs left to move this turn
-            //return pick_next_pc();
-            return;// true;
+            return;
 
         }
 
@@ -732,12 +707,11 @@ namespace SwordsOfExileGame
         public Boolean PickNextPC() {
 
             if (activePC == null)
-                activePC = LeaderPC;// first_active_pc();//adven[0];
+                activePC = LeaderPC;
 
             if (Game.Mode != eMode.COMBAT) return false;
 
             int s = activePC.Slot;
-
 
             // Find next PC with moves
             activePC = null;
@@ -782,9 +756,6 @@ namespace SwordsOfExileGame
 
         public bool IncreaseAge() //Return true if a timer has triggered a script.
         {
-            //int how_many_short = 0;
-	        //Boolean update_stat = false;
-
             int old_age = Age;
 	        // Increase age, adjust light level & stealth
 	        int store_day = Day;
@@ -806,13 +777,7 @@ namespace SwordsOfExileGame
 		    else 
                 Age++;
 
-	        //if (Day != store_day) // Day changed, so check for interesting stuff.
-		    //    update_stat = true;
-
 	        Maths.MoveToZero(ref LightLevel);
-
-	        // decrease monster present counter
-	        //move_to_zero(party.stuff_done[SDF_MONSTERS_ALERTNESS]);
 
 	        // Party spell effects
             if (Stealth == 1) Game.AddMessage("Your footsteps grow louder.");
@@ -839,13 +804,11 @@ namespace SwordsOfExileGame
                     LeaderPC.Dying = true;
                     foreach (PCType pc in PCList)
                     {
-                        //if (pc != LeaderPC) 
-                            pc.LifeStatus = eLifeStatus.DEAD;
+                        pc.LifeStatus = eLifeStatus.DEAD;
                     }
                     Game.PartyDead = true;
                     InventoryWindow.Close();
                     StatsWindow.Close();
-                    //Game.GameOver = eDeath.BadLanding; //TO DO: Death from plumetting
                     return true;
                 }
                 else
@@ -858,7 +821,6 @@ namespace SwordsOfExileGame
 
 	        // Got a radioactive bar or whatnot.
 	        if (Age % 500 == 0 && Maths.Rand(1,0,5) == 3 && HasItemWithAbility(eItemAbil.DISEASE_PARTY)) {
-			        //update_stat = true;
 			        foreach(PCType pc in EachAlivePC())
                         pc.Disease(2, true);
 		    }
@@ -954,56 +916,30 @@ namespace SwordsOfExileGame
 					        pc.Heal(j);
 					}
 			    }
-	        //dump_gold(1);
-
-            //Update timers
 
             if (currentMap is TownMap) ((TownMap)currentMap).ProcessFields();
 
             return Timer.Update(Age - old_age);
-
-
-	        //timed_special_happened = special_increase_age(0);//don't delay the trigger of the special, if there's a special
-	        //TO DO: push_things(); Conveyor belts
-
-	        
-
-	        // Cancel switching PC order
-	        //current_switch = 6;
-
-	        // If a change, draw stat screen
-	        //if (update_stat == true) put_pc_screen();
-	        //adjust_spell_menus();
         }
 
-        public Boolean DayReached(int which_day, string which_event)//int which_event)
+        public Boolean DayReached(int which_day, string which_event)
         // which_day is day event should happen
         // which_event is the party.key_times value to cross reference with. 
         // if the key_time is reached before which_day, event won't happen
         // if it's 8, event always happens
         // which_day gets an extra 20 days to give party bonus time (NO IT DOESN'T - THIS IS AUTOMATICALLY ADDED ON WHEN OLD SCENARIOS ARE CONVERTED)
         {
-	
-	        //which_day += 20;
-
             if (which_day == -1) return false;
 
             int v = GlobalVariables.Get(which_event);
 
             if (Day < which_day || (v > 0 && v < which_day)) return false;
             return true;
-
-	        //if ((which_event != 8) && (party.key_times[which_event] < which_day))
-		    //    return false;
-	        //if (Day >= which_day)
-		    //    return true;
-		    //else 
-            //    return false;
         }
 
         void HandlePoison()
         {
-            Game.AddMessage("Poison:"); //bool someone = false;
+            Game.AddMessage("Poison:");
             foreach (PCType pc in EachAlivePC())
             {   
                 int p = pc.Status(eAffliction.POISON);
@@ -1014,7 +950,6 @@ namespace SwordsOfExileGame
                     if (Maths.Rand(1, 0, 8) < 6 && pc.HasTrait(Trait.Constitution)) pc.DecStatus(eAffliction.POISON, 1, 0);
                 }
             }
-            //if (someone) new Animation_Hold();
         }
 
         void HandleDisease()
@@ -1129,53 +1064,34 @@ namespace SwordsOfExileGame
 
         public void DoRest()
         {
-            //if (Game.Mode == eMode.OUTSIDE)
-            //{ // Resting
                 int i = 0;
-                //var ter = Game.WorldMap.TerrainAt(Pos);
-                //if (IsInABoat()) Game.AddMessage("Rest:  Not in boat.");
-                //else if (AnyoneHas(eAffliction.POISON))
-                //    Game.AddMessage("Rest: Someone poisoned.           ");
-                //else if (Food <= 12)
-                //    Game.AddMessage("Rest: Not enough food.            ");
-                //else if (Game.WorldMap.NPCGroupInRange(3))
-                //    Game.AddMessage("Rest: Monster too close.            ");
-                //else if (ter.Special >= eTerSpec.DOES_FIRE_DAMAGE && ter.Special <= eTerSpec.DISEASED_LAND )
-                //    Game.AddMessage("Rest: It's dangerous here.");////
-                //else if (Flying > 0)
-                //    Game.AddMessage("Rest: Not while flying.           ");
-                //else
-                //{
-                    Game.AddMessage("Resting...                    ");
-                    Sound.Play(20);
-                    //draw_rest_screen();
-                    //BoE.pause(25);
-                    Food -= 6;
 
-                    while (i < 50)
+                Game.AddMessage("Resting...                    ");
+                Sound.Play(20);
+                Food -= 6;
+
+                while (i < 50)
+                {
+                    bool timed_special_happened = IncreaseAge();// increase_age();
+
+                    if (Maths.Rand(1, 1, 2) == 2)
+                        Game.WorldMap.MoveNPCsDuringRest();
+
+                    if (Maths.Rand(1, 1, 70) == 10)
+                        Game.WorldMap.SpawnWanderingGroup();
+
+                    if (Game.WorldMap.NPCGroupInRange(3))
                     {
-                        bool timed_special_happened = IncreaseAge();// increase_age();
-
-                        if (Maths.Rand(1, 1, 2) == 2)
-                            Game.WorldMap.MoveNPCsDuringRest();
-
-                        if (Maths.Rand(1, 1, 70) == 10)
-                            Game.WorldMap.SpawnWanderingGroup();
-
-                        if (Game.WorldMap.NPCGroupInRange(3))
-                        {
-                            i = 200;
-                            Game.AddMessage("  Monsters nearby.");
-                        }
-                        if (timed_special_happened && Constants.COMPATIBILITY_SPECIALS_INTERRUPT_REST)
-                        {
-                            i = 200;
-                            Game.AddMessage("  Rest interrupted.");
-                        }
-                        else i++;
+                        i = 200;
+                        Game.AddMessage("  Monsters nearby.");
                     }
-                    //put_pc_screen();
-                //}
+                    if (timed_special_happened && Constants.COMPATIBILITY_SPECIALS_INTERRUPT_REST)
+                    {
+                        i = 200;
+                        Game.AddMessage("  Rest interrupted.");
+                    }
+                    else i++;
+                }
                 if (i == 50)
                 {
                     if (Constants.COMPATIBILITY_CHECK_TIMERS_WHILE_RESTING)
@@ -1192,7 +1108,7 @@ namespace SwordsOfExileGame
                             // Plants and magic shops
                             Shop.RestockAll(Age);
 
-                            bool timed_special_happened = Timer.Update(10);//special_increase_age(0);//don't delay the trigger of the special, if there's a special
+                            bool timed_special_happened = Timer.Update(10);//don't delay the trigger of the special, if there's a special
 
                             if (timed_special_happened && Constants.COMPATIBILITY_SPECIALS_INTERRUPT_REST)
                             {
@@ -1209,7 +1125,7 @@ namespace SwordsOfExileGame
                     }
                     else
                     {
-                        Age += 1200;////
+                        Age += 1200;
                         Game.AddMessage("  Rest successful.                ");
                         HealAll(Maths.Rand(5, 1, 10), true);
                         RestoreSP(50);

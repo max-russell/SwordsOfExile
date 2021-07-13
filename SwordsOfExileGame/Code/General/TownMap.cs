@@ -3,14 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 
@@ -26,9 +20,8 @@ namespace SwordsOfExileGame
         public string ID { get { return id; } set { id = value; } }
         string id;
         string name;
-        public string Name { get { return name; } }//IMap
+        public string Name { get { return name; } }
 
-        //long DataPos;
         protected ushort[,] _Terrain;
         protected bool[,] _Explored;
         byte[,] _Visible;
@@ -38,17 +31,15 @@ namespace SwordsOfExileGame
         bool HasStorageArea;
         Rectangle StorageArea;
         int town_chop_time; string town_chop_key;
-        public int LightType; //Formerly 'lighting'
-        public Rectangle Boundary; //in_town_rect
-        public int CreatureKillLimit; //max_num_monst
+        public int LightType; 
+        public Rectangle Boundary;
+        public int CreatureKillLimit; 
         string FuncOnEntry, FuncOnExit, FuncOnTurnHostile;
-        public bool PreventMapping, PreventScrying; //specials2 % 10 == 1
+        public bool PreventMapping, PreventScrying; 
         public int Difficulty;
-          //List<NPCRecord[]> WanderingMonsterList = new List<NPCRecord[]>();
-          //public List<Location> SpawnPoints = new List<Location>();
         public List<TriggerSpot> TriggerSpotList = new List<TriggerSpot>();
         public List<InfoRect> InfoRectList = new List<InfoRect>();
-        public Location[] EnterPos = new Location[4]; //start_locs
+        public Location[] EnterPos = new Location[4]; 
         public List<Timer> TimerList = new List<Timer>();
         List<PresetItem> PresetItemList = new List<PresetItem>();
         List<PresetField> PresetFieldList = new List<PresetField>();
@@ -66,7 +57,6 @@ namespace SwordsOfExileGame
 
         public void MakeExplored(Location loc) { if (InBounds(loc)) _Explored[loc.X, loc.Y] = true; } //Used in True Sight spell
         
-        //public int this[int x, int y] { get { if (x >= 0 && x < Width && y > 0 && y <= Height) return _Terrain[x, y]; else return 0; } } //IMap
         public bool Visible(Location loc)
         {
             if (InBounds(loc) && _Visible[loc.X, loc.Y] != 0) return true; return false;
@@ -98,9 +88,6 @@ namespace SwordsOfExileGame
                 return TerrainRecord.OverlayList[overlay >> 8];
             else
                 return TerrainRecord.UnderlayList[_Terrain[loc.X, loc.Y] & 0x00FF];
-         
-            //TerrainRecord.List[_Terrain[loc.x, loc.y]];
-            //return null;
         }
         TerrainRecord terrainAt(int x, int y)
         {
@@ -109,8 +96,6 @@ namespace SwordsOfExileGame
                 return TerrainRecord.OverlayList[overlay >> 8];
             else
                 return TerrainRecord.UnderlayList[_Terrain[x, y] & 0x00FF];
-
-            //return TerrainRecord.List[_Terrain[x, y]];
         }
 
         public bool NPCIsHere(NPC npc) { return NPCList.Contains(npc); }
@@ -134,26 +119,18 @@ namespace SwordsOfExileGame
 
         public void Load(BinaryReader In) {
             //Loads just the town's header. The rest is loaded later.
-            //Num = townnum;
-            //DataPos = In.ReadInt64();
-            //TalkingDataPos = In.ReadInt64();
             id = In.ReadString();
             In.ReadString(); //Folder: ignored
             name = In.ReadString();
             Hidden = In.ReadBoolean();
             Width = In.ReadInt16();
             Height = In.ReadInt16();
-            //int t = In.ReadInt16();
-            //if (t != -1)
-            //    VariableEntry = GlobVar.List[t];//VariableEntrySD = Location.Read(In); //TODO Variable Town entry should be replaced with a 'global' town entry script that can set this
-            //VariableEntry = In.ReadString();
-
             HasStorageArea = In.ReadBoolean();
             if (HasStorageArea) StorageArea = Rectangle.Read(In);
             List.Add(this);
         }
 
-        public void Draw(SpriteBatch sb) //IMap
+        public void Draw(SpriteBatch sb) 
         {
             float VW = (float)Gfx.WinW / Gfx.ZoomSizeW;
             float VH = (float)Gfx.WinH / Gfx.ZoomSizeH;
@@ -168,16 +145,13 @@ namespace SwordsOfExileGame
             int charoffx = (int)((float)(Gfx.ZoomSizeW - charzoomw) / 2f);
             int bigitemzoomw = (int)((float)Gfx.ZoomSizeW * Gfx.CHARWIDTH);
             int bigitemoffx = (int)((float)(Gfx.ZoomSizeW - charzoomw) / 2f);
-            //int itemzoom = (int)(Gfx.ZoomSizeW * ((float)Gfx.ITEMGFXWIDTH / (float)Gfx.TILEWIDTH));
-            //int itemoffx = (Gfx.ZoomSizeW - itemzoom) / 2,
-            //    itemoffy = (Gfx.ZoomSizeH - itemzoom) / 2;
 
             int dy = -offy;
 
             int xmin = 0, xmax = Width, ymin = 0, ymax = Height;
 
             //Draw terrain
-            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);//, BlendState.Opaque);
+            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             if (!PreventMapping)
                 for (int y = sy; y < th; y++)
@@ -189,20 +163,20 @@ namespace SwordsOfExileGame
                             if (x >= xmin && x < xmax)
                                 if (_Explored[x, y])
                                 {
-                                    XnaRect r_dst = new XnaRect(dx, dy, Gfx.ZoomSizeW, Gfx.ZoomSizeH);//(int)Gfx.ZoomW, (int)Gfx.ZoomH);
+                                    XnaRect r_dst = new XnaRect(dx, dy, Gfx.ZoomSizeW, Gfx.ZoomSizeH);
 
-                                    TerrainRecord ter = TerrainRecord.UnderlayList[_Terrain[x, y] & 0x00FF];//_Terrain[x, y]];
+                                    TerrainRecord ter = TerrainRecord.UnderlayList[_Terrain[x, y] & 0x00FF];
 
                                     bool fullbright = _Visible[x, y] != 0;
                                     if (Game.PlayerTargeting && Action.TargetPC.Pos.DistanceTo(new Location(x, y)) > Action.TargetRange)
                                         fullbright = false;
 
-                                    ter.Draw(sb, r_dst, fullbright);///*_Visible[x, y]*/, to_n, to_s, to_w, to_e);
+                                    ter.Draw(sb, r_dst, fullbright);
                                     int overlay = _Terrain[x, y] & 0xFF00;
                                     if (overlay != 0)
                                     {
                                         ter = TerrainRecord.OverlayList[overlay >> 8];
-                                        ter.Draw(sb, r_dst, fullbright);///*_Visible[x, y]*/, to_n, to_s, to_w, to_e);
+                                        ter.Draw(sb, r_dst, fullbright);
                                     }
                                 }
                             dx += Gfx.ZoomSizeW;
@@ -219,17 +193,17 @@ namespace SwordsOfExileGame
                             if (x >= xmin && x < xmax)
                                 if (_Visible[x, y] != 0)
                                 {
-                                    XnaRect r_dst = new XnaRect(dx, dy, Gfx.ZoomSizeW, Gfx.ZoomSizeH);//(int)Gfx.ZoomW, (int)Gfx.ZoomH);
+                                    XnaRect r_dst = new XnaRect(dx, dy, Gfx.ZoomSizeW, Gfx.ZoomSizeH);
                                     bool fullbright = true;
                                     TerrainRecord ter = TerrainRecord.UnderlayList[_Terrain[x, y] & 0x00FF];
                                     if (Game.PlayerTargeting && Action.TargetPC.Pos.DistanceTo(new Location(x, y)) > Action.TargetRange)
                                         fullbright = false;
-                                    ter.Draw(sb, r_dst, fullbright);///*_Visible[x, y]*/, to_n, to_s, to_w, to_e);
+                                    ter.Draw(sb, r_dst, fullbright);
                                     int overlay = _Terrain[x, y] & 0xFF00;
                                     if (overlay != 0)
                                     {
                                         ter = TerrainRecord.OverlayList[overlay >> 8];
-                                        ter.Draw(sb, r_dst, fullbright);///*_Visible[x, y]*/, to_n, to_s, to_w, to_e);
+                                        ter.Draw(sb, r_dst, fullbright);
                                     }
                                 }
                             dx += Gfx.ZoomSizeW;
@@ -242,10 +216,8 @@ namespace SwordsOfExileGame
                 //Draw Items
                 foreach (Item i in ItemList)
                 {
-                    //if (i == Gui.MoveItem) continue;
                     if (_Visible[i.Pos.X, i.Pos.Y] != 0 && i.Pos.Inside(sx, sy, tw, th))
                     {
-
                             XnaRect dr = new XnaRect((i.Pos.X - sx) * Gfx.ZoomSizeW - offx + bigitemoffx,
                                  (i.Pos.Y - sy) * Gfx.ZoomSizeH - offy,
                                  bigitemzoomw, Gfx.ZoomSizeH);
@@ -264,7 +236,7 @@ namespace SwordsOfExileGame
                     {
 
                         if (x >= xmin && x < xmax)
-                            if (_Visible[x, y] != 0 && Misc[x, y] > 3) //!= 0) // > 3 because bits 1 & 2 are secret passages and special triggers, which aren't drawn
+                            if (_Visible[x, y] != 0 && Misc[x, y] > 3) // > 3 because bits 1 & 2 are secret passages and special triggers, which aren't drawn
                             {
                                 XnaRect r_dst = new XnaRect(dx, dy, Gfx.ZoomSizeW, Gfx.ZoomSizeH);
                                 drawField(sb, x, y, r_dst);
@@ -274,8 +246,6 @@ namespace SwordsOfExileGame
                                 XnaRect r_dst = new XnaRect(dx, dy, Gfx.ZoomSizeW, Gfx.ZoomSizeH);
                                 drawDimBarrierFields(sb, x, y, r_dst);
                             }
-                       
-                        //Gfx.DrawTerrain(dx, dy, _Terrain[x, y]);
                         dx += Gfx.ZoomSizeW;
                     }
                 dy += Gfx.ZoomSizeH;
@@ -288,9 +258,6 @@ namespace SwordsOfExileGame
 
                 if (p.Inside(sx, sy, tw, th) && Visible(p))
                 {
-                    //XnaRect dr = new XnaRect((int)((overlay.Pos.X - sx) * Gfx.ZoomW - offx),
-                    //                     (int)((overlay.Pos.Y - sy) * Gfx.ZoomH - offy),
-                    //                     Gfx.ZoomW, Gfx.ZoomH);
                     Vector2 pos = new Vector2((underlay.Pos.X - sx) * Gfx.ZoomSizeW - offx,
                                          (underlay.Pos.Y - sy) * Gfx.ZoomSizeH - offy);
                     underlay.DrawUnderlay(sb, pos);
@@ -301,10 +268,10 @@ namespace SwordsOfExileGame
             bool npc_at_mouse = false;
 
             //Draw dark square on target when targeting - behind NPCs
-            if (Game.PlayerTargeting)// && !Game.TargetNPCsOnly)
+            if (Game.PlayerTargeting)
             {
                 mloc = Gfx.GetTileAtMouse(Gui.Ms);
-                npc_at_mouse = CharacterThere(mloc, false, true) != null;// NPCList.FindIndex(npc => npc.Pos == mloc) != -1;
+                npc_at_mouse = CharacterThere(mloc, false, true) != null;
 
                 if (!Action.TargetNPCsOnly || npc_at_mouse)
                 {
@@ -336,8 +303,6 @@ namespace SwordsOfExileGame
 
             sb.End();
 
-            
-
             //Draw creatures
             foreach (NPC cr in NPCList)
             {
@@ -366,14 +331,11 @@ namespace SwordsOfExileGame
 
                 if (vis)
                 {
-
-                    //Vector2 adj = cr.CharAnim == null ? Vector2.Zero : cr.CharAnim.GetMovePosAdjustment();
-
                     XnaRect dr = new XnaRect((cr.Pos.X - sx) * Gfx.ZoomSizeW - offx + (charoffx * cr.Record.Width),
                              (cr.Pos.Y - sy) * Gfx.ZoomSizeH - offy,
                              charzoomw * cr.Record.Width, Gfx.ZoomSizeH * cr.Record.Height);
                     sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                    cr.Draw(sb, dr, Color.White);//sx, sy, offx, offy);
+                    cr.Draw(sb, dr, Color.White);
                     sb.End();
                 }
             }
@@ -556,9 +518,6 @@ namespace SwordsOfExileGame
 
                 if (p.Inside(sx, sy, tw, th) && (Visible(p) || overlay is Animation_Explosion))
                 {
-                    //XnaRect dr = new XnaRect((int)((overlay.Pos.X - sx) * Gfx.ZoomW - offx),
-                    //                     (int)((overlay.Pos.Y - sy) * Gfx.ZoomH - offy),
-                    //                     Gfx.ZoomW, Gfx.ZoomH);
                     Vector2 pos = new Vector2((overlay.Pos.X - sx) * Gfx.ZoomSizeW - offx,
                                          (overlay.Pos.Y - sy) * Gfx.ZoomSizeH - offy);
                     overlay.DrawOverlay(sb, pos);
@@ -593,13 +552,6 @@ namespace SwordsOfExileGame
                             Vector2 drawpos = pos + step * ((float)Game.AnimTicks / 4f);
                             drawpos.X = (drawpos.X - sx) * Gfx.ZoomSizeW - offx;
                             drawpos.Y = (drawpos.Y - sy) * Gfx.ZoomSizeH - offy;
-                            // 0 = 0
-                            // 1 = 0.25
-                            // 2 = 0.5
-                            // 3 = 0.75
-
-
-                            //   = new Vector2((pos.X - sx) * Gfx.ZoomSizeW - offx, (pos.Y - sy) * Gfx.ZoomH - offy);
                             sb.Draw(Gfx.Bar, drawpos, null, Color.White, rot, new Vector2(8, 4), (float)Gfx.ZoomSizeW / (float)Gfx.TILEWIDTH * 0.5f, SpriteEffects.None, 0);
 
 
@@ -622,11 +574,7 @@ namespace SwordsOfExileGame
                                     (mloc.Y - sy) * Gfx.ZoomSizeH - offy,
                                     Gfx.ZoomSizeW, Gfx.ZoomSizeH);
                     sb.Draw(Gfx.NewGui, dr, new XnaRect(219, 96, 32, 32), Color.White);
-                    // Gfx.DrawRect(dr.X, dr.Y, dr.Width, dr.Height, Color.Red, false, (int)(Math.Ceiling(2f * (float)Gfx.ZoomSizeW / (float)Gfx.SQUAREWIDTH)));
                 }
-
-                    //}
-                
 
                 //Draw crosshairs over already selected targets.
                 if (Action.TargetSelectCount > 0)
@@ -635,9 +583,6 @@ namespace SwordsOfExileGame
                     {
                         if (l.Inside(sx, sy, tw, th))
                         {
-                            //XnaRect dr = new XnaRect((int)((overlay.Pos.X - sx) * Gfx.ZoomSizeW - offx),
-                            //                     (int)((overlay.Pos.Y - sy) * Gfx.ZoomH - offy),
-                            //                     Gfx.ZoomSizeW, Gfx.ZoomH);
                             XnaRect sr = new XnaRect(((l.X - sx) * Gfx.ZoomSizeW - offx),
                                                  ((l.Y - sy) * Gfx.ZoomSizeH - offy), Gfx.ZoomSizeW, Gfx.ZoomSizeH);
                             sb.Draw(Gfx.NewGui, sr, new XnaRect(195, 128, 48, 48), new Color(0, 0, 0, 180));
@@ -649,33 +594,6 @@ namespace SwordsOfExileGame
             }
             sb.End();
         }
-
-        //const uint FieldRecord.SECRET_PASSAGE.Bit = 0x1, //1
-        //           FieldRecord.SPECIAL.Bit = 0x2, //2
-        //           FieldRecord.WEB.Bit = 0x4, //3
-        //           FieldRecord.CRATE.Bit = 0x8, //4
-        //           FieldRecord.BARREL.Bit = 0x10, //5
-        //           FieldRecord.FIRE_BARRIER.Bit = 0x20, //32, //6
-        //           FieldRecord.FORCE_BARRIER.Bit = 0x40, //64, //7
-        //           FieldRecord.QUICKFIRE.Bit = 0x80, //128, //8
-        //           FieldRecord.LIGHT.Bit = 0x100, //256, //9
-        //           FieldRecord.FORCE_WALL.Bit = 0x200, //512, //10
-        //           FieldRecord.FIRE_WALL.Bit = 0x400, //1024, //11
-        //           FieldRecord.ANTIMAGIC.Bit = 0x800, //2048, //12
-        //           FieldRecord.STINK_CLOUD.Bit = 0x1000, //4096, //13
-        //           FieldRecord.ICE_WALL.Bit = 0x2000, //8192, //14
-        //           FieldRecord.BLADE_WALL.Bit = 0x4000, //16384, //15
-        //           FieldRecord.SLEEP_CLOUD.Bit = 0x8000,//32768, //16
-        //           FieldRecord.SMALL_BLOOD.Bit = 0x10000,//65536, //17
-        //           FieldRecord.MEDIUM_BLOOD.Bit = 0x20000,//131072, //18
-        //           FieldRecord.LARGE_BLOOD.Bit = 0x40000, //262144, //19
-        //           FieldRecord.SMALL_SLIME.Bit = 0x80000, //524288, //20
-        //           FieldRecord.LARGE_SLIME.Bit = 0x100000, //1048576, //21
-        //           FieldRecord.CRATER.Bit = 0x200000, //2097152, //22
-        //           FieldRecord.BONES.Bit = 0x400000, //4194304, //23
-        //           FieldRecord.ROCKS.Bit = 0x800000, //8388608, //24
-        //           FieldRecord.CRATE_MOVE.Bit = 0x1000000, //16777216; //25
-        //           FieldRecord.FIELD_APPEAR.Bit = 0x2000000;
 
         public void MakeBloodStain(Location loc) {Misc[loc.X, loc.Y] |= Field.LARGE_BLOOD.Bit;}
         public void MakeCrater(Location loc) { Misc[loc.X, loc.Y] |= Field.CRATER.Bit; }
@@ -719,10 +637,7 @@ namespace SwordsOfExileGame
         public void LoadFull(BinaryReader In) { //IMap
             int x, y, num;
 
-            //In.BaseStream.Seek(DataPos, SeekOrigin.Begin);
-
             In.ReadString(); //Default script file - only used in the editor
-
             town_chop_time = In.ReadInt16();
             town_chop_key = In.ReadString();
             LightType = In.ReadInt16();
@@ -730,39 +645,13 @@ namespace SwordsOfExileGame
             CreatureKillLimit = In.ReadInt16();
             FuncOnEntry = In.ReadString();
             FuncOnExit = In.ReadString();
-
-
-            //FuncOnEntryIfAbandoned = In.ReadString();
             FuncOnTurnHostile = In.ReadString();
-            //i = In.ReadInt16(); if (i > -1) OnEntry = SpecialNodeList[i];
-            //i = In.ReadInt16(); if (i > -1) OnEntryIfAbandoned = SpecialNodeList[i];
             PreventMapping = In.ReadBoolean();
             PreventScrying = In.ReadBoolean();
-            //if (In.ReadByte() % 10 == 1) PreventMapping = true;
-            //if (In.ReadByte() % 10 == 1) PreventScrying = true;
             Difficulty = In.ReadInt16();
-
-            //num = In.ReadInt16();
-            //for (x = 0; x < num; x++) {
-            //    NPCRecord[] cr = new NPCRecord[4];
-            //    i = In.ReadInt16(); if (i >= 1) cr[0] = NPCRecord.List[i];
-            //    i = In.ReadInt16(); if (i >= 1) cr[1] = NPCRecord.List[i];
-            //    i = In.ReadInt16(); if (i >= 1) cr[2] = NPCRecord.List[i];
-            //    i = In.ReadInt16(); if (i >= 1) cr[3] = NPCRecord.List[i];
-            //    WanderingMonsterList.Add(cr);
-            //}
-
-            //num = In.ReadInt16();
-            //for (x = 0; x < num; x++)
-            //    SpawnPoints.Add(In.ReadLocation());
-
             num = In.ReadInt16();
             for (x = 0; x < num; x++)
                 TriggerSpotList.Add(new TriggerSpot(In));
-
-            //num = In.ReadInt16();
-            //for (x = 0; x < num; x++)
-            //    SignList.Add(new Sign(In));
 
             num = In.ReadInt16();
             for (x = 0; x < num; x++)
@@ -770,13 +659,7 @@ namespace SwordsOfExileGame
 
             for (x = 0; x < 4; x++) {
                 EnterPos[x] = In.ReadLocation();
-                //ExitPos[x] = Location.Read(In); //Non-standard ExitPos is automatically handled in town exit script now
-                //FuncOnExit[x] = In.ReadString();
-                //i = In.ReadInt16(); if (i > -1) ExitNode[x] = SpecialNodeList[i];
             }
-
-            //num = In.ReadInt16();
-            //for (x = 0; x < num; x++) new Timer(this, In);
 
             num = In.ReadInt16();
             for (x = 0; x < num; x++) PresetItemList.Add(new PresetItem(In));
@@ -787,39 +670,12 @@ namespace SwordsOfExileGame
             num = In.ReadInt16();
             for (x = 0; x < num; x++) CreatureStartList.Add(new NPCPreset(In));
 
-            //Terrain = new TerrainMap(this, In);
             _Terrain = new ushort[Width, Height];
             for (x = 0; x < Width; x++)
                 for (y = 0; y < Height; y++)
                     _Terrain[x, y] = In.ReadUInt16();//In.ReadByte();
 
-            //int lwidth = (int)Math.Ceiling((float)Width / 8f);
-            //Lighting = new byte[/*lwidth*/Width, Height];
-         //   for (x = 0; x < Width/*lwidth*/; x++)
-         //       for (y = 0; y < Height; y++)
-         //           Lighting[x, y] = In.ReadByte();
-
             _Explored = new bool[Width, Height]; //Stores which tiles have been discovered in bit 1, and force walls etc in the other bits
-            //Misc = new ushort[Width, Height]; //Stores special enc dots, crates, barrels, magic barriers & quickfire in its bits
-            //Sfx = new byte[Width, Height]; //Stores blood stains, slime pools and other decorative stuff.
-
-            ////foreach (SpecialEncounter se in SpecialEncounterList)
-            ////    make_special(se.Pos);
-
-            //foreach (PresetField pf in PresetFieldList) {// (i = 0; i < 50; i++) {
-            //    if (pf.Type < 9)
-            //        Misc[pf.Pos.x, pf.Pos.y] |= (byte)Math.Pow(2, pf.Type - 1);//  misc_i[(short) c_town.town.preset_fields[i].field_loc.x][(short) c_town.town.preset_fields[i].field_loc.y] = 
-            //    //misc_i[(short) c_town.town.preset_fields[i].field_loc.x][(short) c_town.town.preset_fields[i].field_loc.y] | 
-            //    //(unsigned char) (s_pow(2,c_town.town.preset_fields[i].field_type - 1));
-            //    if (pf.Type >= 14 && pf.Type <= 21)
-            //        Sfx[pf.Pos.x, pf.Pos.y] |= (byte)Math.Pow(2, pf.Type - 14);
-            //    //sfx[(short) c_town.town.preset_fields[i].field_loc.x][(short) c_town.town.preset_fields[i].field_loc.y] = 
-            //    // sfx[(short) c_town.town.preset_fields[i].field_loc.x][(short) c_town.town.preset_fields[i].field_loc.y] | 
-            //    // (unsigned char) (s_pow(2,c_town.town.preset_fields[i].field_type - 14));
-            //}
-
-            //num = In.ReadInt16();
-            //for (x = 0; x < num; x++) TalkingNodeList.Add(new TalkingNode(In));
         }
 
         public bool SetUpExitFunc()
@@ -850,16 +706,7 @@ namespace SwordsOfExileGame
                 //Set any fields
                 foreach (PresetField pf in PresetFieldList)
                 {
-                    //var fr = FieldRecord.GetRecord(pf.Type);
                     Misc[pf.Pos.X, pf.Pos.Y] |= pf.Type.Bit;
-
-                    //if (pf.Type == 0)
-                    //    Misc[pf.Pos.x, pf.Pos.y] |= 1; //Secret passage
-                    //if ((pf.Type > 0) && (pf.Type < 9)) //1 to 8
-                    //    Misc[pf.Pos.x, pf.Pos.y] |= (uint)Math.Pow(2, pf.Type - 1);
-                    //if ((pf.Type >= 14) && (pf.Type <= 21))
-                    //    //Sfx[pf.Pos.x,pf.Pos.y] |= (byte) Math.Pow(2,pf.Type - 14);
-                    //    Misc[pf.Pos.x, pf.Pos.y] |= (uint)Math.Pow(2, pf.Type + 2);
                 }
 
                 //Clear any existing instances
@@ -894,7 +741,6 @@ namespace SwordsOfExileGame
                         pitem.Instance = Item.CopyFromPreset(pitem, this);
                         ItemList.Add(pitem.Instance);
                     }
-                    //if (!pitem.AlwaysThere) PresetItemList.RemoveAt(i);
                 }
             }
             else //Town has been visited before (is on the recently visited list)
@@ -1034,7 +880,7 @@ namespace SwordsOfExileGame
 
                 if (town_chop_time > 0)
                 {
-                    if (Party.DayReached(town_chop_time, town_chop_key))// day_reached(c_town.town.town_chop_time,c_town.town.town_chop_key) == true
+                    if (Party.DayReached(town_chop_time, town_chop_key))
                     {
                         removefriendlies = true; //Day has been reached, remove FRIENDLY npcs - hostiles remain
                         Abandoned = true;
@@ -1068,11 +914,6 @@ namespace SwordsOfExileGame
 
             new NewsLine("Now entering:", false, 200);
             new NewsLine(Name, true, 200);
-            
-            //if (Abandoned)
-            //    new Script(FuncOnEntryIfAbandoned, eCallOrigin.ENTERING_TOWN);
-            //else
-            //    new Script(FuncOnEntry, eCallOrigin.ENTERING_TOWN);
         }
 
         public void PlaceEncounterGroup(int n, bool with_summon_animation = false)
@@ -1106,11 +947,6 @@ namespace SwordsOfExileGame
 
         public void MakeTownHostile()
         {
-            //give_help(53,0,0);
-
-
-            //new Script(FuncOnTurnHostile, eCallOrigin.TOWN_GETS_ANGRY);
-
             Script.New_General(FuncOnTurnHostile, eCallOrigin.TOWN_GETS_ANGRY);
 
 
@@ -1219,10 +1055,8 @@ namespace SwordsOfExileGame
 
                 if ((cur_monst.Summoned % 100) == 1)
                 {
-                    //CreatureInstanceList.Remove(cur_monst);
                     cur_monst.Dying = true;
                     new Animation_Death(cur_monst);
-                    //cur_monst.Active = 0;
                     cur_monst.AP = 0;
                     Game.AddMessage(String.Format("  {0} disappears.", cur_monst.Name));
                 }
@@ -1244,12 +1078,9 @@ namespace SwordsOfExileGame
         public bool DoNPCTurn()
         {
             //Only proceed if all animations are over.
-            //if (!Animation.NoAnimationsRunning()) return false;
-
             while (Animation.NoAnimationsRunning())
             {
-                
-                if (NPCTurnQueue.Count > 0) //return true;
+                if (NPCTurnQueue.Count > 0) 
                 {
                     NPC npc = NPCTurnQueue[0];
 
@@ -1281,10 +1112,7 @@ namespace SwordsOfExileGame
                         return true;
                     }
                 }
-
-                
-
-            } //while (Animation.NoAnimationsRunning());
+            } 
 
             return false;
         }
@@ -1294,9 +1122,7 @@ namespace SwordsOfExileGame
         public void GenerateLightMap()
         {
             if (Script.suspendMapUpdate) return;
-
             // Find bonfires, braziers, etc.
-
 
             //Turn off all light field bits.
             for (int i = 0; i < Width; i++)
@@ -1304,19 +1130,13 @@ namespace SwordsOfExileGame
                 {
                     var l = new Location(i,j);
                     removeField(l, Field.LIGHT.Bit);
-                    //uint b = Misc[l.x, l.y] ^ (FieldRecord.LIGHT.Bit ^ uint.MaxValue);
-                    //Misc[l.x, l.y] = b;
                 }
 
             for (int i = 0; i < Width; i++)
                 for (int j = 0; j < Height; j++) 
                 {
-                    if (i == 10 && j == 18)
-                    {
-                    }
-
-                    Location l = new Location(i,j);//l.x = i; l.y = j;
-                    int rad = TerrainAt(l).light_radius;// scenario.ter_types[t_d.terrain[i][j]].light_radius;
+                    Location l = new Location(i,j);
+                    int rad = TerrainAt(l).light_radius;
                     if (rad > 0) {
                         Location where;
                         for (where.X = Maths.Max(0, i - rad); where.X < Maths.Min(Width, i + rad + 1); where.X++)
@@ -1332,9 +1152,7 @@ namespace SwordsOfExileGame
         {
             if (LightType == 0) return true;
             if (!InBounds(to_where)) return true;
-            //if ((Lighting[to_where.x / 8, to_where.y] & (byte)Math.Pow(2, to_where.x % 8)) != 0) return true;
             if (fieldsThere(to_where, Field.LIGHT.Bit)) return true;
-                //Lighting[to_where.x, to_where.y] != 0) return true;
 
             int rad = getLightRadius();
             foreach(PCType pc in Party.EachIndependentPC()) 
@@ -1375,10 +1193,8 @@ namespace SwordsOfExileGame
         /// <returns>True if script should run. Move should not be completed until script has finished and permitted it.</returns>
         public bool TriggerStepOnSpecials(Location pos, Direction dir, PCType pc, bool boat_landing)
         {
-            //SpecialNode foundnode = null;
             string foundfunc = null;
             TriggerSpot foundspot = null;
-            //bool globalnode = false;
 
             TerrainRecord ter = TerrainAt(pos);
 
@@ -1391,11 +1207,10 @@ namespace SwordsOfExileGame
                 {
                     if (se.Pos == pos &&
                         se.TriggeredBy(eTriggerSpot.PCS_TRIGGER) && 
-                        //se.TriggeredBy(eTriggerSpot.STEP_ON))
                         ((Game.Mode == eMode.TOWN && se.TriggeredBy(eTriggerSpot.STEP_ON)
                         || Game.Mode == eMode.COMBAT && se.TriggeredBy(eTriggerSpot.STEP_ON_CMBT))))
                     {
-                        foundfunc = se.Func;//foundnode = se.NodeToRun;
+                        foundfunc = se.Func;
                         foundspot = se;
                         break;
                     }
@@ -1413,29 +1228,14 @@ namespace SwordsOfExileGame
                     foundfunc = ter.Trigger.Func;
                     foundspot = ter.Trigger;
                 }
-                //if (ter.Special == eTerSpec.CALL_LOCAL_SPECIAL && ter.FuncTowns[Num] != "")//&& ter.flag1 == Maths.MinMax(0, SpecialNodeList.Count - 1, ter.flag1))
-                //{
-                //    foundfunc = ter.FuncTowns[Num];// foundnode = list[ter.flag1];
-                //}
-                //else if (ter.Special == eTerSpec.CALL_SCENARIO_SPECIAL && ter.FuncGlobal != "")//.flag1 == Maths.MinMax(0, Scenario.SpecialNodeList.Count - 1, ter.flag1))
-                //{
-                //    foundfunc = ter.FuncGlobal;
-                //}
             }
 
             //Quit if no script function triggers found.
             if (foundfunc == null) return false;
 
-            //eScriptCallOrigin origin = Game.Mode == eMode.COMBAT ? eScriptCallOrigin.COMBAT_MOVING : eScriptCallOrigin.TOWN_MOVING;
-
-            //Set up the special
-            //SpecialNode.SetUpPendingMoveNodeChain(origin, globalnode, list, foundnode, pos, dir, pc);
-
             if (!boat_landing)
-                //new Script(foundfunc, eCallOrigin.MOVING, pc, dir, pos);
                 Script.New_MapTrigger(foundfunc, eCallOrigin.MOVING, foundspot, pc, pos, dir);
             else
-                //new Script(foundfunc, eCallOrigin.BOATLAND, pc, dir, pos);
                 Script.New_MapTrigger(foundfunc, eCallOrigin.BOATLAND, foundspot, pc, pos, dir);
                 return true;
         }
@@ -1465,14 +1265,6 @@ namespace SwordsOfExileGame
             if (ter.Special == eTerSpec.UNLOCKABLE_BASHABLE || ter.Special == eTerSpec.UNLOCKABLE_TERRAIN || ter.Special == eTerSpec.CHANGE_WHEN_STEP_ON)
                 return true;
 
-            //if (Game.Mode == eMode.COMBAT && ter.IsSpecialTrigger) //TO DO: Fix - special should be property of terrain record
-            //{
-            //    Game.AddMessage("Move: Can't trigger this special in combat.");
-            //    return false;
-            //}
-
-            //if (this is CombatMap && TerrainAt(loc).IsPit) return true; //Pits are all around the combat map. Stepping on one means trying to flee the map
-
             //Blocking terrain
             if (ter.BlocksPC) 
             {
@@ -1484,14 +1276,10 @@ namespace SwordsOfExileGame
 
         public bool CharacterCanBeThere(Location location, ICharacter m_num, bool allow_leave_map = false)
         {
-            //if (!InActArea(location)) return false;
-
             for(int y = 0; y < (m_num == null ? 1 : m_num.Height); y++)
                 for (int x = 0; x < (m_num == null ? 1 : m_num.Width); x++)
                 {
                     Location loc = new Location(location.X + x, location.Y + y);
-
-                    //if (this is CombatMap && m_num is PCType && TerrainAt(loc).IsPit) return true; //Pits are all around the combat map. Stepping on one means trying to flee the map
 
                     //Blocking terrain
                     if (m_num is PCType)
@@ -1512,7 +1300,6 @@ namespace SwordsOfExileGame
                         }
                     }
 
-
                     //Stepping out the town boundary
                     if (!allow_leave_map && !InActArea(loc)) return false;
 
@@ -1529,14 +1316,6 @@ namespace SwordsOfExileGame
             return true;
         }
 
-        //public bool TerrainBlocked(Location pos)
-        //{
-        //    byte ter = _Terrain[pos.x, pos.y];//(is_town()) ? t_d.terrain[to_check.x][to_check.y] : combat_terrain[to_check.x][to_check.y];                
-        //    //int gr = TerrainRecord.List[ter].picture;
-        //    if (TerrainRecord.List[ter].Blockage > eBlock.CLEAR_WALK_PC) return true;
-        //    return false;
-        //}
-
         /// <summary>
         /// 
         /// </summary>
@@ -1544,10 +1323,7 @@ namespace SwordsOfExileGame
         /// <param name="p2"></param>
         /// <param name="mode">0: normal</param>
         /// <returns></returns>
-        public int CanSee(Location p1, Location p2, bool ignore_light=false)//int mode=0)
-        //short mode; // 0 - normal  1 - counts 1 for blocked spaces or lava (used for party placement in
-        //				   town combat)
-        // 2 - no light check
+        public int CanSee(Location p1, Location p2, bool ignore_light=false)
         {
             int dx, dy, count, storage = 0;
 
@@ -1597,8 +1373,7 @@ namespace SwordsOfExileGame
                         storage += GetObscurity(new Location(p1.X + count, p1.Y + (count * dy) / dx));
                 return storage;
             }
-            //if (storage > Constants.OBSCURITY_LIMIT) return ;
-            return 0;// storage;
+            return 0;
         }
 
         //This was Mode 1 of CanSee, moved it because that was stupid.
@@ -1674,7 +1449,6 @@ namespace SwordsOfExileGame
             if (storage > Constants.OBSCURITY_LIMIT) return Constants.OBSCURITY_LIMIT;
             else return storage;
         }
-
 
         public ICharacter CharacterThere(Location pos, bool include_pcs = true, bool include_npcs = true)
         {
@@ -1804,18 +1578,6 @@ namespace SwordsOfExileGame
             return false;
         }
 
-        //public IEnumerable<ICharacter> EachVisibleCharacter()
-        //{
-        //    foreach (PCType pc in Party.EachAlivePC())
-        //    {
-        //        yield return pc;
-        //    }
-        //    foreach (NPCType npc in CreatureInstanceList)
-        //    {
-        //        if (Visible(npc.Pos)) yield return npc;
-        //    }
-        //}
-
         public IEnumerable<Item> EachItemThere(Location pos, bool include_contained = false)
         {
             for(int n = ItemList.Count-1;n>=0;n--)
@@ -1836,27 +1598,6 @@ namespace SwordsOfExileGame
             }
         }
 
-
-        //public bool IsDoor(Location pos)
-        //{
-        //    return ((TerrainRecord.List[_Terrain[pos.x, pos.y]].Special == eTerSpec.UNLOCKABLE_TERRAIN) ||
-        //    (TerrainRecord.List[_Terrain[pos.x, pos.y]].Special == eTerSpec.CHANGE_WHEN_STEP_ON) ||
-        //    (TerrainRecord.List[_Terrain[pos.x, pos.y]].Special == eTerSpec.UNLOCKABLE_BASHABLE));
-        //}
-
-        //public int PickorBashDoor(int roll, int difficulty_mod, Location loc)
-        //{
-        //    TerrainRecord terrain = TerrainAt(loc);
-        //    if (terrain.special != eTerSpec.UNLOCKABLE_TERRAIN && terrain.special != eTerSpec.UNLOCKABLE_BASHABLE)
-        //        return 0; //Can't unlock that!
-
-        //    if (terrain.flag2 >= 5 || roll > terrain.flag2 * 15 + 30)
-        //        return 1; //Failed to unlock
-
-        //    //Did it, change terrain to unlocked.
-        //    AlterTerrain(loc, TerrainRecord.List[terrain.flag1]);
-        //    return 2; 
-        //}
 
         public void UnlockTerrain(Location loc)
         {
@@ -1883,8 +1624,6 @@ namespace SwordsOfExileGame
                     _Terrain[pos.X, pos.Y] &= 0xFF00; //Wipe lower (underlay) byte
                     _Terrain[pos.X, pos.Y] += (byte)newter.Num;
                     adjustItemContainment(pos);
-                    //GenerateLightMap();
-                    //if (this == Game.CurrentMap) UpdateVisible();
                 }
             }
             else if (layer == 1) //Overlay
@@ -1896,8 +1635,6 @@ namespace SwordsOfExileGame
                 _Terrain[pos.X, pos.Y] &= 0x00FF; //Wipe upper (overlay) byte
                 _Terrain[pos.X, pos.Y] += b;
                 adjustItemContainment(pos);
-                //GenerateLightMap();
-                //if (this == Game.CurrentMap) UpdateVisible();
             }
         }
 
@@ -1915,7 +1652,6 @@ namespace SwordsOfExileGame
                 if (ts.Pos == pos) ts.Active = true;
             }
         }
-
         public bool DoStoodOnTriggers()
         {
             bool script_run = false;
@@ -1975,17 +1711,12 @@ namespace SwordsOfExileGame
             return script_run;
         }
 
-        //static string[] healthText = { "Near death", "Badly injured", "Injured", "Slightly injured", "Uninjured" };
         public string GetToolTipMessage(Location loc)
         {
             if (Party.NoOfLivingPCs == 0) return null;
             if (!InBounds(loc) || !_Explored[loc.X,loc.Y]) return null;
 
             StringBuilder sb = new StringBuilder();
-            //if (_Visible[loc.x, loc.y]) sb.AppendLine("You see:"); else sb.AppendLine("You saw:");
-            //sb.AppendLine("");
-            //First the terrain.
-            //sb.Append(TerrainRecord.List[_Terrain[loc.x, loc.y]].TooltipInfo(loc,Party.ActivePC.Pos));
 
             if (_Visible[loc.X, loc.Y] == 0) return null;
             
@@ -1995,8 +1726,6 @@ namespace SwordsOfExileGame
                 if (!first) sb.Append("\n"); else first = false;
 
                 sb.Append(ch.TooltipInfo(true));
-
-
             }
 
             int count = 0;
@@ -2090,36 +1819,16 @@ namespace SwordsOfExileGame
             switch (data)
             {
             case PopUpMenuData.TALK_TO:
-                //Action.Requested = eAction.Talk;
-                //Action.NPC = (NPCType)o;
-                    new Action(eAction.Talk) { NPC = (NPC)o };
+                 new Action(eAction.Talk) { NPC = (NPC)o };
                 break;
             case PopUpMenuData.TAKE:
-                //Action.Requested = eAction.TakeItemMap;
-                //if (Game.Mode == eMode.COMBAT) 
-                //    Action.PC = Party.ActivePC;
-                //else
-                //    Action.PC = Party.CurrentPC;
-                //Action.Item = (Item)o;
                 new Action(eAction.TakeItemMap) { PC = Game.Mode == eMode.COMBAT ? Party.ActivePC : Party.CurrentPC, Item = (Item)o };
 
                 break;
             case PopUpMenuData.TAKE_ALL:
-                //Action.Requested = eAction.TakeAllItemMap;
-                //if (Game.Mode == eMode.COMBAT)
-                //    Action.PC = Party.ActivePC;
-                //else
-                //    Action.PC = Party.CurrentPC;
-                //Action.Loc = (Location)o;
                 new Action(eAction.TakeAllItemMap) { PC = Game.Mode == eMode.COMBAT ? Party.ActivePC : Party.CurrentPC, Loc = (Location)o };
                 break;
             case PopUpMenuData.SEARCH:
-                //Action.Requested = eAction.Search;
-                //if (Game.Mode == eMode.COMBAT)
-                //    Action.PC = Party.ActivePC;
-                //else
-                //    Action.PC = Party.CurrentPC;
-                //Action.Loc = (Location)o;
                 new Action(eAction.Search) { PC = Game.Mode == eMode.COMBAT ? Party.ActivePC : Party.CurrentPC, Loc = (Location)o };
                 break;
             }
@@ -2160,7 +1869,7 @@ namespace SwordsOfExileGame
                 {
                     if (se.Pos == spot && se.TriggeredBy(eTriggerSpot.SEARCH) && se.TriggeredBy(eTriggerSpot.PCS_TRIGGER))
                     {
-                        foundfunc = se.Func;//foundnode = se.NodeToRun;
+                        foundfunc = se.Func;
                         foundspot = se;
                         break;
                     }
@@ -2178,7 +1887,6 @@ namespace SwordsOfExileGame
             }
 
             if (foundfunc != null)
-                //new Script(foundfunc, eCallOrigin.SEARCHING, spot);
                 Script.New_MapTrigger(foundfunc, eCallOrigin.SEARCHING, foundspot, pc, spot, pc.Dir);
             else
                 CompleteSearch(spot, false);
@@ -2191,7 +1899,7 @@ namespace SwordsOfExileGame
                 LootSpot loot = LootSpot.Generate(spot, this, false);
                 new LootWindow(loot);
             }
-            else if (!did_script)//(TerrainAt(spot).Special == eTerSpec.IS_A_CONTAINER)
+            else if (!did_script)
                 Game.AddMessage("  But find nothing.");
         }
 
@@ -2216,13 +1924,12 @@ namespace SwordsOfExileGame
             {
                 if (se.Pos == spot && se.TriggeredBy(eTriggerSpot.USE) && se.TriggeredBy(eTriggerSpot.PCS_TRIGGER))
                 {
-                    foundfunc = se.Func;//foundnode = se.NodeToRun;
+                    foundfunc = se.Func;
                     foundspot = se;
                     break;
                 }
             }
             if (foundfunc != null)
-                //new Script(foundfunc, eCallOrigin.SEARCHING, spot);
                 Script.New_MapTrigger(foundfunc, eCallOrigin.USING, foundspot, Party.ActivePC, spot, Party.ActivePC.Dir);
 
             else
@@ -2242,7 +1949,6 @@ namespace SwordsOfExileGame
                         }
                         Game.AddMessage("  OK.");
                         AlterTerrain(spot, to == null ? 1 : to.Layer, to);
-                        //Sound.Play(ter.Flag2);
                         return;
                     }
                 }
@@ -2254,79 +1960,44 @@ namespace SwordsOfExileGame
 
         }
 
-
-        //public Sign SignAtLoc(Location loc)
-        //{
-        //    return SignList.Find(n => n.Pos == loc);
-        //}
-
         // This damages a character, after they've moved into a square
         public void InflictFields(ICharacter which_m) {
-            //creature_data_type* which_m;
-            //for (int i = 0; i < which_m.Record.Width; i++)
-            //{
-            //    for (int j = 0; j < which_m.Record.Height; j++)
-            //    {
-            //        where_check.x = which_m.Pos.x + i;
-            //        where_check.y = which_m.Pos.y + j;
+
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.QUICKFIRE.Bit))
             {
                 which_m.QuickfireMe();
-                //r1 = Maths.get_ran(2, 1, 8);
-                //which_m.damage_monst(null, r1, 0, eDamageType.FIRE, false);
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.BLADE_WALL.Bit))
             {
-                //r1 = Maths.get_ran(6, 1, 8);
-                //which_m.damage_monst(null, r1, 0, eDamageType.WEAPON, false);
                 which_m.BladeWallMe(null);
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.FORCE_WALL.Bit))
             {
-                //r1 = Maths.get_ran(3, 1, 6);
-                //which_m.damage_monst(null, r1, 0, eDamageType.MAGIC, false);
                 which_m.ForceWallMe(null);
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.SLEEP_CLOUD.Bit))
             {
-                //which_m.charm(0, 11, 3);
                 which_m.SleepCloudMe();
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.ICE_WALL.Bit))
             {
-                //r1 = Maths.get_ran(3, 1, 6);
-                //if (which_m.Record.SpecialSkill != eCSS.PARALYSIS_RAY)
-                //    which_m.damage_monst(null, r1, 0, eDamageType.COLD, false);
                 which_m.IceWallMe(null);
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.STINK_CLOUD.Bit))
             {
-                //r1 = Maths.get_ran(1, 2, 3);
-                //which_m.curse(r1);
                 which_m.StinkCloudMe();
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.WEB.Bit))//((is_web(where_check)) && (which_m.Record.Genus != eGenus.BUG))
             {
                 which_m.WebSpaceMe();
-                //which_m.monst_spell_note(19);
-                //r1 = Maths.get_ran(1, 2, 3);
-                //which_m.web(r1);
-                //take_web(where_check);
                 removeFieldArea(which_m.Pos, which_m.Width, which_m.Height, Field.WEB.Bit);
-                //break;
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.FIRE_WALL.Bit))
             {
-                //r1 = Maths.get_ran(2, 1, 6);
-                //if (which_m.Record.SpecialSkill != eCSS.PERMANENT_MARTYRS_SHIELD)
-                //    which_m.damage_monst(null, r1, 0, eDamageType.FIRE, false);
-                //break;
                 which_m.FireWallMe(null);
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.FIRE_BARRIER.Bit))
             {
-                //r1 = Maths.get_ran(2, 1, 10);
-                //which_m.damage_monst(null, r1, 0, eDamageType.FIRE, false);
                 which_m.FireBarrierMe();
             }
             if (fieldsThereArea(which_m.Pos, which_m.Width, which_m.Height, Field.CRATE.Bit | Field.BARREL.Bit))
@@ -2340,17 +2011,13 @@ namespace SwordsOfExileGame
             }
         }
 
-        public Boolean NPCHateSpot(NPC ch, Location pos){//, Location good_loc) {
-            //Location prospect;//, loc;
+        public Boolean NPCHateSpot(NPC ch, Location pos){
             NPCRecord record = ((NPC)ch).Record;
 
             for(int x = pos.X; x < pos.X + ch.Width; x++)
                 for (int y = pos.Y; y < pos.Y + ch.Height; y++)
                 {
-
-                    //loc = c_town.monst.dudes[which_m].m_loc;
                     if (((Misc[x, y] & (Field.BLADE_WALL.Bit | Field.FORCE_BARRIER.Bit | Field.FIRE_BARRIER.Bit | Field.QUICKFIRE.Bit)) != 0)
-                        // hate regular fields
 
                     || ((Misc[x, y] & Field.ICE_WALL.Bit) != 0 && record.Radiate != eRadiate.ICE
                         && !record.ImmuneTo(eImmunity.COLD_IMMUNITY)) // hate ice wall?
@@ -2372,19 +2039,11 @@ namespace SwordsOfExileGame
                         return true;// hate antimagic
                 }
             return false;
-            //{
-            //    prospect = find_clear_spot(pos, 1);
-            //    if (prospect.x > 0) {
-            //        good_loc = prospect;
-            //        return true;
-            //    }
-            //    return false;
-            //} else return false;
         }
 
         eBlock2 blockageThere(Location loc)
         {
-            return terrainAt(loc.X, loc.Y).Blockag;//TerrainRecord.List[_Terrain[loc.x, loc.y]].Blockage;
+            return terrainAt(loc.X, loc.Y).Blockag;
         }
 
         bool drawBoundaryThere(Location loc)
@@ -2393,19 +2052,9 @@ namespace SwordsOfExileGame
             return (Visible(loc) && (ter.Blockag != eBlock2.BLOCKED || ter.BoatOver));
         }
 
-        //bool blocksCharacterThere(Location loc, ICharacter ch = null)
-        //{
-        //    if (ch is NPCType)
-        //        return terrainAt(loc.x, loc.y).Blockage/*TerrainRecord.List[_Terrain[loc.x, loc.y]].Blockage*/ >= eBlock.CLEAR_WALK_PC;
-        //    else
-        //        return terrainAt(loc.x, loc.y).Blockage/*TerrainRecord.List[_Terrain[loc.x, loc.y]].Blockage*/ >= eBlock.CLEAR_BLOCKED;
-        //}
         bool opaqueThere(Location loc)
         {
             return terrainAt(loc.X, loc.Y).Obscurity >= Constants.OBSCURITY_LIMIT;
-
-            //eBlock b = terrainAt(loc.x, loc.y).Blockage;// TerrainRecord.List[_Terrain[loc.x, loc.y]].Blockage;
-            //return b == eBlock.OPAQUE_WALK || b == eBlock.OPAQUE_BLOCKED;
         }
 
 
@@ -2414,7 +2063,6 @@ namespace SwordsOfExileGame
         // returns {0,0} if none found
         // THIS MAKES NO ADJUSTMENTS FOR BIG MONSTERS!!!
         public Location FindClearSpot(Location from_where, bool prefer_adjacent, bool in_line_of_sight)
-            //mode; // 0 - normal  1 - prefer adjacent space
         {
             List<Location> spots = new List<Location>();
 
@@ -2430,7 +2078,7 @@ namespace SwordsOfExileGame
                     
                 }
 
-            if (spots.Count == 0) return from_where;// Location.Zero;
+            if (spots.Count == 0) return from_where;
 
             if (prefer_adjacent) //If prefer adjacent spaces
                 if (spots.Count(n => n.adjacent(from_where)) > 0) //See if there are some adjacent spaces in the list
@@ -2441,7 +2089,7 @@ namespace SwordsOfExileGame
             return spots[Maths.Rand(1, 0, spots.Count - 1)];
         }
 
-        public bool PushLocation(ICharacter pc, Location pos)//(Location from_where, Location to_where)
+        public bool PushLocation(ICharacter pc, Location pos)
         {
             //Pushing crates and barrels about
             if (!fieldsThere(pos, Field.CRATE.Bit | Field.BARREL.Bit)) return false;
@@ -2450,10 +2098,7 @@ namespace SwordsOfExileGame
             if (fieldsThere(pos, Field.CRATE.Bit))
             {
                 is_crate = true;
-                //Game.AddMessage("  You push the crate.");
             }
-            //else
-                //Game.AddMessage("  You push the barrel.");
 
             //Work out a jolly good new place to put the barrel.
             Location loc_to_try = pos;
@@ -2487,7 +2132,7 @@ namespace SwordsOfExileGame
         }
 
         public bool CheckSpecialTerrainPC(Location pos, PCType pc) {
-            TerrainRecord ter = terrainAt(pos.X, pos.Y);// TerrainRecord.List[_Terrain[pos.x, pos.y]];
+            TerrainRecord ter = terrainAt(pos.X, pos.Y);
             bool can_enter = true;
 
             PushLocation(pc, pos);
@@ -2558,36 +2203,11 @@ namespace SwordsOfExileGame
             return true;
         }
 
-        public int GetObscurity(Location l) {
-            
-            //Location l = new Location(x, y);
-
-            TerrainRecord what_terrain = TerrainAt(l);// _Terrain[l.x, l.y];//coord_to_ter(x,y);
-
-            //if ((what_terrain.Num >= 237) && (what_terrain.Num <= 242)) //TODO: Find out what this is in aid of
-            //    return 1;
-
-            //Returns 5 for opaque, 1 for blocked, 0 for clear
-	        // little kludgy in here for pits
-
+        public int GetObscurity(Location l) 
+        {      
+            TerrainRecord what_terrain = TerrainAt(l);
             int store = what_terrain.Obscurity;
-
-            //if ((what_terrain.IsPit) && Game.Mode == eMode.COMBAT )//&& (BoE.which_combat_type == 0))
-            //    store = 5;
-            //else if (opaqueThere(l)) store = Constants.OBSCURITY_LIMIT;
-            //else if (blockageThere(l) > eBlock.CLEAR_BLOCKED) store = 1;
-            //else store = 0;
-
-            //if (BoE.is_town())
-            //if (Game.Mode != eMode.COMBAT) if (fieldsThere(l, Field.SPECIAL.Bit)) store++;
-
             store += fieldObscurityThere(l);
-
-            //if ((BoE.is_town()) || (BoE.is_combat())) {
-            //    if (fieldsThere(l, Field.WEB.Bit)) store += 2;
-            //    if (fieldsThere(l, Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit)) return 5;
-            //    if (fieldsThere(l, Field.CRATE.Bit | Field.BARREL.Bit)) store++;
-            //}
             return store;
         }
 
@@ -2651,15 +2271,11 @@ namespace SwordsOfExileGame
                 }
 
                 if (pc.Pos != Party.Pos) new Animation_Move(pc, Party.Pos, pc.Pos, false);
-
-                //pc.Pos)
             }
 
             //Reset all npcs target so they might choose a pc to pursue now they are all independent on the map
-            foreach (NPC ci in NPCList)// (i = 0; i < T_M; i++)
-                ci.Target = null;//monst_target[i] = 6;
-
-
+            foreach (NPC ci in NPCList)
+                ci.Target = null;
         }
 
         public void DispelFieldPattern(Pattern pattern, Location center, int mode)
@@ -2681,24 +2297,16 @@ namespace SwordsOfExileGame
         }
 
         public void PlaceFieldPattern(Pattern pattern, Location center, Field type, IExpRecipient who_hit)
-        //type;  // 0 - take codes in pattern, OW make all nonzero this type
-        // Types  0 - Null  1 - web  2 - fire barrier  3 - force barrier  4 - force wall  5 - fire wall
-        //   6 - anti-magic field  7 - stink cloud  8 - ice wall  9 - blade wall  10 - quickfire
-        //   11 - dispel  12 - sleep field
-        //  50 + i - 80 :  id6 fire damage  90 + i - 120 : id6 cold damage 	130 + i - 160 : id6 magic dam.
-        // if prep for anim is true, suppress look checks and go fast
         {
             int i, j;
-            //eField effect;
             Location spot_hit;
             Location s_loc;
-            //creature_data_type *which_m;
 
             Field[,] pat = new Field[9, 9];
             for (i = 0; i < 9; i++) 
                 for (j = 0; j < 9; j++)
                 {
-                    if (type == null)//eField.NONE)
+                    if (type == null)
                         pat[j, i] = Field.List[pattern[j, i]]; //Use the fields already in the pattern object
                     else
                         if (pattern[j, i] > 0) pat[j, i] = type;
@@ -2796,28 +2404,20 @@ namespace SwordsOfExileGame
                 {
                     var l = new Location(x,y);
 
-                    //if (fieldsThere(l, Field.QUICKFIRE.Bit))
-                    //{
-                    //    if (HitArea(l, Maths.Rand(2, 1, 8), eDamageType.FIRE, Pattern.Single, false, null)) new Animation_Hold();
-                    //}
                     if (fieldsThere(l, Field.FORCE_WALL.Bit))
                     {
-                        //if (HitArea(l, Maths.Rand(3, 1, 6), eDamageType.MAGIC, Pattern.Single, false, null)) new Animation_Hold();
                         if (Maths.Rand(1, 1, 6) == 2) removeField(l, Field.FORCE_WALL.Bit);
                     }
                     if (fieldsThere(l, Field.ICE_WALL.Bit))
                     {
-                        //if (HitArea(l, Maths.Rand(3, 1, 6), eDamageType.COLD, Pattern.Single, false, null)) new Animation_Hold();
                         if (Maths.Rand(1, 1, 6) == 1) removeField(l, Field.ICE_WALL.Bit);
                     }
                     if (fieldsThere(l, Field.FIRE_WALL.Bit))
                     {
-                        //if (HitArea(l, Maths.Rand(2, 1, 6) + 1, eDamageType.FIRE, Pattern.Single, false, null)) new Animation_Hold();
                         if (Maths.Rand(1, 1, 4) == 2) removeField(l, Field.FIRE_WALL.Bit);
                     }
                     if (fieldsThere(l, Field.BLADE_WALL.Bit))
                     {
-                        //if (HitArea(l, Maths.Rand(6, 1, 8), eDamageType.WEAPON, Pattern.Single, false, null)) new Animation_Hold();
                         if (Maths.Rand(1, 1, 5) == 1) removeField(l, Field.BLADE_WALL.Bit);
                     }
                     if (fieldsThere(l, Field.ANTIMAGIC.Bit))
@@ -2827,14 +2427,10 @@ namespace SwordsOfExileGame
                     if (fieldsThere(l, Field.STINK_CLOUD.Bit))
                     {
                         if (Maths.Rand(1, 1, 4) == 2) removeField(l, Field.STINK_CLOUD.Bit);
-                        //else foreach(ICharacter ch in EachCharacterThere(l))
-                        //    ch.StinkCloudMe();       
                     }
                     if (fieldsThere(l, Field.SLEEP_CLOUD.Bit))
                     {
                         if (Maths.Rand(1, 1, 4) == 2) removeField(l, Field.SLEEP_CLOUD.Bit);
-                        //else foreach (ICharacter ch in EachCharacterThere(l))
-                        //        ch.SleepCloudMe();
                     }
                 }
 
@@ -2845,8 +2441,6 @@ namespace SwordsOfExileGame
 
         // returns true if placement was successful
         public Boolean SummonMonster(ICharacter summoner, NPCRecord which, Location where, int duration)
-        //which; // if in town, this is caster loc., if in combat, this is where to try
-        // to put monster
         {
             if (which == null) return false;
             //For an NPC type, 'where' is the summoner's location, and the summoned monster is put in a nearby spot.
@@ -2864,16 +2458,13 @@ namespace SwordsOfExileGame
                 return false;
             }
 
-            NPC spot = NPC.Summon(which, where, summoner.MyAttitude(), duration);//placeMonster(which, loc);
+            NPC spot = NPC.Summon(which, where, summoner.MyAttitude(), duration);
 
             if (!CharacterCanBeThere(where, spot))
                 return false;
 
             NPCList.Add(spot);
             new Animation_Summon(spot);
-
-            //Terrain.take_crate(spot.Pos);
-            //Terrain.take_barrel(spot.Pos);
             Game.AddMessage(String.Format("  {0} summoned.", spot.Name));
             return true;
         }
@@ -2944,44 +2535,7 @@ namespace SwordsOfExileGame
             else
                 foreach (Item i in EachItemThere(pos, true))
                     i.Contained = false;
-        }
-
-
-        //        const uint FieldRecord.WEB.Bit = 4, FieldRecord.CRATE.Bit = 8, FieldRecord.BARREL.Bit = 16, FieldRecord.QUICKFIRE.Bit = 128, FieldRecord.FIRE_BARRIER.Bit = 32, FieldRecord.FORCE_BARRIER.Bit = 64, FieldRecord.FORCE_WALL.Bit = 512, FieldRecord.FIRE_WALL.Bit = 1024,
-        //           FieldRecord.ANTIMAGIC.Bit = 2048, FieldRecord.STINK_CLOUD.Bit = 4096, FieldRecord.ICE_WALL.Bit = 8192, FieldRecord.BLADE_WALL.Bit = 16384, FieldRecord.SLEEP_CLOUD.Bit = 32768, FieldRecord.SPECIAL.Bit = 2;
-
-        //OLD FIELDS
-        //MISC                         NEW UINT MISC
-        //  1-1   SECRET_PASSAGE       1-1
-        //  2-2   SPECIAL              2-2 
-        //  3-4   WEB                  3-4
-        //  4-8   CRATE                4-8
-        //  5-16  BARREL               5-16
-        //  6-32  FIRE BARRIER         6-32
-        //  7-64  FORCE BARRIER        7-64  
-        //  8-128 QUICKFIRE            8-128
-        //EXPLORED                   
-        //  1-1   LIGHT               9-256    --- Previously in 'lighting'
-        //  2-2   FORCE WALL          10-512
-        //  3-4   FIRE WALL           11-1024
-        //  4-8   ANTIMAGIC           12-2048
-        //  5-16  STINK CLOUD         13-4096
-        //  6-32  ICE WALL            14-8192
-        //  7-64  BLADE WALL          15-16384
-        //  8-128 SLEEP CLOUD         16-32768
-        //SFX
-        //  1-1   SMALL BLOOD         17-65536    
-        //  2-2   MEDIUM BLOOD        18-131072
-        //  3-4   LARGE BLOOD         19-262144
-        //  4-8   SMALL SLIME         20-524288
-        //  5-16  LARGE SLIME         21-1048576
-        //  6-32  ASH                 22-2097152
-        //  7-64  BONES               23-4194304
-        //  8-128 RUBBLE              24-8388608
-        //   
-        //    1101
-        //xor 1111
-        //    0010   ^ uint.MaxValue         
+        }     
 
         public bool fieldsThere(Location loc, uint bits)
         {
@@ -3012,79 +2566,21 @@ namespace SwordsOfExileGame
             return o;
         }
 
-        //Friendlier, public routine for finding fields - can be used in scripts.
-        public bool FieldThere(Location loc, Field field)//eField field)
+        public bool FieldThere(Location loc, Field field)
         {
             return fieldsThere(loc, field.Bit);
-
-
-            //switch (field)
-            //{
-            //case eField.ANTIMAGIC: return fieldsThere(loc, FieldRecord.ANTIMAGIC.Bit);
-            //case eField.BLADE_WALL: return fieldsThere(loc, FieldRecord.BLADE_WALL.Bit);
-            //case eField.FIRE_BARRIER: return fieldsThere(loc, FieldRecord.FIRE_BARRIER.Bit);
-            //case eField.FIRE_WALL: return fieldsThere(loc, FieldRecord.FIRE_WALL.Bit);
-            //case eField.FORCE_BARRIER: return fieldsThere(loc, FieldRecord.FORCE_BARRIER.Bit);
-            //case eField.FORCE_WALL: return fieldsThere(loc, FieldRecord.FORCE_WALL.Bit);
-            //case eField.ICE_WALL: return fieldsThere(loc, FieldRecord.ICE_WALL.Bit);
-            //case eField.QUICKFIRE: return fieldsThere(loc, FieldRecord.QUICKFIRE.Bit);
-            //case eField.SLEEP_CLOUD: return fieldsThere(loc, FieldRecord.SLEEP_CLOUD.Bit);
-            //case eField.STINK_CLOUD: return fieldsThere(loc, FieldRecord.STINK_CLOUD.Bit);
-            //case eField.WEB: return fieldsThere(loc, FieldRecord.WEB.Bit);
-            //case eField.BARREL: return fieldsThere(loc, FieldRecord.BARREL.Bit);
-            //case eField.CRATE: return fieldsThere(loc, FieldRecord.CRATE.Bit);
-            //case eField.SMALL_BLOOD: return fieldsThere(loc, FieldRecord.SMALL_BLOOD.Bit);
-            //case eField.MEDIUM_BLOOD: return fieldsThere(loc, FieldRecord.MEDIUM_BLOOD.Bit);
-            //case eField.LARGE_BLOOD: return fieldsThere(loc, FieldRecord.LARGE_BLOOD.Bit);
-            //case eField.SMALL_SLIME: return fieldsThere(loc, FieldRecord.SMALL_SLIME.Bit);
-            //case eField.LARGE_SLIME: return fieldsThere(loc, FieldRecord.LARGE_SLIME.Bit);
-            //case eField.CRATER: return fieldsThere(loc, FieldRecord.CRATER.Bit);
-            //case eField.BONES: return fieldsThere(loc, FieldRecord.BONES.Bit);
-            //case eField.ROCKS: return fieldsThere(loc, FieldRecord.ROCKS.Bit);
-            //case eField.SECRET_PASSAGE: return fieldsThere(loc, FieldRecord.SECRET_PASSAGE.Bit);
-            //default: return false;
-            //}
         }
 
         public void RemoveField(Location loc, Field field)//eField field)
         {
             removeField(loc, field.Bit);
-
-            //switch (field)
-            //{
-            //case eField.ANTIMAGIC: removeField(loc, FieldRecord.ANTIMAGIC.Bit); break;
-            //case eField.BLADE_WALL: removeField(loc, FieldRecord.BLADE_WALL.Bit); break;
-            //case eField.FIRE_BARRIER: removeField(loc, FieldRecord.FIRE_BARRIER.Bit); break;
-            //case eField.FIRE_WALL: removeField(loc, FieldRecord.FIRE_WALL.Bit); break;
-            //case eField.FORCE_BARRIER: removeField(loc, FieldRecord.FORCE_BARRIER.Bit); break;
-            //case eField.FORCE_WALL: removeField(loc, FieldRecord.FORCE_WALL.Bit); break;
-            //case eField.ICE_WALL: removeField(loc, FieldRecord.ICE_WALL.Bit); break;
-            //case eField.QUICKFIRE: removeField(loc, FieldRecord.QUICKFIRE.Bit); break;
-            //case eField.SLEEP_CLOUD: removeField(loc, FieldRecord.SLEEP_CLOUD.Bit); break;
-            //case eField.STINK_CLOUD: removeField(loc, FieldRecord.STINK_CLOUD.Bit); break;
-            //case eField.WEB: removeField(loc, FieldRecord.WEB.Bit); break;
-            //case eField.BARREL: removeField(loc, FieldRecord.BARREL.Bit); break;
-            //case eField.CRATE: removeField(loc, FieldRecord.CRATE.Bit); break;
-            //case eField.SMALL_BLOOD: removeField(loc, FieldRecord.SMALL_BLOOD.Bit); break;
-            //case eField.MEDIUM_BLOOD: removeField(loc, FieldRecord.MEDIUM_BLOOD.Bit); break;
-            //case eField.LARGE_BLOOD: removeField(loc, FieldRecord.LARGE_BLOOD.Bit); break;
-            //case eField.SMALL_SLIME: removeField(loc, FieldRecord.SMALL_SLIME.Bit); break;
-            //case eField.LARGE_SLIME: removeField(loc, FieldRecord.LARGE_SLIME.Bit); break;
-            //case eField.CRATER: removeField(loc, FieldRecord.CRATER.Bit); break;
-            //case eField.BONES: removeField(loc, FieldRecord.BONES.Bit); break;
-            //case eField.ROCKS: removeField(loc, FieldRecord.ROCKS.Bit); break;
-            //case eField.SECRET_PASSAGE: removeField(loc, FieldRecord.SECRET_PASSAGE.Bit); break;
-            //case eField.CRATE_MOVE: removeField(loc, FieldRecord.CRATE_MOVE.Bit); break;
-            //}
         }
 
-        public void PlaceField(Location loc, Field field)//, int dispel_mode = 0)
+        public void PlaceField(Location loc, Field field)
         {
 
             if (field == Field.ANTIMAGIC) make_antimagic(loc);
             else if (field == Field.BLADE_WALL) make_blade_wall(loc, null); 
-
-            //else if (field == eField.DISPEL) dispel_fields(loc, dispel_mode); 
             else if (field == Field.FIRE_BARRIER) MakeFireBarrier(loc); 
             else if (field == Field.FIRE_WALL) make_fire_wall(loc, null); 
             else if (field == Field.FORCE_BARRIER) MakeForceBarrier(loc); 
@@ -3271,11 +2767,10 @@ namespace SwordsOfExileGame
         Boolean is_container(Location loc)
         {
             if (fieldsThere(loc, Field.CRATE.Bit | Field.BARREL.Bit)) return true;
-            return terrainAt(loc.X, loc.Y).Special/*TerrainRecord.List[_Terrain[loc.x, loc.y]].Special*/ == eTerSpec.IS_A_CONTAINER;
+            return terrainAt(loc.X, loc.Y).Special == eTerSpec.IS_A_CONTAINER;
         }
 
         public void place_treasure(Location where, int level, int loot, int mode)
-        //short mode;  // 0 - normal, 1 - force
         {
 
             Item new_item;
@@ -3312,8 +2807,8 @@ namespace SwordsOfExileGame
 
             if (amt > 3) //Place some gold
             {
-                new_item = Item.List["gold"].Copy();//new Item(); //get_stored_item(0);
-                new_item.Charges = amt;//.Level = amt;
+                new_item = Item.List["gold"].Copy();
+                new_item.Charges = amt;
                 r1 = Maths.Rand(1, 1, 9);
                 if ((loot > 1 && r1 < 7) || (loot == 1 && r1 < 5) || mode == 1
                     || (r1 < 6 && Party.TotalLevel < 30) || loot > 2)
@@ -3392,7 +2887,7 @@ namespace SwordsOfExileGame
             List<ICharacter> targets = new List<ICharacter>();
 
             //Add all possible targets to the list.
-            foreach(ICharacter ch in NPCList)// EachCharacterInRange(pos, range))
+            foreach(ICharacter ch in NPCList)
             {
                 ch.TargetingNum = -1;
                 if (ch.Pos == pos) continue;
@@ -3421,105 +2916,7 @@ namespace SwordsOfExileGame
             return null;
         }
 
-        //class PathNode : IEquatable<PathNode>
-        //{
-        //    public Location Pos;
-        //    public PathNode Parent;
-        //    public int Score;
-        //    public int Level;
-
-        //    public bool Equals(PathNode other)
-        //    {
-        //        return Pos == other.Pos;
-        //    }
-        //}
-
-        //public Stack<eDir> CalculatePath(ICharacter ch, Location dest)
-        //{
-        //    //Use A* pathfinding
-        //    List<PathNode> OpenNodes = new List<PathNode>();
-        //    List<PathNode> ClosedNodes = new List<PathNode>();
-
-        //    OpenNodes.Add(new PathNode{Pos = ch.Pos, Parent = null, Score = 0, Level = 0});
-        //    bool found = false;
-
-        //    //Work out nasty field aversion based on health remaining
-        //    //If > 100, only minimal aversion
-        //    //Then down to maximum aversion for < 25 health
-        //    int f_aversion = Maths.MinMax(Constants.PATH_NASTY_FIELD_AVERSION_HEALTH_LOW, Constants.PATH_NASTY_FIELD_AVERSION_MAX, ch.Health);// 
-        //    f_aversion -= Constants.PATH_NASTY_FIELD_AVERSION_HEALTH_LOW;
-        //    float aver = (float)f_aversion / (float)(Constants.PATH_NASTY_FIELD_AVERSION_HEALTH_HIGH - Constants.PATH_NASTY_FIELD_AVERSION_HEALTH_LOW);
-        //    f_aversion = (int)(aver * (float)(Constants.PATH_NASTY_FIELD_AVERSION_MAX - Constants.PATH_NASTY_FIELD_AVERSION_MIN)) + Constants.PATH_NASTY_FIELD_AVERSION_MIN;
-
-        //    while (!found && OpenNodes.Count > 0)
-        //    {
-        //        if (OpenNodes[0].Pos.adjacent(dest) || OpenNodes[0].Level >= Constants.PATHFINDLIMIT) { found = true; break; }
-
-        //        PathNode curnode = OpenNodes[0];
-        //        OpenNodes.RemoveAt(0);
-        //        ClosedNodes.Add(curnode);
-
-        //        for (int x = curnode.Pos.x - 1; x <= curnode.Pos.x + 1; x++)
-        //        {
-        //            for (int y = curnode.Pos.y - 1; y <= curnode.Pos.y + 1; y++)
-        //            {
-        //                Location l = new Location(x, y);
-
-        //                if (CharacterCanBeThere(l, ch) && !ClosedNodes.Contains(new PathNode{Pos = l}))
-        //                {
-        //                    int sc = curnode.Score + 1 + l.VDistanceTo(dest);
-
-        //                    if (ch is NPCType && NPCHateSpot((NPCType)ch, l)) sc += f_aversion;//Constants.PATH_NASTY_FIELD_AVERSION; //Dislike squares with nasty fields in them
-
-        //                    var newnode = new PathNode{Pos = l, Score = sc, Parent = curnode, Level = curnode.Level+1};
-
-        //                    var alreadyon = OpenNodes.Find(nd => nd.Pos == l);
-
-        //                    if (alreadyon != null)
-        //                        if (newnode.Score < alreadyon.Score)
-        //                            OpenNodes.Remove(alreadyon);
-        //                        else
-        //                            continue;
-
-        //                    int n = 0;
-        //                    foreach (PathNode p in OpenNodes)
-        //                    {
-        //                        if (sc < p.Score) break;
-        //                        n++;
-        //                    }
-
-        //                    if (n == OpenNodes.Count)
-        //                        OpenNodes.Add(new PathNode { Pos = l, Parent = curnode, Score = sc });
-        //                    else
-        //                        OpenNodes.Insert(n, new PathNode { Pos = l, Parent = curnode, Score = sc, Level = curnode.Level + 1 });
-                           
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    if (found)
-        //    {
-        //        var path = new Stack<eDir>();
-
-        //        //PathToTarget.Clear();
-        //        PathNode node = OpenNodes[0];
-        //        while (node.Parent != null)
-        //        {
-        //            path.Push(node.Parent.Pos.DirectionTo(node.Pos));
-        //            node = node.Parent;
-        //        }
-        //        return path;
-        //        //PathPosition = Pos;
-        //        //PathDestination = dest;
-        //        //return true;
-        //    }
-        //    return null;//false;
-
-        //}
-
         public Location FindSpellTargetPosition(Location where, int radius, ref int m, ICharacter who)
-        //short mode; // 0 - hostile casting  1 - friendly casting
         {
             Location check_loc;
             int cur_lev, level_max = 10;
@@ -3531,7 +2928,7 @@ namespace SwordsOfExileGame
                     if (where.DistanceTo(check_loc) <= 8 && where.DistanceTo(check_loc) > radius && CanSee(where, check_loc, true) < Constants.OBSCURITY_LIMIT && GetObscurity(check_loc) < Constants.OBSCURITY_LIMIT)
                     {
                         cur_lev = CountLevels(check_loc, radius, who);
-                        if (cur_lev > level_max) //  || (cur_lev == level_max && Maths.Rand(1, 0, 1) == 0)))
+                        if (cur_lev > level_max) 
                         {
                             level_max = cur_lev;
                             possibles.Clear();
@@ -3552,7 +2949,7 @@ namespace SwordsOfExileGame
         {
             int store = 0;
 
-            foreach (ICharacter ch in EachCharacterInRange(where, radius, Game.Mode == eMode.COMBAT))// ci in CreatureInstanceList)
+            foreach (ICharacter ch in EachCharacterInRange(where, radius, Game.Mode == eMode.COMBAT))
                 if (CanSee(where, ch.Pos) < Constants.OBSCURITY_LIMIT)
                     if (who.AlliedWith(ch))
                         store -= ch is PCType ? 10 : ch.Level;
@@ -3568,15 +2965,5 @@ namespace SwordsOfExileGame
 
             return store;
         }
-
-        //public void Dematerialise(Location x, Location y)
-        //{
-        //    new Animation_Vanish(Party.LeaderPC, true, "010_teleport");
-        //    for (int n = 0; n < 9; n++)
-        //    {
-        //        new Animation_Explosion(new Vector2(Party.Pos.x + Maths.Rand(Party.Pos.x - 1, Party.Pos.x + 1), Party.Pos.y + Maths.Rand(Party.Pos.y - 1, Party.Pos.y + 1)), 1, null);
-        //        new Animation_Pause(10);
-        //    }
-        //}
     }
 }

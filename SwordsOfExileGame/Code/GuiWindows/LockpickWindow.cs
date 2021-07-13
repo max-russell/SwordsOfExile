@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -48,7 +40,6 @@ namespace SwordsOfExileGame
                 }
                 dr.X += Gfx.PCPORTRAITWIDTH + 2;
             }
-            //pc_buttons[Party.CurrentPC.Slot].Pressed = true;
 
             AddLabel("Choose the action to perform:", 20, 50 + Gfx.CHARGFXHEIGHT + 10, -1, -1, false);
 
@@ -76,9 +67,6 @@ namespace SwordsOfExileGame
         public override void Draw(SpriteBatch sb, int partial = 0)
         {
             base.Draw(sb, partial);
-
-            //sb.Draw(Gfx.NewGui, new Vector2(X + 10, Y + 10), new XnaRect(157, 182, 24, 24), Color.White);
-
         }
 
 

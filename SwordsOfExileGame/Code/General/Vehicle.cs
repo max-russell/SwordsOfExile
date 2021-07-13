@@ -1,15 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -33,25 +25,6 @@ namespace SwordsOfExileGame
         public string Name { get { if (Type == eVehicleType.HORSE) return "horses"; else if (Type == eVehicleType.BOAT) return "boat"; else return "vehicle"; } }
         public string BoardMessage() { if (Type == eVehicleType.HORSE) return "You mount the horses."; else return "You board the boat."; }
         public string LeaveMessage() { if (Type == eVehicleType.HORSE) return "You dismount."; else return "You disembark."; }
-
-        //public static RECT[] boat_rects = { new RECT(0, 0, 28, 36), new RECT(28, 0, 56, 36), new RECT(56, 0, 84, 36), new RECT(84, 0, 112, 36) };
-
-        //public static void Load(BinaryReader In)
-        //{
-        //    List.Clear();
-
-        //    while (true)
-        //    {
-        //        byte b = In.ReadByte();
-
-        //        if (b == 0) break;
-
-        //        if (b == 1)
-        //            new Vehicle(In);
-        //        else if (b == 2)
-        //            Scenario.LoadAndDisregardEditorFolder(In);
-        //    }
-        //}
 
         public void LoadGame(BinaryReader file)
         {
@@ -77,7 +50,6 @@ namespace SwordsOfExileGame
         }
 
         public Vehicle() { }
-
         public void Load (BinaryReader In)
         {
             id = In.ReadString();
@@ -119,7 +91,6 @@ namespace SwordsOfExileGame
             {
                 sr = Dir.IsFacingRight ? new XnaRect(117, 0, Gfx.CHARGFXWIDTH, Gfx.CHARGFXHEIGHT)
                                        : new XnaRect(89, 0, Gfx.CHARGFXWIDTH, Gfx.CHARGFXHEIGHT);
-                //sb.Draw(tex, dr, sr, Color.White);
             }
             else //Horse
             {
@@ -149,34 +120,12 @@ namespace SwordsOfExileGame
             return Map == Game.CurrentMap && Map.Visible(pos);
         }
 
-        //public static HorseBoat LoadNew(System.IO.BinaryReader In)
-        //{
-        //    HorseBoat h = new HorseBoat();
-        //    h.Pos.x = In.ReadSByte();
-        //    h.Pos.y = In.ReadSByte();
-        //    h.loc_in_sec.x = In.ReadSByte();
-        //    h.loc_in_sec.y = In.ReadSByte();
-        //    h.sector.x = In.ReadSByte();
-        //    h.sector.y = In.ReadSByte();
-        //    h.which_town = BoE.ReadShort(In);
-        //    h.Exists = In.ReadBoolean();
-        //    h.Property = In.ReadBoolean();
-        //    if (h.which_town == -1) return null;
-        //    return h;
-        //}
-
         public static Vehicle IsThere(IMap where, Location l, eVehicleType specific_type = eVehicleType.NONE)
         {
-
             foreach (Vehicle hb in List)
                 if (hb.Map == where && hb.Pos == l && (specific_type == eVehicleType.NONE || specific_type == hb.Type))
                     return hb;
-            //
-            //                    if (place is OutsideSector && place == hb.sector && hb.loc_in_sec == l) return hb;
-            //                    else if (place is TownMap && place == hb.Town && hb.Pos == l) return hb;
-            //            }
             return null;
-
         }
 
     }

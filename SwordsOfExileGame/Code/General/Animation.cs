@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -51,7 +44,6 @@ namespace SwordsOfExileGame
             //We keep a list of all the sounds that have been triggered this turn so that each type of sound is only played once per turn.
             //This is to stop things like explosions when multiple targets get hit at the same time and all want to play a sound. With this
             //only one sound plays rather than multiple identical sounds.
-            //soundsPlayed.Clear();
 
             for (int n = animationList.Count - 1; n >= 0; n--)
             {
@@ -62,7 +54,7 @@ namespace SwordsOfExileGame
 
                 if (a is IAnimHold)
                     if (n == animationList.Count - 1)
-                        a.AdvanceAnim(ms_passed);//RemoveAnim(a); //No animations remaining before this one, so it can now be removed
+                        a.AdvanceAnim(ms_passed);//No animations remaining before this one, so it can now be removed
                     else
                         break; //Otherwise, exit the loop so any animations still queued are on hold.
                 else
@@ -120,15 +112,14 @@ namespace SwordsOfExileGame
             if (!started)
             {
                 started = true;
-                if (animSound != -1)// && !soundsPlayed.Contains(animSound))
+                if (animSound != -1)
                 {
                     Sound.Play(animSound);
-                    //soundsPlayed.Add(animSound);
                 }
             }
 
-            Time += ms_passed;//Rate;
-            if (Time >= Duration)//1f)
+            Time += ms_passed;
+            if (Time >= Duration)
             {
                 RemoveAnim(this);
                 return true;
@@ -147,7 +138,6 @@ namespace SwordsOfExileGame
             if (Duration > 0)
                 animSound = Sound.IndexOf(s);
         }
-        //public virtual void AdjustCharRect(ref XnaRect r, ref float rot) { }
     }
 
     /// <summary>
@@ -229,7 +219,7 @@ namespace SwordsOfExileGame
     {
         const int DEFAULT_DURATION = 100;
 
-        public Field Type;//eField Type;
+        public Field Type;
         public Vector2 Pos { get { return new Vector2(pos.X, pos.Y); } }
         Location pos;
 
@@ -276,8 +266,6 @@ namespace SwordsOfExileGame
             startPos = startpos;
             pos = startpos.ToVector2();
             endPos = endpos;
-
-            //srcRect = new XnaRect(37, 1 + missile_gfx_no * (GFX_HEIGHT + 2), GFX_WIDTH, GFX_HEIGHT);
         }
 
         protected override bool AdvanceAnim(int ms_passed)
@@ -425,7 +413,6 @@ namespace SwordsOfExileGame
         {
             r.Offset((int)((-PosMod.X * (1 - Stage)) * Gfx.ZoomSizeW),
                      (int)(-PosMod.Y * (1 - Stage) * Gfx.ZoomSizeH));
-            //if (Fades) col = Color.FromNonPremultiplied(col.R, col.G, col.B, (int)((1f - Stage) * 255f));
         }
     }
 
@@ -751,7 +738,7 @@ namespace SwordsOfExileGame
             r.Y -= (r.Height - oldheight) / 2;
 
             byte b = (byte)(255f * t);
-            color = new Color(255, 255, 255, (int)b);//Color.FromNonPremultiplied(255,255,255,b);
+            color = new Color(255, 255, 255, (int)b);
         }
 
         protected override bool AdvanceAnim(int ms_passed)
@@ -782,7 +769,6 @@ namespace SwordsOfExileGame
                 Duration = 0;
                 animSound = -1;
             }
-
             //Base animSound on what who_attacks is
         }
 
@@ -795,13 +781,6 @@ namespace SwordsOfExileGame
 
             r.X -= (r.Width - oldwidth) / 2;
             r.Y -= (r.Height - oldheight) / 2;
-
-            //r.Width = (int)((1 - Time) * r.Width);
-            //r.Height = (int)((1 - Time) * r.Height);
-
-            //r.Inflate(
-            //    (int)-((1 - Time) * r.Width), 
-            //    (int)-((1 - Time) * r.Height));
         }
 
         protected override bool AdvanceAnim(int ms_passed)
@@ -844,17 +823,8 @@ namespace SwordsOfExileGame
 
         public void AdjustCharRect(ref XnaRect r, ref float rot, ref Color color)
         {
-            //TODO: At the moment it just glows red. Should make it flash an asterisk over its head or something.
-
             FlashAmount = (float)(Math.Cos((asFraction(Time) * 2f + 1f) * (float)Math.PI) + 1f) / 2f;
-               
-                //(float)(Math.Cos(asFraction(Time) * 2f * (float)Math.PI) + 1f) / 2f;//asFraction(Time);
             Gfx.ApplyFlashShader(FlashColour, FlashAmount);
-
-            //byte c = (byte)(256 * ((Math.Cos(asFraction(Time) * 2 * (float)Math.PI) + 1) / 2));
-
-            //color.G = c;
-            //color.B = c;
         }
 
         protected override bool AdvanceAnim(int ms_passed)
@@ -868,8 +838,5 @@ namespace SwordsOfExileGame
             }
             return false;
         }
-
-
-
     }
 }

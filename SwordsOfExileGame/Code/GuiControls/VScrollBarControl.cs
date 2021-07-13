@@ -1,15 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -22,7 +12,6 @@ namespace SwordsOfExileGame
     class VScrollBar : Control
     {
         Control Owner;
-        //int Height;
 
         int pos, extend, min, max, Change;
         int YOffset;
@@ -48,7 +37,7 @@ namespace SwordsOfExileGame
             YOffset = yoffset;
             Y = Owner.Y + YOffset;
             Width = 16;
-            Height = height;// Owner.Height;
+            Height = height;
             ChangeValues(_pos, _extend, _min, _max, change);
             window.controls.Add(this);
         }
@@ -58,9 +47,6 @@ namespace SwordsOfExileGame
             if (!Visible) return;
 
             int dx = X + xOffset, dy = Y + yOffset;
-
-            //xOffset += Owner.X + Owner.Width;
-            //yOffset += Owner.Y;
 
             Color col;
 
@@ -94,11 +80,6 @@ namespace SwordsOfExileGame
             Y = Owner.Y + YOffset;
 
             int dx = X + xOffset, dy = Y + yOffset;
-            //xOffset += Owner.Width - 16;
-            //xOffset += Owner.X + Owner.Width;
-            //yOffset += Owner.Y;
-
-            //pressedButton = eButton.NONE;
             bool interacted = false;
 
             if (Gui.Ms.X >= dx && Gui.Ms.X < dx + 16 && Gui.Ms.Y >= dy && Gui.Ms.Y < dy + Height)
@@ -129,7 +110,6 @@ namespace SwordsOfExileGame
                     {
                         Sound.ButtonSound();
                         pos = Maths.Min(pos + Change, max - extend);
-                        //if (++pos + extend > max) pos = max - extend;
                         interacted = true;
                         pressedButton = eButton.NONE;
                     }
@@ -159,7 +139,7 @@ namespace SwordsOfExileGame
             }
 
             ((IScrollBarOwner)Owner).ScrollBarUpdate(pos);
-            return interacted;// pos;
+            return interacted;
         }
 
         public int ChangeValues(int _pos, int _extend, int _min, int _max, int change)

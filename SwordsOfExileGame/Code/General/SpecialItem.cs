@@ -1,15 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -44,7 +34,7 @@ namespace SwordsOfExileGame
         string id;
         public string Name, Description;
         public bool Useable, StartWith;
-        public string UseFunc; //SpecialNode UseNode;
+        public string UseFunc; 
 
         public SpecialItem() { }
 
@@ -101,19 +91,6 @@ namespace SwordsOfExileGame
             }
             return false;
         }
-
-        //public void use_spec_item() {
-
-        //run_special(8, 0, scenario.special_item_special[item], null_loc, &i, &j, &k); TODO
-        //}
-
-        //public void put_spec_item_info() {
-        //    //        display_strings(data_store5->scen_strs[60 + 1 + which_i * 2], "",
-        //    //-1, -1, -1, -1,
-        //    //data_store5->scen_strs[60 + which_i * 2], 57, 1600 + scenario.intro_pic, 0);
-        //    DisplayStringsForm.Go(Description, "", -1, -1, -1, -1, Name, 57, 1600 + BoE.Scenario.IntroPic);
-        //}
-
     }
 
 }

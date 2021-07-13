@@ -1,23 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
     public static class KeyHandler
     {
-        //const Keys SC_Quicksave = Keys.F5;
-        //const Keys SC_Quickload = Keys.F9;
-
         //Keyboard Routines
         static KeyboardState testKeys, oldKeys;
         static int keyRepeatTime;
@@ -37,25 +27,6 @@ namespace SwordsOfExileGame
                 return true;
             }
             return false;
-
-            //if (hitKeysChecked) return false;
-
-            //if (testKeys.IsKeyDown(k))
-            //{
-            //    if (oldKeys.IsKeyUp(k))
-            //    {
-            //        keyRepeat = k;
-            //        keyRepeatTime = Constants.KEY_REPEAT_DURATION_1ST;
-            //        hitKeysChecked = true;
-            //        return true;
-            //    }
-            //    else if (k == keyRepeat && keyRepeatTime == 0)
-            //    {
-            //        keyRepeatTime = Constants.KEY_REPEAT_DURATION_SUBSEQUENT;
-            //        hitKeysChecked = true;
-            //        return true;
-            //    }
-            //}
         }
 
         public static bool AnyKeysHit(params Keys[] ka) { foreach (Keys k in ka) if (KeyHit(k)) return true; return false; }
@@ -63,7 +34,6 @@ namespace SwordsOfExileGame
         public static bool AnyKeysDown(params Keys[] ka) { foreach (Keys k in ka) if (testKeys.IsKeyDown(k)) return true; return false; }
         public static void GetKeysHit(int elapsedtime)
         {
-            //hitKeysChecked = false;
             keyRepeatTime = Math.Max(keyRepeatTime - elapsedtime, 0);
             oldKeys = testKeys;
             testKeys = Keyboard.GetState();
@@ -75,7 +45,6 @@ namespace SwordsOfExileGame
 
             if (!Game.Instance.IsActive) return;
 
-            //if (hitKeysChecked) return null;
             var allHitKeys = new List<Keys>();
 
             if (nk.Length > 0)
@@ -86,19 +55,13 @@ namespace SwordsOfExileGame
                 {
                     hitKey = allHitKeys[0];
 
-                    keyRepeat = hitKey;//allHitKeys[0];
+                    keyRepeat = hitKey;
                     keyRepeatTime = Constants.KEY_REPEAT_DURATION_1ST;
-
-                    //hitKeysChecked = true;
-                    //return list;
                 }
                 else if (KeyDown(keyRepeat) && keyRepeatTime == 0)
                 {
                     keyRepeatTime = Constants.KEY_REPEAT_DURATION_SUBSEQUENT;
-                    //hitKeysChecked = true;
                     hitKey = keyRepeat;
-                    //allHitKeys.Add(keyRepeat);
-                    //return list;
                 }
 
             }
@@ -107,7 +70,6 @@ namespace SwordsOfExileGame
 
         public static void GetActionKeys()
         {
-
             //Handle map zooming with mouse scroll wheel
             MouseState ms = Mouse.GetState();
             if (ScrollWheel < ms.ScrollWheelValue)
@@ -120,9 +82,6 @@ namespace SwordsOfExileGame
                 Gfx.StartZoom(true, Constants.ZOOM_SPEED);
                 ScrollWheel = ms.ScrollWheelValue;
             }
-
-            //eAction action = Action.Requested;
-            //PCType acPC = null;
 
             if (hitKey != Keys.None)
             {
@@ -138,13 +97,10 @@ namespace SwordsOfExileGame
             {
                 if (hitKey == Keys.Escape && Action.LockActions == eAction.NONE && !Gui.WorldModalPaused)
                 {
-                    //if (Game.PlayerTargeting) //new Action(eAction.Cancel);//Action.Requested = eAction.Cancel;// = false;
                     new Action(eAction.EscapeMenu);
-                    //return;
                 }
                 else if ((hitKey == Keys.Oem8 || hitKey == Keys.OemTilde) && Action.LockActions == eAction.NONE && !Gui.WorldModalPaused)
                 {
-                    //if (Game.PlayerTargeting) Action.Requested = eAction.Cancel;
                     new Action(eAction.RunConsoleWindow);
                     return;
                 }
@@ -195,7 +151,6 @@ namespace SwordsOfExileGame
             }
 
             if (Action.Exists()) Gui.ActiveToolTip = null;
-            //Action.Requested = action;
         }
 
         ///// <summary>
@@ -205,40 +160,7 @@ namespace SwordsOfExileGame
         public static Keys GetAllKeysHit() //Relies on GetKeysHit being called at the start of each update
         {
             Keys k = hitKey;
-            //hitKey = Keys.None;
             return k;
-
-
-        //    return allHitKeys;
-        //    //oldKeys = newKeys;
-        //    //newKeys = Keyboard.GetState();
-        //    Keys[] nk = testKeys.GetPressedKeys();
-        //    Keys[] ok = oldKeys.GetPressedKeys();
-
-        //    if (hitKeysChecked) return null;
-
-        //    if (nk.Length > 0)
-        //    { 
-        //        var list = nk.Except(ok).ToList<Keys>();
-
-        //        if (list.Count > 0)
-        //        {
-        //            keyRepeat = list[0];
-        //            keyRepeatTime = Constants.KEY_REPEAT_DURATION_1ST;
-
-        //            hitKeysChecked = true;
-        //            return list;
-        //        }
-        //        else if (KeyDown(keyRepeat) && keyRepeatTime == 0)
-        //        {
-        //            keyRepeatTime = Constants.KEY_REPEAT_DURATION_SUBSEQUENT;
-        //            hitKeysChecked = true;
-        //            list.Add(keyRepeat);
-        //            return list;
-        //        }
-
-        //    }
-        //    return null;
         }
 
         public static void FlushHitKey()
@@ -273,9 +195,6 @@ namespace SwordsOfExileGame
         {
             var buf = new StringBuilder(256);
             var keyboardState = new byte[256];
-
-            //if (shift) keyboardState[16] = 0xff;
-            //if (altGr) keyboardState[18] = 0xff;
 
             switch (keys)
             {
@@ -433,6 +352,5 @@ namespace SwordsOfExileGame
                                                 Keys.I,  //Inventory
                                                 Keys.V,  //Stats
                                             };
-
     }
 }

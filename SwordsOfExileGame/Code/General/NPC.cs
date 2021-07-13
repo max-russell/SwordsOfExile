@@ -1,6 +1,4 @@
-﻿//#define USE_MOVE_SCRIPTS   //Whether NPCs movement is hard-coded, or calls scripts
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +7,6 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -50,8 +47,6 @@ namespace SwordsOfExileGame
         public int Level { get { return Record.Level; } set { } }
         public bool IsAlive() { return !Dying && curTown.NPCList.Contains(this); }
         public Personality Personality { get { if (Start != null) return Start.personality; return null; } }
-        //string funcNonCombatMove { get { if (Start.FuncNonCombatMove != null) return Start.FuncNonCombatMove; else return Record.FuncNonCombatMove; } }
-       // string funcCombatMove { get { if (Start.FuncCombatMove != null) return Start.FuncCombatMove; else return Record.FuncCombatMove; } }
         public int MaxHealth { get { return Record.Health; } }
 
         //Temporary properties - no need to save in savefile
@@ -81,9 +76,6 @@ namespace SwordsOfExileGame
         int Provocation; //This is calculated at the end of every npcs turn based on what it did that turn. Attacking or casting a spell is a big provocation.
         //But if the npc does nothing attention grabbing it decays back to 0 slowly.
         ICharacter LastAttacked; //Did the npc attack another character last turn? Used when an enemy npc is deciding who to target.
-
-        //Stack<eDir> PathToTarget;// = new Stack<eDir>();
-        //Location PathPosition, PathDestination;
         MapPath PathToTarget;
         
         //Intrinsic properties    Should be saved in save file
@@ -105,7 +97,6 @@ namespace SwordsOfExileGame
           public int SP { get { return sp; } set { sp = Maths.MinMax(0, Record.SP, value); } }
           public int Health { get { return health; } set { health = Math.Min(Record.Health, value); } }
           public int AP { get { return ap; } set { ap = Maths.MinMax(0, Record.Speed, value); } }
-          //void take_m_ap(int num) { AP = Math.Max(0, AP - num); }
         int[] status = new int[15];
           public int Status(eAffliction type) { return status[(int)type]; } //ICharacter
           public void SetStatus(eAffliction type, int val, int min = Int32.MinValue, int max = Int32.MaxValue) { status[(int)type] = Maths.MinMax(min, max, val); }
@@ -265,9 +256,6 @@ namespace SwordsOfExileGame
             Provocation = Math.Max(Provocation - 1, 0); //Decay provocation score  before turn starts
             AP = 0;
             if (Active == eActive.COMBATIVE) { // Begin action loop for angry, active monsters
-                // First note that hostile monsters are around.
-                //if (IsABaddie) Party.vogelsExtraShit[5, 9] = 30;
-
                 // Give monster its action points
                 AP = Record.Speed;
 
@@ -354,9 +342,6 @@ namespace SwordsOfExileGame
                         pc_adj.Add(pc);
             }
 
-#if USE_MOVE_SCRIPTS
-            Script.RunNPCMove(funcCombatMove, this);
-#else
 ////////////////////////////////////////////////////////////////////START SCRIPT - COMBAT MOVE////////////////////////////////////////////////////////////////////
             #region NPC combat move script
             
@@ -396,7 +381,7 @@ namespace SwordsOfExileGame
                 }
             }
             if (Target != null && Target.IsAlive() && Attitude > eAttitude.NEUTRAL
-                && CanSee(Target.Pos)) //&& can_see_monst(Target.Pos))
+                && CanSee(Target.Pos)) 
             { // Begin spec. attacks
 
                 // Breathe (fire)
@@ -466,7 +451,7 @@ namespace SwordsOfExileGame
                         && Pos.DistanceTo(Target.Pos) <= abil_range[(int)Record.SpecialSkill]) // missile range
                     {
                         Game.AddMessage(Record.Name + ":");
-                        FireMissile();//Status(eAffliction.BLESS_CURSE), Record.SpecialSkill, Pos, Target);
+                        FireMissile();
 
                         // Vapors don't count as action
                         if (Record.SpecialSkill == eCSS.THROWS_DARTS || Record.SpecialSkill == eCSS.THROWS_RAZORDISKS ||
@@ -541,7 +526,6 @@ namespace SwordsOfExileGame
             }
           
 #endregion
-#endif
 /////////////////////////////////////////////////////////////////////END SCRIPT////////////////////////////////////////////////////////////////////////
 
             // PCs that are parrying attack approaching monsters
@@ -583,10 +567,6 @@ namespace SwordsOfExileGame
             //Sleeping or paralyzed npcs can't move.
             if (Status(eAffliction.ASLEEP) > 0 || Status(eAffliction.PARALYZED) > 0) return;
 
-#if USE_MOVE_SCRIPTS
-
-            Script.RunNPCMove("DoNonCombatMove", this);
-#else
             ////////////////////////////////////////////////////////////START SCRIPT - NON-COMBAT MOVE////////////////////////////////////////////////////////////////////////////
             #region NPc non-combat move script
             
@@ -658,7 +638,6 @@ namespace SwordsOfExileGame
 
             #endregion
             /////////////////////////////////////////////////////////////////////END SCRIPT/////////////////////////////////////////////////////////////////////////
-#endif
         }
 
         /// <summary>
@@ -685,11 +664,6 @@ namespace SwordsOfExileGame
                     curTown.NPCHateSpot(this, Pos))
                 {
                     PathToTarget = MapPath.CalculateNew(curTown, this, Target.Pos);
-                    //if (PathToTarget != null)
-                    //{
-                    //    PathPosition = Pos;
-                    //    PathDestination = Target.Pos;
-                    //}
                 }
                 return true;
             }
@@ -717,7 +691,6 @@ namespace SwordsOfExileGame
 
                 //The npc gets a bonus if it is right next to the target candidate
                 if (score <= 1) score -= Constants.AI_ADJACENCY_BONUS;
-
 
                 score -= npc.Provocation;
 
@@ -766,11 +739,6 @@ namespace SwordsOfExileGame
             Target = possibles[0].Item1;
 
             PathToTarget = MapPath.CalculateNew(curTown, this, Target.Pos);
-            //if (PathToTarget != null)
-            //{
-            //    PathPosition = Pos;
-            //    PathDestination = Target.Pos;
-            //}
 
             return true;
         }
@@ -801,13 +769,6 @@ namespace SwordsOfExileGame
                 }
 
                 if (WanderTarget.X == 0) {
-                    // maybe pick a wand loc, else just pick a loc
-
-                    //if (curTown.SpawnPoints.Count > 0) {
-                    //    j = Maths.Rand(1, 0, curTown.SpawnPoints.Count - 1);
-                    //    store_loc = curTown.SpawnPoints[j];
-                    //}
-
                     if (curTown.InBounds(store_loc) && (Maths.Rand(1, 0, 1) == 1))
                         WanderTarget = store_loc;
                     else {
@@ -833,7 +794,6 @@ namespace SwordsOfExileGame
             {
                 if (Walk(PathToTarget.GetNext()))
                 {
-                //    PathPosition = Pos;
                     return;
                 }
             }
@@ -847,7 +807,6 @@ namespace SwordsOfExileGame
             return;
         }
 
-        //Doesn't necessarily seek 'party', Jeff, just the square l2
         public Boolean WalkTowards(Location l2) {
             Boolean acted_yet = false;
 
@@ -912,22 +871,18 @@ namespace SwordsOfExileGame
                 return false;
             else
             {
-                direction.Dir = d.Dir;//new Direction(Pos, destination);//Pos.DirectionTo(destination);
-                /*charAnim =*/
+                direction.Dir = d.Dir;
                 new Animation_Move(this, Pos, destination, Game.Mode == eMode.COMBAT);
                 curTown.PushLocation(this, destination);
                 Pos = destination;
                 curTown.InflictFields(this);
                 return true;
             }
-            //return false;
         }
 
         int calculateHit(int how_much, eDamageType dam_type)
         {
             eImmunity resist;
-
-            //victim = &c_town.monst.dudes[which_m];
             resist = Record.Immunities;
 
             eDamageType[] dams = { eDamageType.MAGIC, eDamageType.FIRE, eDamageType.COLD, eDamageType.POISON };
@@ -966,14 +921,6 @@ namespace SwordsOfExileGame
         //// Damaging and killing monsters needs to be here because several have specials attached to them.
         public bool Damage(IExpRecipient attacker, int how_much, int how_much_spec, eDamageType dam_type, eDamageType spec_dam_type = eDamageType.WEAPON, string sound_type = null)
         {
-        //public Boolean damage_monst(object who_hit, int how_much, int how_much_spec, eDamageType dam_type, bool processing_fields = false, int sound_type = 0)//, bool no_award_xp=false)
-        //    //short which_m, who_hit, how_much, how_much_spec;  // 6 for who_hit means dist. xp evenly  7 for no xp
-        //    //short dam_type;  // 0 - weapon   1 - fire   2 - poison   3 - general magic   4 - unblockable  5 - cold 
-        //    // 6 - demon 7 - undead  
-        //    // 9 - marked damage, from during anim mode
-        //    //+10 = no_print
-        //    // 100s digit - damage sound for boom space
-
             if (!(Game.PCsAlwaysHit && attacker is PCType))
             {
                 how_much = calculateHit(how_much, dam_type);
@@ -994,12 +941,6 @@ namespace SwordsOfExileGame
             {
                 if (Game.Mode == eMode.COMBAT)
                     Game.AddMessage(String.Format("  {0} undamaged.", Name));
-                //if ((how_much <= 0) && ((dam_type == eDamageType.WEAPON) || (dam_type == eDamageType.UNDEAD) || (dam_type == eDamageType.DEMON)))
-                //{
-                //    //GameScreen.draw_terrain(2);
-                //    //new Animation_Hold("002_swordswish");
-                //    //Sound.Play(2);
-                //}
                 return false;
             }
 
@@ -1017,8 +958,6 @@ namespace SwordsOfExileGame
                     default: sound_type = "032_gethit1"; break;
                 }
             }
-
-            ///*if (!no_print)*/ InfoListWindow.monst_damaged_mes(how_much, how_much_spec, this);
 
             if (how_much_spec > 0)
                 Game.AddMessage(
@@ -1045,16 +984,10 @@ namespace SwordsOfExileGame
 
             new Animation_Damage(animpos, how_much, how_much_spec, displaydamtype, sound_type);
 
-            //if (how_much_spec > 0)
-            //{
-            //    new Animation_Hold();
-            //    new Animation_Damage(animpos, how_much_spec, eDamageType.MAGIC, sound_type);
-            //}
-
             if (Health <= 0)
             {
                 Game.AddMessage(String.Format("  {0} dies.", Record.Name));
-                Kill(attacker, eLifeStatus.DEAD);//,no_award_xp);
+                Kill(attacker, eLifeStatus.DEAD);
             }
             else
             {
@@ -1064,8 +997,7 @@ namespace SwordsOfExileGame
                 if (how_much > 20) Morale -= 2;
             }
 
-            if (!IsABaddie && (attacker is PCType || attacker is PartyType)
-             && !curTown.Hostile)///*BoE.monsters_going == false ||*/ Party.vogelsExtraShit[5, 9] == 0))
+            if (!IsABaddie && (attacker is PCType || attacker is PartyType) && !curTown.Hostile)
             {
                 Game.AddMessage("Damaged an innocent.           ");
                 Attitude = eAttitude.HOSTILE_A;
@@ -1079,13 +1011,8 @@ namespace SwordsOfExileGame
             int xp, i;
 
             // Special killing effects
-            if (Start != null && Start.LifeVariable != null && Start.LifeVariable != "") Script.StuffDone[Start.LifeVariable] = 1;//Start.LifeVariable.Value = 1;//Party.SetStuffDone(Start.spec1, Start.spec2, 1);
-
-            //SpecialNode.run_special(12, 2, Start.OnKill, Pos, ref s1, ref s2, ref s3);
-            //if (Record.DeathSpecial != null)//if (Record.Radiate1 == 15)
-            //    SpecialNode.run_special(12, 0, Record.DeathSpecial/*which_m->m_d.radiate_2*/, Pos, ref s1, ref s2, ref s3);
-            if (Start != null) Script.New_KillNPC(Start.FuncOnDeath, this, who_killed as PCType);//new Script(Start.FuncOnDeath, eCallOrigin.KILLED_NPC);
-            //new Script(Record.FuncOnDeath, eCallOrigin.KILLED_NPC);
+            if (Start != null && Start.LifeVariable != null && Start.LifeVariable != "") Script.StuffDone[Start.LifeVariable] = 1;
+            if (Start != null) Script.New_KillNPC(Start.FuncOnDeath, this, who_killed as PCType);
             Script.New_KillNPC(Record.FuncOnDeath, this, who_killed as PCType);
 
             if (Summoned >= 100 || Summoned == 0)
@@ -1111,28 +1038,24 @@ namespace SwordsOfExileGame
             if (Summoned == 0)
                 curTown.place_treasure(Pos, Record.Level / 2, Record.Treasure, 0);
 
-            //i = which_m->m_loc.x;
-            //j = which_m->m_loc.y;
             switch (Record.Genus)
             {
             case eGenus.DEMON: curTown.PlaceField(Pos, Field.CRATER); break;
-            case eGenus.UNDEAD: /*if (which_m->number <= 59)*/ curTown.PlaceField(Pos, Field.BONES); break;
+            case eGenus.UNDEAD: curTown.PlaceField(Pos, Field.BONES); break;
             case eGenus.SLIME:
             case eGenus.BUG: curTown.PlaceField(Pos, Field.SMALL_SLIME); break;
             case eGenus.STONE: curTown.PlaceField(Pos, Field.ROCKS); break;
             default: curTown.PlaceField(Pos, Field.SMALL_BLOOD); break;
             }
 
-            if (/*((BoE.is_town()) || (BoE.which_combat_type == 1)) && (*/Summoned == 0)
+            if (Summoned == 0)
             {
-                curTown.KillCount++;// party.m_killed[c_town.town_num]++;
+                curTown.KillCount++;
             }
 
             if (Start != null) Start.InstanceWasKilled = true;
 
             Party.total_m_killed++;// party.total_m_killed++;
-            //if (Start != null && Start.LifeVariable != null) Start.LifeVariable.Value = 0;//.spec1 = 0; // make sure, if this is a spec. activated monster, it won't come back TODO: Figure this shite out
-            //curTown.CreatureInstanceList.Remove(this);
             Dying = true;
             new Animation_Hold();
             new Animation_Death(this);
@@ -1227,7 +1150,6 @@ namespace SwordsOfExileGame
         public void FinishDying()
         {
             curTown.NPCList.Remove(this);
-            //new Action(eAction.NONE);
         }
 
         void adjustMagic(ref int how_much)
@@ -1282,7 +1204,6 @@ namespace SwordsOfExileGame
         }
         public void Haste(int how_much, bool silent = false)
         {
-            //adjustMagic(ref how_much);
             status[(int)eAffliction.HASTE_SLOW] = Maths.MinMax(-8, 8, status[(int)eAffliction.HASTE_SLOW] + how_much);
             if (!silent) Game.AddMessage(String.Format("  {0} is hastened.", Name));
             new Animation_CharFlash(this, Color.Orange, "075_cold");
@@ -1296,7 +1217,6 @@ namespace SwordsOfExileGame
         }
         public void Bless(int how_much, bool silent = false)
         {
-            //adjustMagic(ref how_much);
             status[(int)eAffliction.BLESS_CURSE] = Maths.MinMax(-8, 8, status[(int)eAffliction.BLESS_CURSE] + how_much);
             if (!silent) Game.AddMessage(String.Format("  {0} is blessed.", Name));
             new Animation_CharFlash(this, Color.Gold, "004_bless");
@@ -1313,7 +1233,6 @@ namespace SwordsOfExileGame
             adjustMagic(ref how_much);
             Morale -= how_much;
             if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "resists fear." : " is scared."));
-            //if (!silent) Sound.Play(54);
             new Animation_CharFlash(this, Color.DarkKhaki, "054_scream");
         }
         public void Disease(int how_much, bool silent = false)
@@ -1329,7 +1248,6 @@ namespace SwordsOfExileGame
             adjustMagic(ref how_much);
             status[(int)eAffliction.DUMB] = Maths.MinMax(-8, 8, status[(int)eAffliction.DUMB] + how_much);
             if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "resists dumbfounding." : " is dumbfounded."));
-            //if (!silent) Sound.Play(53);
             new Animation_CharFlash(this, Color.DarkSlateBlue, "067_huh");
         }
 
@@ -1383,8 +1301,7 @@ namespace SwordsOfExileGame
             new Animation_CharFlash(this, Color.Olive, "090_paralyze");
         }
 
-        public void Charm(int penalty)//int amount, eAffliction which_status, int penalty)
-        // Also used for sleep and paralyze, which_statys is 0 means charm
+        public void Charm(int penalty)
         {
             short[] charm_odds = { 90, 90, 85, 80, 78, 75, 73, 60, 40, 30, 20, 10, 5, 2, 1, 0, 0, 0, 0, 0 };
 
@@ -1402,52 +1319,6 @@ namespace SwordsOfExileGame
             Attitude = eAttitude.FRIENDLY;
             Game.AddMessage(String.Format("  {0} is charmed.", Name));
             new Animation_CharFlash(this, Color.PeachPuff, "007_cool");
-
-            //short[] charm_odds = { 90, 90, 85, 80, 78, 75, 73, 60, 40, 30, 20, 10, 5, 2, 1, 0, 0, 0, 0, 0 };
-
-            //int r1;
-
-            //if (which_status == eAffliction.ASLEEP && (Record.Genus == eGenus.UNDEAD || Record.Genus == eGenus.SLIME || Record.Genus == eGenus.STONE))
-            //{
-            //    Game.AddMessage(String.Format("  {0} resists.", Name));
-            //    return;
-            //}
-            //r1 = Maths.Rand(1, 0, 100);
-            //if ((Record.Immunities & eImmunity.MAGIC_RESISTANCE) != eImmunity.NONE) r1 = r1 * 2;
-            //if ((Record.Immunities & eImmunity.MAGIC_IMMUNITY) != eImmunity.NONE) r1 = 200;
-            //r1 += penalty;
-            //if (which_status == eAffliction.ASLEEP) r1 -= 25;
-            //if (which_status == eAffliction.PARALYZED) r1 -= 15;
-            //if (which_status == eAffliction.ASLEEP && Record.SpecialSkill == eCSS.BREATHES_SLEEP_CLOUDS)
-            //    return;
-
-            //if (r1 > charm_odds[Record.Level / 2])
-            //{
-            //    Game.AddMessage(String.Format("  {0} resists.", Name));
-            //}
-            //else
-            //{
-            //    if (which_status == eAffliction.NONE)
-            //    {
-            //        Attitude = eAttitude.FRIENDLY;
-            //        Game.AddMessage(String.Format("  {0} is charmed.", Name));
-            //        new Animation_CharFlash(this, Color.PeachPuff, "007_cool");
-            //    }
-            //    else
-            //    {
-            //        SetStatus(which_status, amount);
-            //        if (which_status == eAffliction.ASLEEP)
-            //        {
-            //            Game.AddMessage(String.Format("  {0} falls asleep.", Name));
-            //            new Animation_CharFlash(this, Color.MidnightBlue, "096_sleep");
-            //        }
-            //        else if (which_status == eAffliction.PARALYZED)
-            //        {
-            //            Game.AddMessage(String.Format("  {0} is paralyzed.", Name));
-            //            new Animation_CharFlash(this, Color.Olive, "090_paralyze");
-            //        }
-            //    }
-            //}
         }
 
         ////Amalgamation of monster_attack_pc and monster_attack_monster
@@ -1533,8 +1404,6 @@ namespace SwordsOfExileGame
 
                     if (target.Damage(this, r2, 0, dam_type) && store_hp - target.Health > 0 && target.IsAlive())
                     {
-
-
                         if (target.Status(eAffliction.MARTYRS_SHIELD) > 0)
                         {
                             Game.AddMessage("  Shares damage!                 ");
@@ -1676,59 +1545,43 @@ namespace SwordsOfExileGame
         }
 
         ////level = spec_skill
-        public void FireMissile()//int bless, eCSS level, Location source, object target)
-        //    //short target; // 100 +  - monster is target
+        public void FireMissile()
         {
             hasJustAttacked = true; //Set this if monster targets a specific PC!
             KeyHandler.FlushHitKey();
             new Action(eAction.NONE);
 
-            //CreatureInstance m_target = null;
-            //PCType pc_target = null;
             int r1;//, r2, i;
             int[] dam = {0,1,2,3,4, 6,8,7,0,0, 0,0,0,0,0, 0,0,0,0,0,
             8,0,0,0,0, 0,0,0,0,0, 0,0,0,0,6, 0,0,0,0,0};
-            //Location targ_space;
 
             switch (Record.SpecialSkill)
             {
 
             case eCSS.BREATHES_SLEEP_CLOUDS:
-             // sleep cloud
                 Game.AddMessage("Creature breathes.");               
-                //Gfx.run_a_missile(source, Target.Pos, 0, 0, 44, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 0, false, "044_breathe");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Radius2, Target.Pos, Field.SLEEP_CLOUD, this);
                 break;
             case eCSS.BREATHES_STINKING_CLOUDS:
-             // vapors
-
                 Game.AddMessage(String.Format("  Breathes on {0}.", Target.Name));
-                //Gfx.run_a_missile(source, Target.Pos, 12, 0, 44,
-                //    0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 12, false, "044_breathe");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Single, Target.Pos, Field.STINK_CLOUD, this);
                 break;
             case eCSS.SHOOTS_WEB:
-             // webs
                 Game.AddMessage(String.Format("  Throws web at {0}.", Target.Name));
-                //Gfx.run_a_missile(source, Target.Pos, 8, 0, 14,
-                //    0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 8, false, "014_missile");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Single, Target.Pos, Field.WEB, this);
                 break;
             case eCSS.PARALYSIS_RAY:
-             // paral
                 Sound.Play(51);
                 Game.AddMessage(String.Format("  Fires ray at {0}.", Target.Name));
-                Target.Paralyze(100, 0);//.Charm(100, eAffliction.PARALYZED, 0);
+                Target.Paralyze(100, 0);
                 break;
             case eCSS.PETRIFICATION_RAY:
-             // petrify
-                //Gfx.run_a_missile(source, Target.Pos, 14, 0, 43, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 14, false, "043_stoning");
                 new Animation_Hold();
                 Game.AddMessage(String.Format("  Gazes at {0}.", Target.Name));
@@ -1739,30 +1592,19 @@ namespace SwordsOfExileGame
                     Target.Kill(this, eLifeStatus.STONE);
                 break;
             case eCSS.SP_DRAIN_RAY:
-             // Drain sp
-                //Gfx.run_a_missile(source, Target.Pos, 8, 0, 43, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 8, false, "043_stoning");
                 new Animation_Hold();
                 Game.AddMessage(String.Format("  Drains {0}.", Target.Name));
                 Target.SP /= 2;
                 break;
             case eCSS.HEAT_RAY:
-             // heat ray
-                //Gfx.run_a_missile(source, Target.Pos, 13, 0, 51, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 13, false, "051_magic1");
                 new Animation_Hold();
                 r1 = Maths.Rand(7, 1, 6);
-                //store_missile_type.start_missile_anim();
                 Game.AddMessage(String.Format("  Hits {0} with heat ray.", Target.Name));
                 if (Target.Damage(this, r1, 0, eDamageType.FIRE)) new Animation_Hold();
-          
-                //Gfx.do_explosion_anim(5, 0);
-                //store_missile_type.end_missile_anim();
-                //BoE.CurTown.handle_marked_damage();
                 break;
             case eCSS.ACID_SPIT:
-             // acid spit
-                //Gfx.run_a_missile(source, Target.Pos, 0, 1, 64, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 0, true, "064_spit");
                 new Animation_Hold();
                 Game.AddMessage(String.Format("  Spits acid on {0}.", Target.Name));
@@ -1771,31 +1613,26 @@ namespace SwordsOfExileGame
             case eCSS.THROWS_DARTS:
             case eCSS.SHOOTS_ARROWS:
             case eCSS.GOOD_ARCHER:
-                //Gfx.run_a_missile(source, Target.Pos, 3, 1, 12, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 3, true, "012_longbow");
                 new Animation_Hold();
                 Game.AddMessage(String.Format("  Shoots at {0}.", Target.Name));
                 break;
             case eCSS.THROWS_SPEARS:
-                //Gfx.run_a_missile(source, Target.Pos, 5, 1, 14, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 5, true, "014_missile");
                 new Animation_Hold();
                 Game.AddMessage(String.Format("  Throws spear at {0}.", Target.Name));
                 break;
             case eCSS.THROWS_RAZORDISKS:
-                //Gfx.run_a_missile(source, Target.Pos, 7, 1, 14, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 7, true, "014_missile");
                 new Animation_Hold();
                 Game.AddMessage(String.Format("  Throws razordisk at {0}.", Target.Name));
                 break;
             case eCSS.SHOOTS_SPINES:
-                //Gfx.run_a_missile(source, Target.Pos, 5, 1, 14, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 5, true, "014_missile");
                 new Animation_Hold();
                 Game.AddMessage(String.Format("  Fires spines at {0}.", Target.Name));
                 break;
             default://rock throwing
-                //Gfx.run_a_missile(source, Target.Pos, 12, 1, 14, 0, 0, 100);
                 new Animation_Missile(Pos, Target.Pos, 12, true, "014_missile");
                 new Animation_Hold();
                 Game.AddMessage(String.Format("  Throws rock at {0}.", Target.Name));
@@ -1901,15 +1738,6 @@ namespace SwordsOfExileGame
 
             target_pos = new Location(-1,-1);
             target_char = null;
-
-            //int[] monst_mage_cost = { 1, 1, 1, 1, 2, 2, 2, 2, 2, 4, 2, 4, 4, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7 };
-            //int[] monst_mage_area_effect = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0 };
-            //string[] m_mage_sp = {"Spark","Minor Haste","Strength","Flame Cloud","Flame",
-            //                            "Minor Poison","Slow","Dumbfound","Stinking Cloud","Summon Beast",
-            //                            "Conflagration","Fireball","Weak Summoning","Web","Poison",
-            //                            "Ice Bolt","Slow Group","Major Haste","Firestorm","Summoning",
-            //                            "Shockstorm","Major Poison","Kill","Daemon","Major Blessing",
-            //                            "Major Summoning","Shockwave"};
 
             NPCMageSpell[,] caster_array = {//mage level 1 (spark, minor haste, strength, flame cloud)
                                         {NPCMageSpell.Spark ,NPCMageSpell.Spark ,NPCMageSpell.Spark ,NPCMageSpell.MinorHaste,
@@ -2135,9 +1963,9 @@ namespace SwordsOfExileGame
             Location l = Pos;
             if (Dir.IsFacingRight && Record.Width > 1) l.X++;
 
-            Game.AddMessage(String.Format("{0} casts: {1}", Record.Name, spell.Name));//m_mage_sp[(int)spell - 1]));
+            Game.AddMessage(String.Format("{0} casts: {1}", Record.Name, spell.Name));
 
-            SP -= spell.Cost;//monst_mage_cost[(int)spell - 1];
+            SP -= spell.Cost;
 
             if (spell == NPCMageSpell.Spark)
             {
@@ -2149,71 +1977,66 @@ namespace SwordsOfExileGame
                 Haste(2);
             }
             else if (spell == NPCMageSpell.Strength)
-            { // strength
+            { 
                 Bless(3);
             }
             else if (spell == NPCMageSpell.FlameCloud)
-            { // flame cloud
+            { 
                 new Animation_Missile(l, targc.Pos, 2, true, "011_3booms");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Single, targc.Pos, Field.FIRE_WALL, this);
             }
             else if (spell == NPCMageSpell.Flame)
-            { // flame
+            { 
                 new Animation_Missile(l, targc.Pos, 2, true, "011_3booms");
                 new Animation_Hold();
                 if (targc.Damage(this, Maths.Rand(Record.Level, 1, 4), 0, eDamageType.FIRE)) new Animation_Hold();
             }
             else if (spell == NPCMageSpell.MinorPoison)
-            { // minor poison
+            {
                 new Animation_Missile(l, targc.Pos, 11, false, "025_magespell");
                 new Animation_Hold();
                 targc.Poison(2 + Maths.Rand(1, 0, 1));
             }
             else if (spell == NPCMageSpell.Slow)
-            { // slow
+            { 
                 new Animation_Missile(l, targc.Pos, 15, false, "025_magespell");
                 new Animation_Hold();
                 targc.Slow(2 + Record.Level / 2);
             }
             else if (spell == NPCMageSpell.Dumbfound)
-            { // dumbfound
+            { 
                 new Animation_Missile(l, targc.Pos, 14, false, "025_magespell");
                 new Animation_Hold();
                 targc.Dumbfound(2);
             }
             else if (spell == NPCMageSpell.StinkingCloud)
-            { // scloud
+            { 
                 new Animation_Missile(l, target, 0, false, "025_magespell");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Square, target, Field.STINK_CLOUD, this);
             }
             else if (spell == NPCMageSpell.SummonBeast)
-            { // summon beast
+            { 
                 NPCRecord sum = NPCRecord.GetSummonMonster(1);
                 if (sum != null)
-                    //Delay(12,&dummy); // gives sound time to end
-                    //Sound.Play(25);
-                    //Sound.Play(-61);
                     curTown.SummonMonster(this, sum, Pos, (!IsABaddie ? 0 : 100) + Maths.Rand(3, 1, 4));
             }
             else if (spell == NPCMageSpell.Conflagration)
-            { // conflagration
+            { 
                 new Animation_Missile(l, target, 13, true, "025_magespell");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Radius2, target, Field.FIRE_WALL, this);
             }
             else if (spell == NPCMageSpell.Fireball)
-            { // fireball
+            { 
                 new Animation_Missile(l, target, 2, true, "011_3booms");
                 new Animation_Hold();
-                //store_missile_type.start_missile_anim();
                 curTown.HitArea(target, Maths.Min(1 + (Record.Level * 3) / 4, 29),1,6, eDamageType.FIRE, Pattern.Square, true, this);
                 new Animation_Hold();
             }
             else if (spell == NPCMageSpell.WeakSummoning || spell == NPCMageSpell.Summoning || spell == NPCMageSpell.MajorSummoning)
-            {// summon
-                //Sound.Play(25);
+            {
                 NPCRecord sum = null;
                 if (spell == NPCMageSpell.WeakSummoning)
                 {
@@ -2244,24 +2067,24 @@ namespace SwordsOfExileGame
                 }
             }
             else if (spell == NPCMageSpell.Web)
-            { // web
+            {
                 Sound.Play(25);
                 curTown.PlaceFieldPattern(Pattern.Radius2, target, Field.WEB, this);
             }
             else if (spell == NPCMageSpell.Poison)
-            { // poison
+            {
                 new Animation_Missile(l, targc.Pos, 11, false, "025_magespell");
                 new Animation_Hold();
                 targc.Poison(4 + Maths.Rand(1, 0, 3));
             }
             else if (spell == NPCMageSpell.IceBolt)
-            { // ice bolt
+            {
                 new Animation_Missile(l, targc.Pos, 6, true, "011_3booms");
                 new Animation_Hold();
                 if (targc.Damage(this, Maths.Rand(5 + (Record.Level / 5), 1, 8), 0, eDamageType.COLD)) new Animation_Hold();
             }
             else if (spell == NPCMageSpell.SlowGroup)
-            { // slow gp
+            {
                 foreach (ICharacter ch in curTown.EachCharacterInRange(Pos, 7))
                 {
                     if (!AlliedWith(ch))
@@ -2269,7 +2092,7 @@ namespace SwordsOfExileGame
                 }
             }
             else if (spell == NPCMageSpell.MajorHaste)
-            { // major haste
+            {
                 foreach (ICharacter ch in curTown.EachCharacterInRange(Pos, 7))
                 {
                     if (AlliedWith(ch))
@@ -2277,39 +2100,35 @@ namespace SwordsOfExileGame
                 }
             }
             else if (spell == NPCMageSpell.Firestorm)
-            { // firestorm
+            {
                 new Animation_Missile(l, target, 1, true, "011_3booms");
                 new Animation_Hold();
                 curTown.HitArea(target, Maths.Min(1 + (Record.Level * 3) / 4 + 3, 29), 1,6, eDamageType.FIRE, Pattern.Radius2, true, this); new Animation_Hold();
             }
             else if (spell == NPCMageSpell.Shockstorm)
-            { // shockstorm
+            {
                 new Animation_Missile(l, target, 6, true, "011_3booms");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Radius2, target, Field.FORCE_WALL, this);
             }
             else if (spell == NPCMageSpell.MajorPoison)
-            { // m. poison
+            {
                 new Animation_Missile(l, targc.Pos, 11, true, "011_3booms");
                 new Animation_Hold();
                 targc.Poison(6 + Maths.Rand(1, 1, 2));
             }
             else if (spell == NPCMageSpell.Kill)
-            { // kill!!!
+            {
                 new Animation_Missile(l, targc.Pos, 9, true, "011_3booms");
                 new Animation_Hold();
                 if (targc.Damage(this, 35 + Maths.Rand(3, 1, 10), 0, eDamageType.MAGIC)) new Animation_Hold();
             }
             else if (spell == NPCMageSpell.Daemon)
-            { // daemon
-                //Sound.Play(25);
-                //Sound.Play(-61);
-                //BoE.pause(12); // gives sound time to end
+            {
                 curTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Demon_ID], Pos, (!IsABaddie ? 0 : 100) + Maths.Rand(3, 1, 4));
             }
             else if (spell == NPCMageSpell.MajorBlessing)
-            { // major bless
-                //Sound.Play(25);
+            { 
                 foreach (ICharacter ch in curTown.EachCharacterInRange(Pos, 7))
                 {
                     if (!AlliedWith(ch))
@@ -2324,7 +2143,7 @@ namespace SwordsOfExileGame
                 }
             }
             else if (spell == NPCMageSpell.Shockwave)
-            { // shockwave
+            { 
                 Game.AddMessage("  The ground shakes.");
                 foreach (ICharacter ch in curTown.EachCharacterInRange(Pos, 10))
                     if (ch != this && curTown.Visible(ch.Pos))
@@ -2332,8 +2151,6 @@ namespace SwordsOfExileGame
                 new Animation_Hold();
             }
         }
-
-
 
         void castPriestSpell(NPCPriestSpell spell, Location target, ICharacter targc)
         {
@@ -2471,7 +2288,6 @@ namespace SwordsOfExileGame
         }
 
         bool breathAttack(Location target)
-        //dam_type; // 0 - fire,  1 - cold,  2 - magic, 3 - darkness (= unblockable type)
         {
             KeyHandler.FlushHitKey();
             new Action(eAction.NONE);

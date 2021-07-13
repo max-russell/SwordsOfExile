@@ -1,15 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -25,7 +16,7 @@ namespace SwordsOfExileGame
         public TrainerWindow(ConversationWindow from)
             : base(220, 30, 268, 500, true, true, false, true, true)
         {
-            Action.LockActions = eAction.MAGIC_LOCK_ACTIONS;// true; //Don't pause the world, but prevent the player doing anything not inventory related
+            Action.LockActions = eAction.MAGIC_LOCK_ACTIONS; //Don't pause the world, but prevent the player doing anything not inventory related
             instance = this;
             cameFrom = from;
             var c = new Control[19];
@@ -40,11 +31,7 @@ namespace SwordsOfExileGame
                 controls.Add(c[n]);
             }
 
-            LineUpControlsDown(10, l.Y + l.Height + 4, 1, c);/*controls[0], controls[1], controls[2], controls[3],
-                                           controls[4], controls[5], controls[6], controls[7],
-                                           controls[8], controls[9], controls[10], controls[11],
-                                           controls[12], controls[13], controls[14], controls[15],
-                                           controls[16], controls[17], controls[18]*/
+            LineUpControlsDown(10, l.Y + l.Height + 4, 1, c);
 
             var cn = new StatControl(this, 10, c[18].Y + 26, -1, eSkill.HEALTH, true, false);
             controls.Add(cn);
@@ -77,7 +64,6 @@ namespace SwordsOfExileGame
 
             InnerHeight = b.Y + b.Height + 4;
             Position(-2, -2);
-
         }
 
         public override void Draw(SpriteBatch sb, int partial = 0)
@@ -89,7 +75,7 @@ namespace SwordsOfExileGame
             sb.Draw(Gfx.StatAreaGfx, wpos, new XnaRect(0, 116, InnerWidth, 17), Color.White);
             sb.DrawString(Gfx.SmallBoldFont, "Training: " + Party.CurrentPC.Name + " (Level " + Party.CurrentPC.Level + ")", wpos + new Vector2(3, 1), Color.White);
 
-            int y = Y + Gfx.FRAME_HEIGHT;// +skillPtsLbl.Y;
+            int y = Y + Gfx.FRAME_HEIGHT;
             int x = X + Gfx.FRAME_WIDTH;
 
             sb.DrawString(Gfx.SmallBoldFont, Convert.ToString(Party.CurrentPC.SkillPoints), new Vector2(x + 80, y + skillPtsLbl.Y), Color.White);
@@ -105,17 +91,14 @@ namespace SwordsOfExileGame
             KillMe = true;
         }
 
-
-
         public override void Close()
         {
             base.Close();
             if (cameFrom != null)
             {
                 cameFrom.Visible = true;
-                //Gui.KeyFocusWindow = cameFrom;
             }
-            Action.LockActions = eAction.NONE;// false;
+            Action.LockActions = eAction.NONE;
         }
     }
 

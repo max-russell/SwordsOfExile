@@ -1,15 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -37,7 +27,6 @@ namespace SwordsOfExileGame
                     src_hside_x = 87, src_vside_y = 62,
                     src_side_width = 64, src_side_height = 64;
 
-        //pad_from_edge = 8;
         int padding = 8;
         public int Padding { get { return padding; } set { padding = value; } }
 
@@ -173,7 +162,6 @@ namespace SwordsOfExileGame
 
                 if (!DrawAsPressed)
                     sb.DrawString(Font, caption, new Vector2(dx + textPos.X, dy + textPos.Y), shade);
-                    //sb.DrawString(Gfx.NewTinyFont, caption, new Vector2(dx + textPos.X, dy + textPos.Y), shade);
                 else
                     sb.DrawString(Font, caption, new Vector2(dx + textPos.X + 2, dy + textPos.Y + 2), shade);
             }
@@ -191,22 +179,19 @@ namespace SwordsOfExileGame
             
             base.Handle(xOffset, yOffset);
 
-            if (!Game.PlayerTargeting)// && Gui.KeyFocusWindow == parent && */KeyShortcut != Keys.None)
+            if (!Game.PlayerTargeting)
             {
-                if (ShortcutKeyHit())  //Game.KeyDown(KeyShortcut))
+                if (ShortcutKeyHit()) 
                     keyPressed = true;
                 else if (!ShortcutKeyDown() && keyPressed)
                 {
                     keyPressed = false;
-                    //if (!mousePressed)
-                    //{
                     Gui.DragItem = null;
                     parent.controlEvent = this;
                     Sound.ButtonSound();
                     pressButtonFunc.Invoke(this);
                     Pressed = keyPressed | mousePressed;
                     return true;
-                    //}
                 }
             }
             else
@@ -228,14 +213,11 @@ namespace SwordsOfExileGame
                     //activate the button by setting the Gui.Event variable.
                     mousePressed = false;
 
-                    //if (!keyPressed)
-                    //{
                     parent.controlEvent = this;
                     if (pressButtonFunc != null)
                     {
                         pressButtonFunc.Invoke(this);
                     }
-                    //}
                     Pressed = keyPressed | mousePressed;
                     return true;
                 }

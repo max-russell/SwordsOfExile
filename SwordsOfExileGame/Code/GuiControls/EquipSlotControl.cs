@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -49,7 +41,7 @@ namespace SwordsOfExileGame
             if (Gui.DragItem != null && Gui.DragItem.CompatibleSlot(SlotType))
                 Gfx.DrawRect(dx, dy, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT, Color.Green, false, 2);
 
-            if (item != null)// && item != Gui.DragItem)
+            if (item != null)
             {
                 item.DrawOffMap(sb, new Vector2(dx, dy), Color.White);
             }
@@ -108,12 +100,6 @@ namespace SwordsOfExileGame
                             {
                                 if (Gui.DragItem != null)
                                 {
-                                    //Action.Requested = eAction.PlaceInEquipSlot;
-                                    //Action.Item = Gui.DragItem;
-                                    //Action.InventoryTo = Owner;
-                                    //Action.PC = Owner;
-                                    //Action.InventoryFrom = Gui.DragItemFrom;
-                                    //Action.EquipSlot = SlotType;
                                     new Action(eAction.PlaceInEquipSlot) { Item = Gui.DragItem, InventoryTo = Owner, PC = Owner, InventoryFrom = Gui.DragItemFrom, EquipSlot = SlotType };
                                 }
                                 else

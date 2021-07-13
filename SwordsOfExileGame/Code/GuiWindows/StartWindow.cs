@@ -1,15 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -19,7 +12,6 @@ namespace SwordsOfExileGame
     {
         static StartMenuWindow instance;
         Button b_resume, b_startnew, b_quit, b_load, b_options, b_about;
-
 
         public static void Begin()
         {
@@ -108,7 +100,7 @@ namespace SwordsOfExileGame
                 {
                     Scenario.Filename = Path.GetFileNameWithoutExtension(i.ScenFile);
                     Game.ScenarioDirectory = Path.Combine(Game.RootDirectory, "Scenarios", Scenario.Filename);
-                    Game.LastSaveFile = filename;//.CurrentParty.SaveFileName = savefile;
+                    Game.LastSaveFile = filename;
                     KillMe = true;
                     Game.BeginLoadingThread(false);
                 }

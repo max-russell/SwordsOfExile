@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -24,7 +13,7 @@ namespace SwordsOfExileGame
         public EncounterRecord Record;
         //public OutsideSector which_sector;
         public Location Pos
-        { //Was m_loc
+        { 
             get { return pos; }
             set { pos = value; }
         }
@@ -48,7 +37,6 @@ namespace SwordsOfExileGame
             if (!doneMeetFunc)
             {
                 Script.CancelOutdoorEncounter = false;
-                //new Script(Record.FuncOnMeet, eCallOrigin.OUTDOOR_ENCOUNTER);
                 Script.New_NPCGroup(Record.FuncOnMeet, eCallOrigin.OUTDOOR_ENCOUNTER, Record);
                 doneMeetFunc = true;
                 return true;
@@ -143,6 +131,4 @@ namespace SwordsOfExileGame
 
         }
     }
-
-
 }

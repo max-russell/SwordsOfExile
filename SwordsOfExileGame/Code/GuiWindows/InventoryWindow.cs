@@ -1,15 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -23,23 +14,7 @@ namespace SwordsOfExileGame
         InventoryBox inventoryBox;
         List<EquipmentSlot> equipBoxes = new List<EquipmentSlot>();
         XnaRect gfxSrcRectTop = new XnaRect(0, 99, 269, 34);
-        //XnaRect gfxSrcRect = new XnaRect(0, 116, 271, 144);
 
-        //public static void SwitchPC(PCType pc)
-        //{
-        //    if (pc.IsAlive())
-        //    {
-        //        instance.Visible = true;
-        //        instance.inventoryBox.ChangeOwner(pc);
-        //        foreach (EquipmentSlot eq in instance.equipBoxes) eq.ChangeOwner(pc);
-        //        //Game.AddMessage(pc.Name + " is now active.");
-        //        Game.CurrentParty.CurrentPC = pc;
-
-        //        //if (Game.Mode != eMode.COMBAT) Game.CurrentParty.ActivePC = pc;
-        //        //Game.CurrentParty.CurrentPC = pc;
-
-        //    }
-        //}
         public static void Reveal(PCType pc, bool toggle=false)
         {
             if (toggle && (pc == Game.CurrentParty.CurrentPC && instance.Visible == true))
@@ -63,7 +38,7 @@ namespace SwordsOfExileGame
         }
 
         public InventoryWindow()
-            : base(140, 30, 291, Gfx.WinH - 200/*426*/, true, true, false, true, true)
+            : base(140, 30, 291, Gfx.WinH - 200, true, true, false, true, true)
         {
             instance = this;
             inventoryBox = AddInventoryBox(Party.CurrentPC, new XnaRect(0, 187, 253, Height - 246));
@@ -106,8 +81,6 @@ namespace SwordsOfExileGame
             specialItems = new PictureButton(this, pressButtons, new XnaRect(176, 242, 35, 15), Gfx.StatAreaGfx, new XnaRect(176, 190 + inventoryBox.Height, 35, 15), -1);
             controls.Add(specialItems);
             specialItems.SetStandardToolTip("Display a window listing the Special Items your party has acquired in this scenario.",200);
-
-            //CloseButtonHides = true; //Don't get rid of the window if the close button is pressed.
             Visible = false;
 
             AllowResizing(300, Height, Gfx.WinH);
@@ -123,29 +96,6 @@ namespace SwordsOfExileGame
                 b.Y = inventoryBox.Height + 187;
             specialItems.Y = inventoryBox.Height + 190;
         }
-
-        //public override bool Handle()
-        //{
-        //    bool interacted = base.Handle();
-
-        //    int pcb = -1;
-        //    if (controlEvent == pcButtons[0]) pcb = 0;
-        //    else if (controlEvent == pcButtons[1]) pcb = 1;
-        //    else if (controlEvent == pcButtons[2]) pcb = 2;
-        //    else if (controlEvent == pcButtons[3]) pcb = 3;
-        //    else if (controlEvent == pcButtons[4]) pcb = 4;
-        //    else if (controlEvent == pcButtons[5]) pcb = 5;
-
-        //    if (pcb != -1)
-        //    {
-        //        PCType pc = Party.PCList[pcb];
-        //        inventoryBox.ChangeOwner(pc);
-        //        Game.AddMessage(pc.Name + " is now active.");
-        //        Party.CurrentPC = pc;
-        //    }
-
-        //    return interacted;
-        //}
 
         void pressButtons(Control button_pressed)
         {
@@ -166,7 +116,6 @@ namespace SwordsOfExileGame
             if (pcb != -1)
             {
                 PCType pc = Party.PCList[pcb];
-                //SwitchPC(pc);
                 Party.CurrentPC = pc;
             }
         }
@@ -181,15 +130,12 @@ namespace SwordsOfExileGame
             if (!Visible || Party.CurrentPC == null) return;
 
             base.Draw(sb, 1);
-            //Vector2 wpos = GetWindowPos();
-            //sb.Draw(Gfx.StatAreaGfx, wpos, gfxSrcRect, Color.White);
             Vector2 winpos = GetClientAreaPos();
             Vector2 wpos = winpos;
             sb.Draw(Gfx.StatAreaGfx, wpos, new XnaRect(0, 116, 269, 17), Color.White);
             sb.DrawString(Gfx.SmallBoldFont, Party.CurrentPC.Name + " inventory:", wpos + new Vector2(3, 1), Color.White);
 
             wpos.Y += 186 + inventoryBox.Height;
-            //wpos.Y += inventoryBox.Height;
 
             sb.Draw(Gfx.StatAreaGfx, wpos, new XnaRect(0, 239, 269, 21), Color.White);
             wpos.Y += 21;

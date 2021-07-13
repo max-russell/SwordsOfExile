@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -22,8 +14,6 @@ namespace SwordsOfExileGame
         List<TalkingNode> nodeList;
         Button[] buttons = new Button[8];
         bool forceEnd; //When true, all options that continue the conversation vanish.
-
-        //Texture2D customFace;
 
         List<Tuple<string, bool>> goBackList = new List<Tuple<string, bool>>();
 
@@ -217,178 +207,6 @@ namespace SwordsOfExileGame
                     n = Maths.MinMax(0, 6, n);
                     new EnchantingWindow(this, node.Text, (eEnchantShop)n);
                     break;
-
-                //case eTalkNodeTypeOLD.REGULAR:
-                //    string[] texts = new string[] { node.Text1, node.Text2 };
-                //    setUpText(joinTexts(new string[] { node.Text1, node.Text2 })); break;
-                //case eTalkNodeTypeOLD.DEP_ON_SDF:
-                //    if ((int)Script.StuffDone[node.Var] <= node.DataC)
-                //        setUpText(node.Text1);
-                //    else
-                //        setUpText(node.Text2);
-                //    break;
-                //case eTalkNodeTypeOLD.SET_SDF:
-                //    setUpText(joinTexts(new string[] { node.Text1, node.Text2 }));
-                //    Script.StuffDone[node.Var] = 1;
-                //    break;
-                //case eTalkNodeTypeOLD.INN:
-                //    if (Party.Gold < node.DataA)
-                //        setUpText(node.Text2);
-                //    else
-                //    {
-                //        //TODO: Buying a room at the inn.
-                //        Party.Gold -= node.DataA;
-                //        if (Town.InBounds(new Location(node.DataC, node.DataD))) Party.Pos = new Location(node.DataC, node.DataD);
-                //        Town.UpdateVisible();
-                //        Party.HealAll(30 * node.DataB,true);
-                //        Party.RestoreSP(25 * node.DataB);
-                //        forceEnd = true;
-                //        setUpText(node.Text1);
-                //        Gfx.CentreView(Party.Pos, false);
-                //    }
-                //    break;
-                //case eTalkNodeTypeOLD.DEP_ON_TIME:
-                //    if (Party.Day > node.DataA)
-                //        setUpText(node.Text2);
-                //    else
-                //        setUpText(node.Text1);
-                //    break;
-                //case eTalkNodeTypeOLD.DEP_ON_TIME_AND_EVENT:
-                //    break; //TODO: Dialogue node involving events
-                //case eTalkNodeTypeOLD.DEP_ON_TOWN:
-                //    if (node.DataA >= 0 && node.DataA < TownMap.List.Count && Town == TownMap.List[node.DataA])
-                //        setUpText(node.Text1);
-                //    else
-                //        setUpText(node.Text2);
-                //    break;
-
-                //case eTalkNodeTypeOLD.SHOP:
-                //    Visible = false;
-                //    switch (node.Shop.ShopType)
-                //    {
-                //        case eShop.ITEM: new ItemShopWindow(node.Shop, this); break;
-                //        case eShop.MAGIC: new MagicShopWindow(node.Shop, this); break;
-                //        case eShop.ALCHEMY: new AlchemyShopWindow(node.Shop, this); break;
-                //    }
-                //    break;
-
-                //case eTalkNodeTypeOLD.TRAINING:
-
-                //    Visible = false;
-                //    new TrainerWindow(this);
-                //    break;
-
-                //case eTalkNodeTypeOLD.BUY_HEALING:
-                //    Visible = false;
-                //    new HealerShopWindow(this, node.DataA);
-                //    break;
-                //case eTalkNodeTypeOLD.IDENTIFY:
-                //    Visible = false;
-                //    new IdentifyWindow(this, node.Text1, node.DataA);
-                //    break;
-
-                //case eTalkNodeTypeOLD.ENCHANT:
-                //    Visible = false;
-                //    new EnchantingWindow(this, node.Text1, (eEnchantShop)node.DataA);
-                //    break;
-
-                //case eTalkNodeTypeOLD.BUY_INFO:
-                //    if (Party.Gold < node.DataA)
-                //        setUpText(node.Text2);
-                //    else
-                //    {
-                //        setUpText(node.Text1);
-                //        Party.Gold -= node.DataA;
-                //    }
-                //    break;
-                //case eTalkNodeTypeOLD.BUY_SDF:
-                //    if (Party.Gold < node.DataA)
-                //        setUpText(node.Text2);
-                //    else
-                //    {
-                //        //Party.SetStuffDone(node.DataB, node.DataC, (byte)node.DataD);
-                //        Script.StuffDone[node.Var] = node.DataD;
-                //        setUpText(node.Text1);
-                //        Party.Gold -= node.DataA;
-                //    }
-                //    break;
-                //case eTalkNodeTypeOLD.BUY_SHIP:
-                //case eTalkNodeTypeOLD.BUY_HORSE:
-                //    if (Party.Gold < node.DataA)
-                //        setUpText(node.Text2);
-                //    else
-                //    {
-                //        //Find the next boat to sell.
-                //        Vehicle foundv = null;
-                //        for (int a = node.DataB; a < node.DataA + node.DataC; a++)
-                //        {
-                //            if (a >= 0 && a < Vehicle.List.Count && !Vehicle.List[a].PartyOwns)
-                //            {
-                //                foundv = Vehicle.List[a];
-                //                break;
-                //            }
-
-                //        }
-                //        if (foundv == null)
-                //            setUpText("There are none available to buy.");
-                //        else
-                //        {
-                //            foundv.PartyOwns = true;
-                //            setUpText(node.Text1);
-                //            Party.Gold -= node.DataA;
-                //        }
-
-                //    }
-
-                //    break;
-                //case eTalkNodeTypeOLD.BUY_SPEC_ITEM:
-                //    //TODO: Buy special item
-                //    if (Party.Gold < node.DataB)
-                //        setUpText(node.Text2);
-                //    else
-                //    {
-                //        setUpText(node.Text1);
-
-                //    }
-                //    break;
-                //case eTalkNodeTypeOLD.BUY_TOWN_LOC:
-                //    if (Party.Gold < node.DataA)
-                //        setUpText(node.Text2);
-                //    else
-                //    {
-                //        if (node.DataB >= 0 && node.DataB < TownMap.List.Count) TownMap.List[node.DataB].Hidden = false;
-                //        setUpText(node.Text1);
-                //    }
-                //    break;
-                //case eTalkNodeTypeOLD.END_FORCE:
-                //    forceEnd = true;
-                //    setUpText(joinTexts(new string[] { node.Text1, node.Text2 }));
-                //    break;
-                //case eTalkNodeTypeOLD.END_FIGHT:
-                //    forceEnd = true;
-                //    setUpText(joinTexts(new string[] { node.Text1, node.Text2 }));
-                //    NPC.Attitude = eAttitude.HOSTILE_A;
-                //    NPC.Mobile = true;
-                //    break;
-                //case eTalkNodeTypeOLD.END_ALARM:
-                //    forceEnd = true;
-                //    setUpText(joinTexts(new string[] { node.Text1, node.Text2 }));
-                //    Town.MakeTownHostile();
-                //    break;
-                //case eTalkNodeTypeOLD.END_DIE:
-                //    Town.NPCList.Remove(NPC);
-                //    if (NPC.Start.LifeVariable != "")
-                //        Script.StuffDone[NPC.Start.LifeVariable] = 1;
-                //    forceEnd = true;
-                //    setUpText(joinTexts(new string[] { node.Text1, node.Text2 }));
-                //    break;
-                //case eTalkNodeTypeOLD.CALL_TOWN_SPEC:
-                //case eTalkNodeTypeOLD.CALL_SCEN_SPEC:
-                //    //Set up the default text for if the script that's about to be run doesn't change the response.
-                //    texts = new string[] { node.Text1, node.Text2 };
-                //    Script.TalkingText = joinTexts(new string[] { node.Text1, node.Text2 });
-                //    Script.New_General(node.Func, eCallOrigin.TALKING);
-                //    break;
             }
             return true;
         }

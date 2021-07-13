@@ -1,34 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
 {
-    //public class Action
-    //{
-    //    public static eAction Requested;
-    //    public static PCType PC, PC2; //For when Action.Requested is an action concerning a PC
-    //    public static NPCType NPC;
-    //    public static Direction Dir;
-    //    public static Item Item; //For when Action.Requested is an action concerning an item.
-    //    public static Location Loc;
-    //    public static IInventory InventoryTo, InventoryFrom;
-    //    public static eEquipSlot EquipSlot;
-    //    public static MagicSpell Spell;
-    //    public static eItemFilter FilterTo;
-    //    public static List<Location> TargetList;
-    //}
-
     public static class Colour
     {
         public static Color FromRGB(byte r, byte g, byte b)
@@ -45,9 +21,6 @@ namespace SwordsOfExileGame
 
         public static Location Zero { get { return new Location(0, 0); } }
 
-        //public static Location Read(BinaryReader In) {
-        //    return new Location(In.ReadInt16(), In.ReadInt16());
-        //}
         public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool Equals(object obj)
@@ -152,33 +125,11 @@ namespace SwordsOfExileGame
             return eDir.E;
         }
 
-        //public RECT ToScreenRect(int width, int height) {
-        //    Location where_put = new Location();
-        //    where_put.x = 4 + x - GameScreen.center.x;
-        //    where_put.y = 4 + y - GameScreen.center.y;
-
-        //    return new RECT(18 + where_put.x * 28, 18 + where_put.y * 36,
-        //        46 + where_put.x * 28 + 28 * (width - 1), 54 + where_put.y * 36 + 36 * (height - 1));
-        //}
-
-        //public Boolean OnScreen(Location center)
-        //{
-        //    return (Math.Abs(center.x - x) <= 4) && (Math.Abs(center.y - y) <= 4);
-        //}
-
         public bool adjacent(Location l)
         {
             return Math.Abs(X - l.X) <= 1 && Math.Abs(Y - l.Y) <= 1;
         }
 
-        /* functions */
-        //public location toGlobal();		/* convert local coordinates to global*/
-        //public Location toLocal() {
-        //    Location l = new Location(x, y);
-        //    if (BoE.Party.i_w_c.x == 1) l.x = l.x - 48;
-        //    if (BoE.Party.i_w_c.y == 1) l.y = l.y - 48;
-        //    return l;
-        //}/* convert global coordinates to local*/
         public Location randomShift()
         {
             Location store;
@@ -282,7 +233,6 @@ namespace SwordsOfExileGame
         }
         public Direction(Location l1, Location l2)
         {
-
             Location mod = l2 - l1;
             mod.X = Math.Sign(mod.X);
             mod.Y = Math.Sign(mod.Y);

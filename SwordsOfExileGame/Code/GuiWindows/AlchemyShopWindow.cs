@@ -1,15 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -18,9 +8,6 @@ namespace SwordsOfExileGame
         ConversationWindow calledFromTalk = null;
 
         Shop _Shop;
-        //string ShopName = null;
-        //List<Recipe> SpellsForSale = null;
-        //int costAdjust;
 
         ListBox spellListBox;
         Button cancelButton, buyButton;
@@ -30,7 +17,7 @@ namespace SwordsOfExileGame
         Label selSpellTitle, goldLabel;
         RichTextBox selSpellDesc;
 
-        public AlchemyShopWindow(Shop shop, ConversationWindow shopcaller)//, List<Recipe> spelllist, int costadjust, string shopname)
+        public AlchemyShopWindow(Shop shop, ConversationWindow shopcaller)
             : base(0, 0, 500, 480, true, false, true, true, true)
         {
             _Shop = shop;
@@ -122,11 +109,6 @@ namespace SwordsOfExileGame
                 ));
         }
 
-        //int spellPrice(Recipe spell)
-        //{
-        //    return (spell.Price * Constants.SHOP_PRICE_MULTIPLIER[costAdjust]) / 10;//for now.
-        //}
-
         void pressCancel(Control b)
         {
             KillMe = true;
@@ -180,7 +162,6 @@ namespace SwordsOfExileGame
             if (calledFromTalk != null)
             {
                 calledFromTalk.Visible = true;
-                //Gui.KeyFocusWindow = calledFromTalk;
             }
         }
 

@@ -1,15 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -44,7 +34,6 @@ namespace SwordsOfExileGame
             LineUpControlsRight(InnerWidth - 7, InnerHeight - 47, 10, deleteButton, okButton);
 
             listNotes();
-
         }
 
         public override void Draw(SpriteBatch sb, int partial = 0)

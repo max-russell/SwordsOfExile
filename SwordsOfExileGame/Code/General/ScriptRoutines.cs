@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
-
 using IronPython.Hosting;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
@@ -67,7 +65,6 @@ namespace SwordsOfExileGame
     class Script
     {
         static List<Script> ScriptQueue;
-        //public static ScriptInterface UI;
         public static GlobalVariables StuffDone;
 
         static public bool CancelOutdoorEncounter;
@@ -233,7 +230,6 @@ namespace SwordsOfExileGame
         void scriptThreadRoutine()
         {
             ResetInterfaceValues();
-            //var f = scrScope.GetVariable<Func<ScriptParameters, object>>(this.funcName);
             builtinScope.SetVariable("Party", Game.CurrentParty);
             builtinScope.SetVariable("Town", Game.CurrentTown);
             builtinScope.SetVariable("WorldMap", Game.WorldMap);
@@ -305,20 +301,10 @@ namespace SwordsOfExileGame
             if (Params.Origin == eCallOrigin.MOVING && !Params.CancelAction)
             {
                 new Action(eAction.CompleteMove) { Dir = Params.Dir, Loc = Params.Target, PC = Params.PC };
-                //Action.Requested = eAction.CompleteMove;
-                //Action.Dir = Params.Dir;
-                //Action.Loc = Params.Target;
-                //Action.PC = Params.PC;
-                //PC.CompleteMove(Target, Dir);
             }
             else if (Params.Origin == eCallOrigin.BOATLAND && !Params.CancelAction)
             {
                 new Action(eAction.BoatLanding) { Dir = Params.Dir, Loc = Params.Target, PC = Params.PC };
-                //Action.Requested = eAction.BoatLanding;
-                //Action.Dir = Params.Dir;
-                //Action.Loc = Params.Target;
-                //Action.PC = Params.PC;
-                //PC.CompleteMove(Target, Dir);
             }
             else if (Params.Origin == eCallOrigin.SEARCHING && !Params.CancelAction && Game.Mode != eMode.OUTSIDE)
             {
@@ -328,20 +314,12 @@ namespace SwordsOfExileGame
             {
                 if (!Params.CancelAction)
                 {
-                    //Action.Requested = Params.Origin == eCallOrigin.CAST_SPELL ? eAction.CompleteCastSpell : eAction.CompleteCastItemSpell;
-                    //Action.Spell = Params.Spell;
-                    //Action.PC = Params.PC;
-                    //Action.Item = Params.Origin == eCallOrigin.CAST_SPELL ? null : Params.UsedItem;
-
                     new Action(Params.Origin == eCallOrigin.CAST_SPELL ? eAction.CompleteCastSpell : eAction.CompleteCastItemSpell)
                     {
                         Spell = Params.Spell,
                         PC = Params.PC,
                         Item = Params.Origin == eCallOrigin.CAST_SPELL ? null : Params.UsedItem
                     };
-
-                    //PC.SP -= Spell.Cost;
-                    //Game.CurrentParty.ActivePC.AP -= 4;
                 }
             }
             else if (Params.Origin == eCallOrigin.OUTDOOR_ENCOUNTER)
@@ -353,7 +331,6 @@ namespace SwordsOfExileGame
                     TalkingText = Params.TalkingText;
             }
             else if (Params.Origin == eCallOrigin.LEAVING_TOWN)
-                //Gfx.StartFade(300, false);
                 new Animation_FadeDown(300);
             else if (Params.Origin == eCallOrigin.ENTERING_TOWN && ScriptQueue.Count <= 1)
                 Game.AutoSave();
@@ -369,8 +346,6 @@ namespace SwordsOfExileGame
             //Add all of the main engine's stuff to the script assembly so it can access it
             scrEngine.Runtime.LoadAssembly(Assembly.GetAssembly(typeof(SwordsOfExileGame.Location)));
             scrScope = scrEngine.CreateScope();
-
-            //Directory.SetCurrentDirectory(Path.Combine(Scenario.ScenarioDirectory,"Scripts"));
 
             //Execute just this little line of script that will let all the script files access the game's objects an ting.
             ScriptSource source = scrEngine.CreateScriptSourceFromString("from SwordsOfExileGame import *", SourceCodeKind.SingleStatement);
@@ -455,7 +430,6 @@ namespace SwordsOfExileGame
             ScriptQueue = new List<Script>();
             return true;
         }
-
 
         public static void PreventAction()
         {
@@ -566,7 +540,7 @@ namespace SwordsOfExileGame
             try { return f(); }
             catch(Exception e)
             {
-                FlagScriptError(e); //Game.FlagError("Script Runtime Error", e.Message, func);
+                FlagScriptError(e); 
                 return false;
             }
         }
@@ -725,32 +699,6 @@ namespace SwordsOfExileGame
             }
         }
 
-        //static void script_OpenMagicShop(PyList spell_list, int pricelevel, string shopname)
-        //{
-        //    List<MagicSpell> list = new List<MagicSpell>();
-        //    foreach (string s in spell_list)
-        //    {
-        //        MagicSpell spell;
-        //        if (MagicSpell.List.TryGetValue(s, out spell))
-        //            list.Add(spell);
-        //    }
-
-        //    new MagicShopWindow(null, list, pricelevel, shopname);
-        //    script_Wait();
-        //}
-        //static void script_OpenAlchemyShop(PyList recipe_list, int pricelevel, string shopname)
-        //{
-        //    List<Recipe> list = new List<Recipe>();
-        //    foreach (string s in recipe_list)
-        //    {
-        //        Recipe recipe;
-        //        if (Recipe.List.TryGetValue(s, out recipe))
-        //            list.Add(recipe);
-        //    }
-
-        //    new AlchemyShopWindow(null, list, pricelevel, shopname);
-        //    script_Wait();
-        //}
         static void script_OpenHealingShop(int pricelevel)
         {
             if (!latentScriptRunning) return; //Nothing happens if script is non-latent.
@@ -809,7 +757,6 @@ namespace SwordsOfExileGame
 #endregion
 
         //SCRIPT READABLE VALUES
-        //public static eCallOrigin CallOrigin;
         static int Result;
         static string TextResult;
         static PCType SelectedPC = null;
@@ -819,8 +766,6 @@ namespace SwordsOfExileGame
         public static bool suspendMapUpdate = false;
 
         //SCRIPT WRITEABLE VALUES
-        //public bool CancelAction = false;
-        //public string TalkingText; //Set for when conversation window runs scripts and wants talking output.
 
         //This one is public but it's not to be called by the script itself! It's called the first time a script function executes
         static void ResetInterfaceValues()
@@ -828,15 +773,5 @@ namespace SwordsOfExileGame
             Result = -1;
             SelectedPC = null;
         }
-
-
-
     }
-
-    //public class ScriptInterface
-    //{
-
-    //}
-
-
 }

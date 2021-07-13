@@ -1,16 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using XnaRect = Microsoft.Xna.Framework.Rectangle;
+﻿using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
 {
@@ -22,12 +10,12 @@ namespace SwordsOfExileGame
         InventoryBox inventoryBox;
         Button btnDone;
 
-        public ItemShopWindow(Shop shop, ConversationWindow calledfromtalk)//, string shopname)
+        public ItemShopWindow(Shop shop, ConversationWindow calledfromtalk)
             : base(0, 0, 302, 350, true, true, false, true, true)
         {
             Gui.ShopIsOpen = shop;
             thisShop = shop;
-            Action.LockActions = eAction.INVENTORY_LOCKED_ACTIONS;////true; //Don't pause the world, but prevent the player doing anything not inventory related
+            Action.LockActions = eAction.INVENTORY_LOCKED_ACTIONS;
             Position(-2, -2);
             calledFromTalk = calledfromtalk;
 
@@ -37,8 +25,7 @@ namespace SwordsOfExileGame
 
             inventoryBox = AddInventoryBox(thisShop, new XnaRect(5, 20, 256, 252));
             btnDone = AddButton(pressDone, "Done", 223, 280);
-            OKKeyControl = btnDone; //b.KeyShortcut = Keys.Enter;
-            //Gui.KeyFocusWindow = this;
+            OKKeyControl = btnDone;
             AllowResizing(Height, Height, Gfx.WinH);
 
             InventoryWindow.Reveal(Party.CurrentPC);
@@ -61,14 +48,12 @@ namespace SwordsOfExileGame
             if (calledFromTalk != null)
             {
                 calledFromTalk.Visible = true;
-                //Gui.KeyFocusWindow = calledFromTalk;
             }
-            Action.LockActions = eAction.NONE;//false;
+            Action.LockActions = eAction.NONE;
         }
 
         void pressDone(Control b)
         {
-            //Close();
             KillMe = true;
         }
 

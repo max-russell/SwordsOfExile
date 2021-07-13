@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -67,21 +59,11 @@ namespace SwordsOfExileGame
             if (!Visible) return;
             int dx = X + xOffset, dy = Y + yOffset;
 
-            //Draw border
-            //sb.Draw(Gfx.GuiBits, new XnaRect(dx, dy, Width - 2, 2), new XnaRect(8,24, 1, 1), Color.White);
-            //sb.Draw(Gfx.GuiBits, new XnaRect(dx + Width - 2, dy, 2, Height - 2), new XnaRect(8, 24, 1, 1), Color.White);
-            //sb.Draw(Gfx.GuiBits, new XnaRect(dx, dy + 2, 2, Height - 2), new XnaRect(8, 24, 1, 1), Color.White);
-            //sb.Draw(Gfx.GuiBits, new XnaRect(dx + 2, dy + Height - 2, Width - 2, 2), new XnaRect(8, 24, 1, 1), Color.White);
-
             Gfx.DrawFrame(dx, dy, Width, Height, Color.DarkSlateGray);
 
             //Copy the current scissor rect so we can restore it after
             XnaRect currentRect = sb.GraphicsDevice.ScissorRectangle;
             sb.GraphicsDevice.ScissorRectangle = new XnaRect(dx += BORDER_WIDTH, dy += BORDER_HEIGHT, Width - 2 * BORDER_WIDTH, Height - 2 * BORDER_HEIGHT);
-
-
-
-            //If selected item is visible, draw bar behind it
 
             //Draw each item in the list
             int i = 0;
@@ -90,25 +72,16 @@ namespace SwordsOfExileGame
             {
                 int ypos = i * itemHeight - scrollViewPos;
 
-                if (ypos >= -itemHeight && ypos < scrollViewHeight)//itemtop)
+                if (ypos >= -itemHeight && ypos < scrollViewHeight)
                 {
-                    //Vector2 ssize = Gfx.GuiFont1.MeasureString(item);
-                    //int ypos = (int)((i - itemtop) * itemHeight + 4);
-                    //if (ypos + ssize.Y > Height) break; //Stop if no space for more items in box
-
-                    //if (ssize.X > Width - 8)
-                    //    scale = (Width - 8) / ssize.X;
-                    //else
-                    //    scale = 1f;
 
                     if (i == itemsel)
                     {
                         Gfx.DrawRect(dx, dy + ypos, Width - BORDER_WIDTH * 2, itemHeight, Color.White, true);
-                        //sb.Draw(Gfx.GuiBits, new XnaRect(dx, dy + ypos, Width - BORDER_WIDTH * 2, itemHeight), new XnaRect(8, 24, 1, 1), Color.White);
                         sb.DrawString(item.Italic ? listFontItalic : listFont, item.Text, new Vector2(dx, dy + ypos), Color.Black, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
                     }
                     else
-                        sb.DrawString(item.Italic ? listFontItalic : listFont, item.Text, new Vector2(dx /*+ 4*/, dy + ypos), item.Colour, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                        sb.DrawString(item.Italic ? listFontItalic : listFont, item.Text, new Vector2(dx, dy + ypos), item.Colour, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
                 }
                 i++;
@@ -130,17 +103,13 @@ namespace SwordsOfExileGame
             {
                 if (Gui.Ms.X >= dx && Gui.Ms.Y >= dy && Gui.Ms.X < dx + Width - 2 * BORDER_WIDTH && Gui.Ms.Y < dy + Height - 2 * BORDER_HEIGHT)
                 {
-
-                    //if (Items.Count <= visibleitems || Gui.Ms.X < dx + Width - 16) //user selects an item in the list
-                    //{
                     int sel = (Gui.Ms.Y - dy + scrollViewPos) / itemHeight;
                     if (sel < Items.Count)
                     {
                         itemsel = sel;
                         if (changedHandler != null) changedHandler.Invoke(true, Items[sel]);
                         return true;
-                    }
-                    //}    
+                    }  
                 }
             }
             return false;
@@ -178,7 +147,7 @@ namespace SwordsOfExileGame
                 }
                 else
                 {
-                    itemsel = Items.IndexOf(value);// FindIndex(n => n == value); 
+                    itemsel = Items.IndexOf(value); 
                     if (changedHandler != null) changedHandler.Invoke(false, itemsel == -1 ? null : value);
                 }
             }

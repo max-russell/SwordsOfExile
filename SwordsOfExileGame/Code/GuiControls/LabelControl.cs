@@ -1,15 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.BitmapFonts;
 
 namespace SwordsOfExileGame
@@ -69,7 +59,6 @@ namespace SwordsOfExileGame
                     Gfx.DrawRect(X + xOffset, Y + yOffset, Width, Height, BackColour, true);
 
                 sb.DrawString(Font, wrapping ? wrapped_text : text, new Vector2(X + xOffset + padding, Y + yOffset + padding), TextColour);
-                //Gfx.DrawRect(X + xOffset, Y + yOffset, Width, Height, Color.Red,false, 1);
             }
         }
 

@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 
 namespace SwordsOfExileGame
 {
     public partial class Scenario
     {
-        
-
         static PartyType Party { get { return Game.CurrentParty; } }
 
         public static string Filename, Name, Description, Credits1, Credits2, ContactInfo;
@@ -112,9 +106,6 @@ namespace SwordsOfExileGame
             int j = 0;
             int to_return = 1;
 
-            //      if (BoE.adjust_diff > 0) // don't automatically adjust difficulty flag activated
-            //          return 1;
-
             foreach (PCType pc in Party.EachAlivePC())// (i = 0; i < 6; i++)
                 j += pc.Level;
 
@@ -145,7 +136,6 @@ namespace SwordsOfExileGame
         {
             Game.GameOver = true;
             new MessageWindow(null, "Congratulations - you have just completed this scenario! If you want you can save your adventurers now before returning to the main menu.", eDialogPic.NONE, 0, "OK");
-            //Action.LockActions = eAction.ALL_ACTIONS;
         }
     }
 

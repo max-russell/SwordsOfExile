@@ -1,15 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -29,14 +23,12 @@ namespace SwordsOfExileGame
             get { return visible; }
             set
             {
-                visible = value; if (Modal /*|| 
-                WorldFreeze*/) Gui.WorldModalPaused = value;
+                visible = value; if (Modal) Gui.WorldModalPaused = value;
             }
         }
 
         public bool EscapeKeyCloses = false; //Don't set if CancelKeyControl is set to something.
         public bool Modal = false; //True if the window freezes all windows beneath it until it closes 
-        //public bool WorldFreeze = false;//True if the window pauses all game actions
         public bool KillMe = false; //Set to true to end the window at the next opportunity
         public bool OnTop = false; //Set to true for tooltips and popupmenus to always appear above other windows
         bool moveable = true;      //The window can be repositioned by the user
@@ -48,7 +40,6 @@ namespace SwordsOfExileGame
         Color backCol = new Color(255, 255, 255, 200);
         public int X, Y, Width, Height;
         public int ClientX = 0, ClientY = 0;
-        //protected string Title;
         public int InnerWidth
         {
             get { return Width - ClientX * 2; }
@@ -68,7 +59,6 @@ namespace SwordsOfExileGame
         public Control OKKeyControl, CancelKeyControl;
 
         PictureButton closeButton, expandButton; //The button that closes the form
-        //protected bool CloseButtonHides = false; //Whether the close button kills the window or just hides it.
 
         public List<Control> controls = new List<Control>(); //All the controls on the window
 
@@ -92,7 +82,6 @@ namespace SwordsOfExileGame
             if (closeable && Border)
             {
                 closeButton = AddPictureButton(pressWindowClose, new XnaRect(191, 209, 16, 16), Gfx.NewGui, new XnaRect(InnerWidth, -4 - ClientY, 16, 16));
-                //closeButton = (PictureButton) controls[controls.Count - 1];
             }
 
             if (!(this is ToolTipV2))
@@ -100,8 +89,6 @@ namespace SwordsOfExileGame
                 Gui.GuiWindows.Add(this);
                 Gui.ActiveToolTip = null;
             }
-
-            //if (Modal) Gui.KeyFocusWindow = this; //Newly created windows automatically gain the key focus
         }
 
         public int Opacity { set { backCol = new Color(255, 255, 255, value); } get { return backCol.A; } }
@@ -109,9 +96,6 @@ namespace SwordsOfExileGame
         public void SetTabs(params string[] tabnames)
         {
             Tabs = new TabButton[tabnames.Count()];
-
-            //tabNames = tabnames;
-            //Title = null; //Windows with tabs have no title
             int xpos = 6;
 
             for (int i = 0; i < tabnames.Length; i++)
@@ -155,13 +139,6 @@ namespace SwordsOfExileGame
             return l;
         }
 
-        //protected TextInputBox AddTextInputBox(int x, int y, int w, int h, string default_text, bool numbers_only = false, int tabno = -1)
-        //{
-        //    TextInputBox tx = new TextInputBox(this, x, y, w, h, default_text, numbers_only, tabno);
-        //    controls.Add(tx);
-        //    return tx;
-        //}
-
         protected Button AddButton(PressControlHandler press_handler, string c, int x, int y, int w = -1, int h = -1, int tabno = -1)
         {
             Vector2 ssize = Gfx.GuiFont1.MeasureString(c);
@@ -203,33 +180,17 @@ namespace SwordsOfExileGame
 
         protected InventoryBox AddInventoryBox(IInventory c, XnaRect r, bool use_shortcuts = false, int tabno = -1)
         {
-            //if (!(c is Container || c is Character)) throw new Exception("Inventory must belong to a Character or a Container!");
-            InventoryBox i = new InventoryBox(this, c, r, tabno, use_shortcuts);//PictureButton(r, x, y, r.Width, r.Height);
+            InventoryBox i = new InventoryBox(this, c, r, tabno, use_shortcuts);
             controls.Add(i);
             return i;
         }
 
         protected EquipmentSlot AddEquipmentSlot(int x, int y, PCType pc, String txt, eEquipSlot kind, int tabno = -1)
         {
-            //if (!(c is Container || c is Character)) throw new Exception("Inventory must belong to a Character or a Container!");
-            EquipmentSlot e = new EquipmentSlot(this, x, y, pc, txt, kind);//PictureButton(r, x, y, r.Width, r.Height);
+            EquipmentSlot e = new EquipmentSlot(this, x, y, pc, txt, kind);
             controls.Add(e);
             return e;
         }
-
-        //protected IdentifyBox AddIdentifyBox(XnaRect r, int price, int tabno = -1)
-        //{
-        //    IdentifyBox i = new IdentifyBox(this, r, price, tabno);
-        //    controls.Add(i);
-        //    return i;
-        //}
-        //protected EnchantingBox AddEnchantingBox(XnaRect r, eEnchantShop type, int tabno = -1)
-        //{
-        //    EnchantingBox i = new EnchantingBox(this, r, type, tabno);
-        //    controls.Add(i);
-        //    return i;
-        //}
-
 
         protected ListBox AddListBox(ChangeSelectedHandler handler, int x, int y, int w, int h, int tab, params ListBoxItem[] list)
         {
@@ -237,12 +198,6 @@ namespace SwordsOfExileGame
             controls.Add(l);
             return l;
         }
-        //protected Slider AddSlider(int x, int y, int w, int tab)
-        //{
-        //    Slider s = new Slider(this, x, y, w, tab);
-        //    controls.Add(s);
-        //    return s;
-        //}
 
         protected Vector2 GetClientAreaPos()
         {
@@ -315,25 +270,15 @@ namespace SwordsOfExileGame
 
             if (interacted)
             {
-                //Automatically handle the close window picture button.
-                //if (closeButton != null && controlEvent == closeButton) { KillMe = true; return true; }
-
-                //Switch tabs if there are any
-                //if (controlEvent is TabButton)
-                //{
-                //    for (int i = 0; i < Tabs.Count(); i++)
-                //        if (controlEvent == Tabs[i]) { currentTab = i; break; }
-                //}
                 return true;
             }
             else
                 //If mouse wasn't near a control, try to start moving window.
 
-                if (Gui.Ms.X >= X && Gui.Ms.X < X + Width)//MouseIsOnTopFrame())
+                if (Gui.Ms.X >= X && Gui.Ms.X < X + Width)
                 {
                     if (Gui.Ms.Y >= Y && Gui.Ms.Y < Y + frameHeight)
                     {
-                        //if (moveable && Gui.moveCarryable == null)
                         if (Gui.LMBHit && moveable)
                         {
                             Gui.StartMovingWindow(this);
@@ -364,16 +309,6 @@ namespace SwordsOfExileGame
                 Resize(Width, defHeight);
             else
                 Resize(Width, Maths.Min(maxHeight, Gfx.WinH - Y));
-
-            //Height - h
-
-            //int h = (maxHeight - minHeight) / 2 + minHeight;
-
-            //if (Height > h) 
-            //    Resize(Width, minHeight);
-            //else 
-            //    Resize(Width, Maths.Min(maxHeight, Gfx.WinH - Y));
-
         }
 
         void pressWindowTab(Control button_pressed)
@@ -484,13 +419,8 @@ namespace SwordsOfExileGame
 
         public virtual void Close()
         {
-            //If KillMe is flagged the Gui Handle routine will automatically do this.
-            //if (!KillMe)
             Gui.GuiWindows.Remove(this);
         }
-
-        //public virtual void makeInventoryPopUpWindow(int slot) {
-        //}
     }
 
 }

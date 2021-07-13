@@ -2,14 +2,8 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -21,7 +15,6 @@ namespace SwordsOfExileGame
         Label scenTitle;
         PictureBox scenPic;
         Button btnBack, btnNewParty, btnLoadParty;
-
 
         public ScenSelectWindow()
             : base(0, 0, 700, 500, true, false, true, true, false)
@@ -96,7 +89,6 @@ namespace SwordsOfExileGame
             if (b == btnNewParty)
             {
                 Scenario.Filename = Path.GetFileNameWithoutExtension(((ScenarioInfo)scenList.SelectedItem.Tag).Filename);
-                //Game.ScenarioDirectory = Path.Combine(Game.RootDirectory, "Scenarios", Scenario.Filename);
                 KillMe = true;
                 new NewPartyMainWindow();
             }
@@ -104,7 +96,6 @@ namespace SwordsOfExileGame
             {
                 Scenario.Filename = Path.GetFileNameWithoutExtension(((ScenarioInfo)scenList.SelectedItem.Tag).Filename);
                 new LoadGameWindow(true, false, true, doLoadParty);
-                //KillMe = true;
                 Visible = false;
             }
         }
@@ -118,12 +109,7 @@ namespace SwordsOfExileGame
                 SaveInfo i = Game.LoadSaveInfo(filename, true);
                 if (i != null)
                 {
-                    //foreach (PCType pc in Party.PCList)
-                    //    pc.MakePCGraphics();
-
                     Gfx.MakeCharacterHighlight(Party.ActivePC);
-                    //Gfx.PCPortraitGfx = null;
-                    //Gfx.PCGfx = null;
 
                     Game.BeginLoadingThread(true);
                     KillMe = true;

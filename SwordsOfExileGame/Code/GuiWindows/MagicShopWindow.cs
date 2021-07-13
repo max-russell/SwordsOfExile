@@ -1,15 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -18,9 +8,6 @@ namespace SwordsOfExileGame
         ConversationWindow calledFromTalk = null;
 
         Shop _Shop;
-        //string ShopName = null;
-        //List<MagicSpell> SpellsForSale = null;
-        //int costAdjust;
 
         ListBox spellListBox;
         Button cancelButton, buyButton;
@@ -30,16 +17,13 @@ namespace SwordsOfExileGame
         Label selSpellTitle, goldLabel;
         RichTextBox selSpellDesc;
 
-        public MagicShopWindow(Shop shop, ConversationWindow shopcaller)//, List<MagicSpell> spelllist, int costadjust, string shopname)
+        public MagicShopWindow(Shop shop, ConversationWindow shopcaller)
             : base(0, 0, 500, 480, true, true, false, true, true)
         {
-            Action.LockActions = eAction.MAGIC_LOCK_ACTIONS;//true;
+            Action.LockActions = eAction.MAGIC_LOCK_ACTIONS;
             Gui.MagicShopIsOpen = this;
             calledFromTalk = shopcaller;
             _Shop = shop;
-            //ShopName = shopname;
-            //SpellsForSale = spelllist;
-            //costAdjust = costadjust;
 
             Position(-2, -2);
             spellListBox = AddListBox(changedSelected, 0, 130, 200, InnerHeight - 10, -1);
@@ -111,11 +95,6 @@ namespace SwordsOfExileGame
                 _Shop.BuyCost(selectedSpell.Cost)));
         }
 
-        //int spellPrice(MagicSpell spell)
-        //{
-        //    return (spell.Price * Constants.SHOP_PRICE_MULTIPLIER[costAdjust]) / 10;//for now.
-        //}
-
         void pressCancel(Control b)
         {
             KillMe = true;
@@ -169,9 +148,8 @@ namespace SwordsOfExileGame
             if (calledFromTalk != null)
             {
                 calledFromTalk.Visible = true;
-                //Gui.KeyFocusWindow = calledFromTalk;
             }
-            Action.LockActions = eAction.NONE;// false;
+            Action.LockActions = eAction.NONE;
             Gui.MagicShopIsOpen = null;
         }
     }

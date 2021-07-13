@@ -2,13 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -32,8 +26,6 @@ namespace SwordsOfExileGame
             if (!sfxLib.ContainsKey(key)) throw new Exception("Sound not found"); //TODO: Replace with proper error
             
             return sfxLib.Values.ToList().IndexOf(sfxLib[key]);
-            //else
-                //return -1;
         }
         public static int Duration(string key)
         {
@@ -79,14 +71,7 @@ namespace SwordsOfExileGame
             SoundEffect s;
 
             using (Stream fileStream = File.OpenRead(path))
-                //try
-                //{
                     s = SoundEffect.FromStream(fileStream);
-                //}
-                //catch
-                //{
-                //    s = new SoundEffect(File.ReadAllBytes(path), 22050, AudioChannels.Mono);
-                //}
 
             return s;
         }
@@ -114,15 +99,11 @@ namespace SwordsOfExileGame
                 sfxLib[s].Play();
                 Played.Add(sfxLib[s]);
             }
-
-            //Played.Add(s);
         }
 
         public static void ItemSound()
         {
             Play("001_lowbeep");
-
-            //sfxLib["001_lowbeep"].Play();
         }
 
         public static void ButtonSound()
@@ -136,11 +117,6 @@ namespace SwordsOfExileGame
                 Play("048_boatmove");
             else switch (tr.step_sound)
             {
-                //case 0:
-                //    if (step % 2 == 0)          //footsteps alternate sound
-                //        Play(49);
-                //    else Play(50);
-                //    break;
                 case 1:
                     Play(55);         //squish
                     break;
@@ -157,9 +133,6 @@ namespace SwordsOfExileGame
             }
         }
 
-        //public static void one_sound(int n) { }
-
         public static void SysBeep(int n) { }
-
     }
 }

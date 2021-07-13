@@ -3,14 +3,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -74,9 +68,8 @@ namespace SwordsOfExileGame
         IEnumerable<Tuple<Item, int>> EachItem();
         Item PlaceItem(Item item, int slotno);
         bool AddItem(Item item, bool stack);
-        bool RemoveItem(Item item);//, bool regardless_of_curse);
+        bool RemoveItem(Item item);
         Item GetSlot(int slotno);
-        //int LastSlot{get;}//(eItemFilter filter);
         bool InventorysClose(IInventory other);
         void MakeInventoryPopUpWindow(Item c);
         void MakeItemToolTip(Item i, XnaRect r);//int slotno);
@@ -87,38 +80,24 @@ namespace SwordsOfExileGame
 
     public interface IMap
     {
-
-        //int this[int x, int y] { get; }
         bool Visible(Location loc);
         string Name { get; }
 
-        //void Load(BinaryReader In);
         void Draw(SpriteBatch sb);
         bool PlaceItem(Item item, Location loc);
-        //void Launch();
         void Enter(bool firsttime);
-        //void UpdateVisible(bool only_active = false);//params Location[] locs);
-
-        void UpdateVisible();//params Location[] locs);
-        //void UpdateVisiblePC(PCType pc, bool clear_existing);//params Location[] locs);
-
+        void UpdateVisible();
         void AlterTerrain(Location pos, int layer, TerrainRecord newter);
         string GetInfoRectString(Location pos);
-        //bool TerrainBlocked(Location pos);
         TerrainRecord TerrainAt(Location poc);
         bool CheckSpecialTerrainPC(Location pos, PCType ch);
         void DoNastyTerrain(Location pos);
-        //ICharacter CharacterThere(Location pos, bool include_pcs = true, bool include_npcs = true);
         bool CharacterCanBeThere(Location loc, ICharacter m_num, bool allow_leave_map = false);
-        //Location GetTileAtMouse(MouseState ms);
         string GetToolTipMessage(Location loc);
-        //Sign SignAtLoc(Location loc);
         bool DoNPCTurn();
         void StartNPCTurn();
-        //int CanSee(Location l1, Location l2, int mode);
         void Search(Location l, PCType pc);
         bool DoStoodOnTriggers();
-        //List<SpecialNode> SpecialNodeList { get; }
         bool PCCanTryToWalkThere(Location pos, PCType pc);
         bool TriggerStepOnSpecials(Location pos, Direction dir, PCType pc, bool boat_landing);
         List<PopUpMenuData> GetPopUpMenuOptions(Location loc, Location frompos);
@@ -149,7 +128,6 @@ namespace SwordsOfExileGame
         int SP { get; set; }
         int Level { get; set; }
         string DeathSound { get; }
-        //void Attack(ICharacter target);
         bool Damage(IExpRecipient attacker, int how_much, int how_much_spec, eDamageType dam_type, eDamageType spec_dam_type = eDamageType.WEAPON, string sound_type = null);
         bool Kill(IExpRecipient who_killed, eLifeStatus type, bool no_save = false);
         void ForceWallMe(IExpRecipient perp);
@@ -174,12 +152,10 @@ namespace SwordsOfExileGame
         void Dumbfound(int how_much, bool silent = false);
         void Sleep(int how_much, int adjust);
         void Paralyze(int how_much, int adjust);
-        //void Charm(int how_much, eAffliction what_type, int adjust); //Also handles sleep/paralyse
         string Name { get; }
         string TooltipInfo(bool brief);
         eAttitude MyAttitude();
         bool AlliedWith(ICharacter ch);
-        //bool IsNotHere();
         int Status(eAffliction type);
         void SetStatus(eAffliction type, int val, int min = Int32.MinValue, int max = Int32.MaxValue);
         void IncStatus(eAffliction type, int val, int max = Int32.MaxValue);
@@ -209,6 +185,4 @@ namespace SwordsOfExileGame
         void AdjustCharRect(ref XnaRect r, ref float rot, ref Color colour);
     }
     interface IAnimHold { }
-
-
 }

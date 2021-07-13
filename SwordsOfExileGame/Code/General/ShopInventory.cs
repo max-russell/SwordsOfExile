@@ -1,15 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -128,7 +120,6 @@ namespace SwordsOfExileGame
                 for (int n = 0; n < count; n++)
                     recipeList.Add(Recipe.List[file.ReadInt32()]);
             }
-            //lastSlot = file.ReadInt32();
         }
 
         public void SaveGame(BinaryWriter file)
@@ -187,7 +178,6 @@ namespace SwordsOfExileGame
             {
                 Sound.Play("039_coinsjingle");
                 Game.AddMessage("You sell it.");
-                //Action.InventoryFrom.RemoveItem(Action.Item);
                 Game.CurrentParty.Gold += i.Value;
                 return true;
             }
@@ -319,30 +309,15 @@ namespace SwordsOfExileGame
                 }
             };
 
-            slotList.Add(n);//item.Pos);
-            //item.Pos.x = n;
+            slotList.Add(n);
             itemList.Add(item);
-            //if (n > lastSlot) lastSlot = n;
             return true;
         }
 
         public bool RemoveItem(Item item)
         {
-            //    if (jumbleShop == null) return true;
-
-            //    if (itemList.Contains(item))
-            //    {
-            //        int ind = itemList.IndexOf(item);
-            //        itemList.Remove(item);
-            //        jumbleShop.Remove(item);
-            //        //item.Pos = locList[ind];
-            //        slotList.RemoveAt(ind);
-            //        lastSlot = -1;
-            //        foreach (int i in slotList) lastSlot = i > lastSlot ? i : lastSlot;
-            //        return true;
-            //    }
             return true;
-        }//, bool regardless_of_curse);
+        }
 
         public void ArrangeItems() { } //No need for this in shops.
 
@@ -357,11 +332,11 @@ namespace SwordsOfExileGame
             }
             return null;
         }
-        //public int LastSlot { get { return 0; } }
+
         public bool InventorysClose(IInventory other) { return true; }
         public void MakeInventoryPopUpWindow(Item c)
         {
-            var popupoptions = new List<PopUpMenuData>();//<Tuple<string, object, int>>();
+            var popupoptions = new List<PopUpMenuData>();
 
             if (c != null)
             {
@@ -372,22 +347,14 @@ namespace SwordsOfExileGame
         }
 
         void handlePopUp(object o, object o2, int data)
-        {//string option) {
-            Item c = (Item)o;//owner.GetSlot(popupSlot);//carryables.Find(cFind => cFind.Pos.X == popupSlot);
-            PCType pc = Game.CurrentParty.CurrentPC;//owner as PCType;
+        {
+            Item c = (Item)o;
+            PCType pc = Game.CurrentParty.CurrentPC;
             switch (data)
             {
                 case PopUpMenuData.BUY:
                     var a = new Action(eAction.BuyItem) { PC = Game.CurrentParty.CurrentPC, Item = c, InventoryFrom = this, InventoryTo = Game.CurrentParty.CurrentPC, Loc = new Location(-1, -1) };
-
-                    //Action.Requested = eAction.BuyItem;
-                    //Action.PC = Game.CurrentParty.CurrentPC;
-                    //Action.Item = c;
-                    //Action.InventoryFrom = this;
-                    //Action.InventoryTo = Game.CurrentParty.CurrentPC;
-                    //Action.Loc.x = -1;
                     a.PlaceDraggedItem(eAction.PlaceInInventory);
-                    //Action.Requested = eAction.NONE;
                     new Action(eAction.NONE);
                     break;
             }
@@ -402,14 +369,7 @@ namespace SwordsOfExileGame
         {
             if (ShopType != eShop.ITEM) return false;
             if (!i.Identified) return false;
-
             if ((willBuy & (uint)Math.Pow(2, (int)i.Variety)) == 0) return false;
-
-            //if (SellAll) return true;
-            //if (i.IsWeapon() && SellWeapons) return true;
-            //if (i.IsArmour() && SellArmour) return true;
-
-
             return true;
         }
 
@@ -454,14 +414,12 @@ namespace SwordsOfExileGame
             if (Recipe.List.Contains(s)) RemoveRecipe(Recipe.List[s]);
         }
         
-        public void MakeItemToolTip(Item i, XnaRect r)//int slotno)
+        public void MakeItemToolTip(Item i, XnaRect r)
         {
-            //Item i = GetSlot(slotno);
-
             if (i != null)
             {
                 string txt = i.TooltipInfo() + "@n@e@7" + "Cost: " + BuyCost(i.Value) + " gold";
-                new ToolTipV2(false, r, txt, -1);// ToolTip(txt, -1, false);
+                new ToolTipV2(false, r, txt, -1);
             }
         }
 

@@ -1,24 +1,15 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
 namespace SwordsOfExileGame
 {
-
     class InfoListWindow : GuiWindow
     {
-        static InfoListWindow instance;
         List<string> messageList = new List<string>();
         int messageLimit = 50;
         int messagePos = 0;
@@ -35,7 +26,6 @@ namespace SwordsOfExileGame
         public InfoListWindow()
             : base(0, 260, 271 + Gfx.FRAME_WIDTH * 2, 138 + Gfx.FRAME_HEIGHT * 2, true, true, false, true, false)
         {
-            instance = this;
             Position(0, -1);
             AllowResizing(24, Height, Gfx.WinH);
         }
@@ -44,11 +34,7 @@ namespace SwordsOfExileGame
         {
             Vector2 wpos = GetClientAreaPos();
             base.Draw(sb);
-            //sb.Draw(Gfx.StatAreaGfx, wpos, gfxSrcRect, Color.White);
-
-            int pos = InnerHeight + messagePos; //gfxSrcRect.Height + messagePos;
-
-
+            int pos = InnerHeight + messagePos;
             XnaRect currentRect = sb.GraphicsDevice.ScissorRectangle;
             sb.GraphicsDevice.ScissorRectangle = new XnaRect((int)wpos.X, (int)wpos.Y, InnerWidth - 16, Maths.Min(InnerHeight,Gfx.WinH - (int)wpos.Y));
 
@@ -77,10 +63,6 @@ namespace SwordsOfExileGame
                 float g2 = messagesHeight < messageExtend ? barh : ((float)messageExtend / (float)messagesHeight) * barh;
                 if (g2 > barh) g2 = barh;
                 g1 = barh - g2 - g1;
-
-
-                //g1 = barh - g2;
-
                 Gfx.DrawRect((int)wpos.X + gfxSrcRect.Width - 16, (int)wpos.Y + 16 + (int)g1, 16, (int)g2/*(int)(g2 > barh ? barh : g2)*/, Color.DarkGray);
             }
         }
@@ -105,7 +87,6 @@ namespace SwordsOfExileGame
                     }
                     else if (!Gui.LMBDown && pressedButton == eButton.UP)
                     {
-                        //if (--pos < min) pos = min;
                         if (messagePos + messageExtend < messagesHeight)
                             messagePos = Maths.Min(messagePos + SCROLL_CHANGE, messagesHeight - messageExtend);//+= 8;
                         interacted = true;
@@ -132,27 +113,13 @@ namespace SwordsOfExileGame
                     {
                         if (messagesHeight > messageExtend)
                         {
-
                             pressedButton = eButton.BAR;
 
                             //Get mouse position in the bar from 0 (top) to 1 (bottom)
                             float mpos = 1 - ((float)(Gui.Ms.Y - dy - 16) / (float)(InnerHeight - 32));
-                            //Game.TestMessage = mpos.ToString();
-
-
                             messagePos = (int)((float)(messagesHeight - messageExtend) * mpos);
                             if (messagePos < 0) messagePos = 0;
                             if (messagePos > messagesHeight - messageExtend) messagePos = messagesHeight - messageExtend;
-
-                            //if (extend > max - min)
-                            //{
-                            //    extend = max - min;
-                            //    Visible = false;
-                            //}
-                            //else Visible = true;
-                            //if (pos < min) pos = min;
-                            //if (pos + extend > max) pos = max - extend;
-
                             interacted = true;
                         }
                     }
@@ -163,16 +130,9 @@ namespace SwordsOfExileGame
                 if (Gui.LMBDown && pressedButton == eButton.BAR)
                 {
                     float mpos = 1 - ((float)(Gui.Ms.Y - dy - 16) / (float)(InnerHeight - 32));
-                    //ChangeValues((int)((float)(max - min) * mpos) + min - extend / 2, extend, min, max);
-
                     messagePos = (int)((float)(messagesHeight - messageExtend) * mpos);
                     if (messagePos < 0) messagePos = 0;
                     if (messagePos > messagesHeight - messageExtend) messagePos = messagesHeight - messageExtend;
-
-
-                    //float mpos = (float)(Gui.Ms.Y - dy - 16) / (float)(Height - 32);
-                    //if (mpos < 0) mpos = 0; if (mpos > 1) mpos = 1;
-                    //ChangeValues((int)((float)(max - min) * mpos) + min - extend / 2, extend, min, max);
                     interacted = true;
 
                 }
@@ -193,7 +153,6 @@ namespace SwordsOfExileGame
         public void AddMessage(String message)
         {
             var all_lines = message.Split(new char[]{'\n'}, StringSplitOptions.None).ToList<string>();
-            //all_lines.Reverse();
             int insertpos = 0;
 
             foreach (string text in all_lines)

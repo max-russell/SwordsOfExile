@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
-
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -19,9 +11,7 @@ namespace SwordsOfExileGame
     public partial class Item : IListEntity
     {
         //A list of all the items in the game
-        //public static Dictionary<string, Item> List = new Dictionary<string, Item>();
         public static ExileList<Item> List = new ExileList<Item>();
-        //public static bool ValidNum(int n) { return n >= 0 && n < Item.List.Count; } 
 
         public string ID { get { return id; } set { id = value; } }
         string id;
@@ -38,7 +28,7 @@ namespace SwordsOfExileGame
 
         public int Weight, SpecialClass;
         public Location Pos;
-        public string Name, ShortName; //char[] full_name = new char[25], name = new char[15];
+        public string Name, ShortName;
         public string KnownName { get { return Identified ? Name : ShortName; } }
 
         public int TreasureClass, //0 - Junk
@@ -50,8 +40,6 @@ namespace SwordsOfExileGame
 
         public string SpellID, //The ID of the magic spell this item will cast when it is used. Only used if Ability property is CAST_SPELL
                       AlchemyID; //To allow alchemical recipes to make use of this item as an ingredient
-
-        //public bool BigPicture { get { return Picture < 45 || Picture >= Constants.ITEM_CUSTOM_PIC_START; } }
 
         public void DrawBigViewInfo(SpriteBatch sb, Vector2 d)
         {
@@ -66,7 +54,6 @@ namespace SwordsOfExileGame
             {
                 s = "Unidentified";
                 sb.DrawString(Gfx.ItalicFont, s, d, Color.Cyan);
-                //d.X += Gfx.ItalicFont.MeasureString(s).Width;
             }
             else
             {
@@ -292,15 +279,6 @@ namespace SwordsOfExileGame
                     s.Append("@n   Ability: @5??@9");
                 }
 
-                //"Holly/Toadstool", 150-157: Alchemical ingredient
-                //"Comfrey Root",
-                //"Glowing Nettle",
-                //"Crypt Shroom/Wormgr.",
-                //"Asptongue Mold",
-                //"Ember Flowers",
-                //"Graymold",
-                //"Mandrake",
-
                 if (IsArmour())
                 {
                     s.AppendFormat("@n   Encumbrance: @2{0}@9", Awkward);
@@ -319,8 +297,6 @@ namespace SwordsOfExileGame
             if (Charges < 2) return BaseValue;
             else return Charges * BaseValue;
         }}
-
-        //public bool Equipped = false; //Equipped by the PC who has it in their inventory (ignored if not carried by a PC)
 
         public Color GetEquipBoxColour()
         {
@@ -394,8 +370,6 @@ namespace SwordsOfExileGame
             AlchemyID = In.ReadString();
             if (BaseValue < Constants.ITEM_VALUE_IDENTIFY_LIMIT) Identified = true;
             if (Variety == eVariety.Food || Variety == eVariety.Gold) Identified = true; //Food and gold are never unidentified.
-
-            //if (add_to_list) List.Add(this);
         }
 
         const int PROP_IDENTIFIED = 1;
@@ -443,7 +417,6 @@ namespace SwordsOfExileGame
             case eVariety.Gloves:
             case eVariety.Helm:
             case eVariety.Shield:
-            //case eVariety.Shield2:
             case eVariety.Trousers:
                 return true;
             } return false;
@@ -463,13 +436,6 @@ namespace SwordsOfExileGame
         public bool IsUseable()
         {
             return (Ability >= eItemAbil.POISON_AUGMENT && Ability <= eItemAbil.CALL_SPECIAL) || Ability == eItemAbil.CAST_SPELL;
-            //switch (i.Variety)
-            //{
-            //    case eVariety.Potion:
-            //    case eVariety.Scroll:
-            //    case eVariety.Wand:
-            //    case eVariety.Poison: return true;
-            //} return false;
         }
 
         public bool IsEquippable {get
@@ -530,12 +496,6 @@ namespace SwordsOfExileGame
                     if (npctype == eGenus.BUG)
                         store += 7 * AbilityStrength;
                     break;
-                //case eItemAbil.CAUSES_FEAR:
-                //    Scare(AbilityStrength * 10);
-                //    break;
-                //case eItemAbil.MISSILE_ACID:
-                //    Acid(AbilityStrength);
-                //    break;
                 case eItemAbil.MISSILE_SLAY_UNDEAD:
                     if (npctype == eGenus.UNDEAD)
                         store += 20 + 6 * AbilityStrength;
@@ -620,11 +580,6 @@ namespace SwordsOfExileGame
             if (town.Abandoned)
                 item.Properties &= 253;//NOT property because the town is abandoned.
             if (p.Contained) item.Properties |= 8;
-
-
-            //item.Identified = true;
-
-
             return item;
         }
 
@@ -679,18 +634,6 @@ namespace SwordsOfExileGame
             if (Gfx.ItemGfx[sheet] == null) { sb.Draw(Gfx.NewGui, pos, new XnaRect(266, 193, 28, 36), Color.White); return; }
             XnaRect sr = new XnaRect((no % Gfx.ItemGfxSlotsAcross[sheet]) * Gfx.ITEMGFXWIDTH, (no / Gfx.ItemGfxSlotsAcross[sheet]) * Gfx.ITEMGFXHEIGHT, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT);
             sb.Draw(Gfx.ItemGfx[sheet], pos, sr, col);
-
-
-            //if (Picture >= Constants.ITEM_CUSTOM_PIC_START)
-            //{
-            //    XnaRect sr = Gfx.GetCustomRect(Picture - Constants.ITEM_CUSTOM_PIC_START);
-            //    sb.Draw(Gfx.CustomGfx, new XnaRect((int)pos.X, (int)pos.Y, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT), sr, col);
-            //}
-            //else
-            //{
-            //    XnaRect sr = new XnaRect((Picture % Gfx.ItemGfxSlotsAcross) * Gfx.ITEMGFXWIDTH, (Picture / Gfx.ItemGfxSlotsAcross) * Gfx.ITEMGFXHEIGHT, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT);
-            //    sb.Draw(Gfx.ItemGfx, pos, sr, col);
-            //}
         }
 
         public void DrawOffMap(SpriteBatch sb, Vector2 pos, Color col)
@@ -707,17 +650,6 @@ namespace SwordsOfExileGame
                 XnaRect sr = new XnaRect((no % Gfx.ItemGfxSlotsAcross[sheet]) * Gfx.ITEMGFXWIDTH, (no / Gfx.ItemGfxSlotsAcross[sheet]) * Gfx.ITEMGFXHEIGHT, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT);
                 sb.Draw(Gfx.ItemGfx[sheet], pos, sr, col);
             }
-
-            //if (Picture >= Constants.ITEM_CUSTOM_PIC_START)
-            //{
-            //    XnaRect sr = Gfx.GetCustomRect(Picture - Constants.ITEM_CUSTOM_PIC_START);
-            //    sb.Draw(Gfx.CustomGfx, new XnaRect((int)pos.X, (int)pos.Y, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT), sr, col);
-            //}
-            //else
-            //{
-            //    XnaRect sr = new XnaRect((Picture % Gfx.ItemGfxSlotsAcross) * Gfx.ITEMGFXWIDTH, (Picture / Gfx.ItemGfxSlotsAcross) * Gfx.ITEMGFXHEIGHT, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT);
-            //        sb.Draw(Gfx.ItemGfx, pos, sr, col);
-            //}
 
             //Draw box around it if this item is being dragged.
             if (Gui.DragItem == this)
@@ -780,18 +712,6 @@ namespace SwordsOfExileGame
                 XnaRect sr = new XnaRect((no % Gfx.ItemGfxSlotsAcross[sheet]) * Gfx.ITEMGFXWIDTH, (no / Gfx.ItemGfxSlotsAcross[sheet]) * Gfx.ITEMGFXHEIGHT, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT);
                 sb.Draw(Gfx.ItemGfx[sheet], dr, sr, Color.White);
             }
-
-            //if (Picture >= Constants.ITEM_CUSTOM_PIC_START)
-            //{
-            //    //Custom graphic
-            //    XnaRect sr = Gfx.GetCustomRect(Picture - Constants.ITEM_CUSTOM_PIC_START);
-            //    sb.Draw(Gfx.CustomGfx, dr, sr, Color.White);
-            //}
-            //else
-            //{
-            //    XnaRect sr = new XnaRect((Picture % Gfx.ItemGfxSlotsAcross) * Gfx.ITEMGFXWIDTH, (Picture / Gfx.ItemGfxSlotsAcross) * Gfx.ITEMGFXHEIGHT, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT);
-            //    sb.Draw(Gfx.ItemGfx, dr, sr, Color.White);
-            //}
         }
 
         public bool Identify(int cost)
@@ -996,8 +916,7 @@ namespace SwordsOfExileGame
                 case 12: treas = get_poison(loot); break;
                 case 13: treas = get_gloves(loot); break;
                 case 14: treas = get_boots(loot); break;
-            }
-            //if (treas.variety == 0)	treas.value = 0;	
+            }	
             if (treas != null) return treas;
             else return new Item();
             //TODO: For now we don't return null if we can't find a treasure, just a dummy item with a Variety of None.
@@ -1016,8 +935,7 @@ namespace SwordsOfExileGame
             }
             for (i = 0; i < 80; i++)
             {
-                //j = Maths.get_ran(1, 0, BoE.Scenario.StoredItems.Count);
-                temp_i = Item.GetRandom().Copy();//StoredItems[j];////get_stored_item(j);
+                temp_i = Item.GetRandom().Copy();
                 if (temp_i.Variety == t1 || (t2 != eVariety.None && temp_i.Variety == t2) || (t3 != eVariety.None && temp_i.Variety == t3))
                 {
                     val = temp_i.Value;
@@ -1026,8 +944,7 @@ namespace SwordsOfExileGame
                         return temp_i;
                 }
             }
-            //temp_i = return_dummy_item();
-            return null;// temp_i;
+            return null;
         }
 
         public static Item GetRandom()
@@ -1041,7 +958,6 @@ namespace SwordsOfExileGame
             if (Maths.Rand(1, 0, 2) != 1) return null;
 
             Item food = new Item();
-            //{ 11, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 0, { 0, 0 }, "Food", "Food", 0, 0, 0, 0 };
             food.Variety = eVariety.Food; // 11;
             food.Picture = 62;
             food.Name = "Food";
@@ -1053,22 +969,20 @@ namespace SwordsOfExileGame
                 food.Picture = 113;
             if (Maths.Rand(1, 0, 9) == 5)
                 food.Picture = 114;
-            // food doesn't always appear
-                //food.Variety = 0;
 
             return food;
         }
 
         static Item get_weapon(int loot)
         {
-            if (loot == 0) return null;//return_dummy_item();
+            if (loot == 0) return null;
             return pull_item_of_type(loot, loot_min[loot], loot_max[loot], eVariety.OneHanded, eVariety.TwoHanded);
         }
 
         static Item get_armor(int loot)
         {
             int r1;
-            if (loot == 0) return null;// return return_dummy_item();
+            if (loot == 0) return null;
             r1 = Maths.Rand(1, (loot - 1) * 5 + 124, 142);
             return pull_item_of_type(loot, loot_min[loot], loot_max[loot], eVariety.Armour);//13);
         }

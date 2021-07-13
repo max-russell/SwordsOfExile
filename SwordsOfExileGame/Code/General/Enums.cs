@@ -92,24 +92,6 @@ namespace SwordsOfExileGame
 
     public enum eDir { N = 0, NE = 1, E = 2, SE = 3, S = 4, SW = 5, W = 6, NW = 7, None = -1 }
 
-    //public enum eBlock
-    //{
-    //    CLEAR_WALK = 0, //CHARACTERS CAN SEE & WALK THROUGH (eg, Grass)
-    //    OPAQUE_WALK = 1, //CHARACTERS CAN WALK THROUGH BUT NOT SEE THROUGH (eg, secret passage)
-    //    CLEAR_WALK_PC = 2, //CHARACTERS CAN SEE THROUGH, ONLY PCS CAN WALK THROUGH (eg, Lava)
-    //      //From here, Clear doesn't mean completely clear - too many in a line will obstruct
-    //    CLEAR_BLOCKED = 3, //CHARACTERS CAN SEE BUT NOT WALK THROUGH (eg, Pit)
-    //    CLEAR_BLOCKED_OBS = 4, //AS ABOVE BUT PARTIALLY OBSTRUCTS MISSILES FIRED THROUGH IT (eg, Windows/Pillars)
-    //    OPAQUE_BLOCKED = 5 //CHARACTERS CANNOT SEE OR WALK THROUGH (eg, Wall) Fields cannot be here
-    //}
-
-    //Old eBlock to new:
-    //  CLEAR_WALK -->   eBlock2:WALK    Obscurity:0
-    //  OPAQUE_WALK -->  eBlock2:WALK    Obscurity:5
-    //  CLEAR_WALK_PC -->eBlock2:WALK_PC Obscurity:0
-    //  CLEAR_BLOCKED -->eBlock2:BLOCKED Obscurity:1
-    //  OPAQUE_BLOCKED-->eBlock2:BLOCKED Obscurity:5
-
     public enum eBlock2
     {
         CLEAR = 0,    // Anyone can cross
@@ -125,18 +107,10 @@ namespace SwordsOfExileGame
         CAST_SPELL,
         CAST_ITEM_SPELL,
         PRE_TARGET_SPELL,
-        //OUT_MOVING,        // 0 - out moving (a - 1 if blocked)                            OutsideSector.SpecialNodeList (local)
-        //TOWN_MOVING, // 1 - town moving (a - 1 if blocked)                                 TownMap.SpecialNodeList (local)
-        //COMBAT_MOVING, // 2 - combat moving (a - 1 if blocked)                             TownMap.SpecialNodeList (local)
-        //OUT_LOOKING, // 3 - out looking (a - 1 if don't get items inside)  NOT USED!!!     OutsideSector.SpecialNodeList (local)
-        //TOWN_LOOKING,// 4 - town looking (a - 1 if don't get items inside)                 TownMap.SpecialNodeList (local)
         ENTERING_TOWN,// 5 - entering town                                                 TownMap.OnEntry / TownMap.OnEntryIfAbandoned (local)
         LEAVING_TOWN,// 6 - leaving town                                                   TownMap.ExitNode[4] (local)
         TALKING, // 7 - talking (a,b - numbers of strings to respond)                      TalkingNode.DataA (when TalkingNode.Type is CALL_TOWN_SPEC or CALL_SCEN_SPEC) (local or global)
         USING_SPECIAL_ITEM, // 8 - using a special item                                    SpecialItem.UseNode (global)
-        //TOWN_TIMER,// 9 - town timer                                                       TownMap.TimerList[].Node (SpecialTimer class) (local)
-        //GLOBAL_TIMER,// 10 - scen timer                                                    Scenario.TimerList[].Node (global)
-        //COUNTDOWN_TIMER,// 11 - party countdown timer                                      TownMap.TimerList[].Node / Scenario.TimerList[].Node (Created in game by special nodes 13 & 195)
         TIMER,
         KILLED_NPC,// 12 - killed a monst                                                  NPCType.Start.OnKill (local)
         OUTDOOR_ENCOUNTER,// 13 - encountering outdoor enc (a - 1 if no fight)             
@@ -187,41 +161,6 @@ namespace SwordsOfExileGame
         CUSTOM_FACE // 32x32 custom graphic, split in 2.
     }
 
-    //public enum eTalkNodeTypeOLD
-    //{
-    //    REGULAR = 0,
-    //    DEP_ON_SDF = 1,
-    //    SET_SDF = 2,
-    //    INN = 3,
-    //    DEP_ON_TIME = 4,
-    //    DEP_ON_TIME_AND_EVENT = 5,
-    //    DEP_ON_TOWN = 6,
-    //    //BUY_ITEMS = 7,
-    //    TRAINING = 8,
-    //    //BUY_MAGE = 9, //Now a shop, type 100
-    //    //BUY_PRIEST = 10,
-    //    //BUY_ALCHEMY = 11,
-    //    BUY_HEALING = 12,
-    //    //SELL_WEAPONS = 13,
-    //    //SELL_ARMOR = 14,
-    //    //SELL_ITEMS = 15,
-    //    IDENTIFY = 16,
-    //    ENCHANT = 17,
-    //    BUY_INFO = 18,
-    //    BUY_SDF = 19,
-    //    BUY_SHIP = 20,
-    //    BUY_HORSE = 21,
-    //    BUY_SPEC_ITEM = 22,
-    //    //BUY_JUMBLE = 23,
-    //    BUY_TOWN_LOC = 24,
-    //    END_FORCE = 25,
-    //    END_FIGHT = 26,
-    //    END_ALARM = 27, // Town hostile
-    //    END_DIE = 28,
-    //    CALL_TOWN_SPEC = 29,
-    //    CALL_SCEN_SPEC = 30,
-    //    SHOP = 100
-    //}
     public enum eTalkNodeType
     {
         REGULAR = 0,
@@ -281,7 +220,6 @@ namespace SwordsOfExileGame
         //TOWN_ENTRANCE = 21,      //Flag 1=Terrain if hidden
         CHANGE_WHEN_USED = 22,   //Flag 1=Terrain to change to
         //CALL_SPECIAL_WHEN_USED = 23,
-
         //FORGET THAT    HAS_TRIGGER_DOT = 24 //New one used to erase the white dot on the map automatically when the global variable in FUNC_GLOBAL is set to value in flag1 (250 is standard BoE) flag2 is the terrain no to change it to
     }
 
@@ -299,37 +237,6 @@ namespace SwordsOfExileGame
     //       Number -  2, 3, 4, 5, 6
     //Flag2: Sound ID - 1
     //       Number -  2, 3, 4, 5, 6, 9, 10
-
-
-    //public enum eField
-    //{
-    //    NONE,
-    //    WEB = 1,
-    //    BARREL,
-    //    CRATE,
-    //    FIRE_BARRIER,
-    //    FORCE_BARRIER,//5
-    //    FORCE_WALL,
-    //    FIRE_WALL,
-    //    ANTIMAGIC,
-    //    STINK_CLOUD,
-    //    ICE_WALL,//10
-    //    BLADE_WALL,
-    //    QUICKFIRE,
-    //    DISPEL,
-    //    SLEEP_CLOUD,
-    //    SMALL_BLOOD,//15
-    //    MEDIUM_BLOOD,
-    //    LARGE_BLOOD,
-    //    SMALL_SLIME,
-    //    LARGE_SLIME,
-    //    CRATER,//20
-    //    BONES,
-    //    ROCKS,
-    //    SECRET_PASSAGE,
-    //    CRATE_MOVE, 
-    //    FIELD_APPEAR, //25
-    //}
 
     public enum eTrapType
     {
@@ -434,14 +341,12 @@ namespace SwordsOfExileGame
         OUTDOOR = 5
     }
 
-
     public class Trait
     {
         public string Name, Description;
         public int Handicap;
         public bool Race;
-        
-
+       
         public Trait(int i, string nm, int handicap, bool is_a_race, string desc)
         {
             Name = nm; Handicap = handicap; Race = is_a_race; Description = desc;
@@ -520,7 +425,6 @@ namespace SwordsOfExileGame
         DISAPPEAR_EVENT = 8,
         USE_SCRIPT = 9
     }
-
 
     public enum eCSS
     { //Creature Special Skill
@@ -856,33 +760,6 @@ namespace SwordsOfExileGame
         FLYING = 93,
         MAJOR_HEALING = 94,
         CALL_SPECIAL = 95, //new (Classic Blades of Exile) item property
-        // Spell Usable
-        //SPELL_FLAME = 110,
-        //SPELL_FIREBALL = 111,
-        //SPELL_FIRESTORM = 112,
-        //SPELL_KILL = 113,
-        //SPELL_ICE_BOLT = 114,
-        //SPELL_SLOW = 115,
-        //SPELL_SHOCKWAVE = 116,
-        //SPELL_DISPEL_UNDEAD = 117,
-        //SPELL_RAVAGE_SPIRIT = 118,
-        //SPELL_SUMMONING = 119,
-        //SPELL_MASS_SUMMONING = 120,
-        //SPELL_ACID_SPRAY = 121,
-        //SPELL_STINKING_CLOUD = 122,
-        //SPELL_SLEEP_FIELD = 123,
-        //SPELL_VENOM = 124,
-        //SPELL_SHOCKSTORM = 125,
-        //SPELL_PARALYSIS = 126,
-        //SPELL_WEB_SPELL = 127,
-        //SPELL_STRENGTHEN_TARGET = 128, //wand of carrunos effect
-        //SPELL_QUICKFIRE = 129,
-        //SPELL_MASS_CHARM = 130,
-        //SPELL_MAGIC_MAP = 131,
-        //SPELL_DISPEL_BARRIER = 132,
-        //SPELL_MAKE_ICE_WALL = 133,
-        //SPELL_CHARM_SPELL = 134,
-        //SPELL_ANTIMAGIC_CLOUD = 135,
         // Reagents
         HOLLY = 150, // Holly/Toadstool
         COMFREY_ROOT = 151,
@@ -907,141 +784,9 @@ namespace SwordsOfExileGame
 
         CAST_SPELL = 177//NEW - replace all the spell abilities with this one and a new string property
                    //for each item of the spell to cast.
-
     }
 
     public enum eItemFilter { ALL, WEAPONS, ARMOUR, POTIONS, USEABLES, OTHER };
 
     public enum eShop { ITEM, MAGIC, ALCHEMY };
-
-    //public enum eSpell
-    //{
-    //    LIGHT_M,//0
-    //    SPARK,
-    //    MINOR_HASTE,
-    //    STRENGTH,
-    //    SCARE,
-    //    FLAME_CLOUD,
-    //    IDENTIFY,
-    //    SCRY_MONSTER,
-    //    GOO,
-    //    TRUE_SIGHT,
-    //    MINOR_POISON,
-    //    FLAME,
-    //    SLOW,
-    //    DUMBFOUND,
-    //    ENVENOM,
-    //    STINKING_CLOUD,
-    //    SUMMON_BEAST,
-    //    CONFLAGRATION,
-    //    DISPEL_FIELDS_M,
-    //    SLEEP_CLOUD,
-    //    UNLOCK,
-    //    HASTE,
-    //    FIREBALL,
-    //    LONG_LIGHT,
-    //    FEAR,
-    //    WALL_OF_FORCE,
-    //    WEAK_SUMMONING,
-    //    FLAME_ARROWS,
-    //    WEB,
-    //    RESIST_MAGIC,
-    //    POISON,
-    //    ICE_BOLT,
-    //    SLOW_GROUP,
-    //    MAGIC_MAP,
-    //    CAPTURE_SOUL,
-    //    SIMULACRUM,
-    //    VENOM_ARROWS,
-    //    WALL_OF_ICE,
-    //    STEALTH,
-    //    MAJOR_HASTE,
-    //    FIRE_STORM,
-    //    DISPEL_BARRIER,
-    //    FIRE_BARRIER,
-    //    SUMMONING,
-    //    SHOCKSTORM,
-    //    SPRAY_FIELDS,
-    //    MAJOR_POISON,
-    //    GROUP_FEAR,
-    //    KILL,
-    //    PARALYSIS,
-    //    DAEMON,
-    //    ANTIMAGIC_CLOUD,
-    //    MINDDUEL,
-    //    FLIGHT,
-    //    SHOCKWAVE,
-    //    MAJOR_BLESSING,
-    //    MASS_PARALYSIS,
-    //    PROTECTION,
-    //    MAJOR_SUMMON,
-    //    FORCE_BARRIER,
-    //    QUICKFIRE,
-    //    DEATH_ARROWS,
-
-    //    MINOR_BLESS, //62
-    //    MINOR_HEAL,
-    //    WEAKEN_POISON,
-    //    TURN_UNDEAD,
-    //    LOCATION,
-    //    SANCTUARY,
-    //    SYMBIOSIS,
-    //    MINOR_MANNA,
-    //    RITUAL_SANCTIFY,
-    //    STUMBLE,
-    //    BLESS,
-    //    CURE_POISON,
-    //    CURSE,
-    //    LIGHT_P,
-    //    WOUND,
-    //    SUMMON_SPIRIT,
-    //    MOVE_MOUNTAINS,
-    //    CHARM_FOE,
-    //    DISEASE,
-    //    AWAKEN,
-    //    HEAL,
-    //    LIGHT_HEAL_ALL,
-    //    HOLY_SCOURGE,
-    //    DETECT_LIFE,
-    //    CURE_PARALYSIS,
-    //    MANNA,
-    //    FORCEFIELD,
-    //    CURE_DISEASE,
-    //    RESTORE_MIND,
-    //    SMITE,
-    //    CURE_PARTY,
-    //    CURSE_ALL,
-    //    DISPEL_UNDEAD,
-    //    REMOVE_CURSE,
-    //    STICKS_TO_SNAKES,
-    //    MARTYRS_SHIELD,
-    //    CLEANSE,
-    //    FIREWALK,
-    //    BLESS_PARTY,
-    //    MAJOR_HEAL,
-    //    RAISE_DEAD,
-    //    FLAMESTRIKE,
-    //    MASS_SANCTUARY,
-    //    SUMMON_HOST,
-    //    SHATTER,
-    //    DISPEL_FIELDS_P,
-    //    HEAL_ALL,
-    //    REVIVE,
-    //    HYPERACTIVITY,
-    //    DESTONE,
-    //    GUARDIAN,
-    //    MASS_CHARM,
-    //    PROTECTIVE_CIRCLE,
-    //    PESTILENCE,
-    //    REVIVE_ALL,
-    //    RAVAGE_SPIRIT,
-    //    RESURRECT,
-    //    DIVINE_THUD,
-    //    AVATAR,
-    //    WALL_OF_BLADES,
-    //    WORD_OF_RECALL,
-    //    MAJOR_CLEANSING,
-    //};
-
-
 }

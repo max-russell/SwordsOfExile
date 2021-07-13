@@ -1,15 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -94,9 +85,7 @@ namespace SwordsOfExileGame
             if (canChange) //Only draw buttons if the user can change the stat (trainer / character creation)
             {
                 Color col = pressedButton == eButton.DEC ? Color.Red : (v <= fixedMin[PC.Slot] ? Color.DarkSlateGray : Color.White);
-                //if (value <= Min) col = Color.Gray;
                 sb.Draw(Gfx.NewGui, new XnaRect(dx + 190, dy, 18, 18), new XnaRect(117, 0, 18, 18), col);
-                //if (value <= Min) col = Color.Gray; else col = Color.White;
 
                 bool can_increase = (creationMode || Game.CurrentParty.Gold >= price) && PC.SkillPoints >= cost;
 
@@ -109,28 +98,24 @@ namespace SwordsOfExileGame
         {
             if (!Enabled || !Visible ) return false;
             
-            //return base.Handle(xOffset, yOffset);
             int dx = X + xOffset, dy = Y + yOffset;
 
             if (Gui.Ms.X >= dx && Gui.Ms.Y > dy && Gui.Ms.X < dx + Width && Gui.Ms.Y < dy + Height)
             {
                 if (Gui.Ms.X < dx + 190)
                 {
-                    //if (ToolTip.WaitForToolTip())
-                    //{
                     if (Stat == eSkill.HEALTH)
                         new ToolTipV2(false, new XnaRect(dx, dy, Width, Height), healthdesc, 200);//ToolTip(healthdesc, 200, false);
                     else if (Stat == eSkill.SPELLPTS)
                         new ToolTipV2(false, new XnaRect(dx, dy, Width, Height), spelldesc, 200);//ToolTip(spelldesc, 200, false);
                     else
                         new ToolTipV2(false, new XnaRect(dx, dy, Width, Height), statdesc[(int)Stat], 200); //ToolTip(statdesc[(int)Stat], 200, false);
-                    //}
                     return false;
                 }
                 else
                 {
                     if (!canChange) return false;
-                    if (Gui.Ms.X < dx + 208) //Press 'Decrase button'?
+                    if (Gui.Ms.X < dx + 208) //Press 'Decrease button'?
                     {
                         if (Gui.LMBHit)
                         {

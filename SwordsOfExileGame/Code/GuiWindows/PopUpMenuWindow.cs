@@ -1,21 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
 namespace SwordsOfExileGame
 {
-    delegate void PopUpHandler(object o, object o2, int data);//string option);
+    delegate void PopUpHandler(object o, object o2, int data);
 
     public class PopUpMenuData
     {
@@ -39,9 +30,7 @@ namespace SwordsOfExileGame
     {
         PopUpMenuOption[] menuButtons;
         PopUpHandler popupHandler;
-        List<PopUpMenuData> optionList;// = new List<option>();
-        //List<object> optionObjects;
-        //List<int> optionData;
+        List<PopUpMenuData> optionList;
 
         public PopUpMenu(PopUpHandler handler, List<PopUpMenuData> options)
             : base(0, 0, 10, 10, true, false, true, true, false)
@@ -49,7 +38,6 @@ namespace SwordsOfExileGame
             OnTop = true;
             int w = 0, h = 0, x, y;
             popupHandler = handler;
-            //optionList = options;
             //Work out size of pop-up menu from option texts
             optionList = options;
             foreach (PopUpMenuData op in optionList)
@@ -91,7 +79,6 @@ namespace SwordsOfExileGame
             {
                 Gui.NeedMouseRelease = true;
                 KillMe = true;
-                //popupHandler.Invoke(null, null,0);
                 return true;
             }
             if (interacted)

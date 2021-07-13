@@ -1,15 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -19,8 +10,6 @@ namespace SwordsOfExileGame
     class MenuBarWindow : GuiWindow
     {
         static MenuBarWindow instance;
-        //textbar: TEXTBAR.PNG 279x21
-        //buttons: BUTTONS.PNG 258x(3x37=111)
         PictureButton btnCastMage, btnCastPriest, btnLook, btnCamp, btnDefend, btnTalk, btnMap, btnLoot, btnGather,
             btnSave, btnLoad, btnWait, btnEnd, btnAct, btnCombat, btnRanged, btnMapSml, btnUse, btnAlchemy;
 

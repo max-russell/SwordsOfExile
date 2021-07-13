@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.BitmapFonts;
 
 namespace SwordsOfExileGame
@@ -37,7 +29,7 @@ namespace SwordsOfExileGame
         {
             bool interacted = base.Handle();
             Keys hitkeys = KeyHandler.GetAllKeysHit();
-            if (hitkeys != Keys.None)//null && hitkeys.Count > 0)
+            if (hitkeys != Keys.None)
             {
                 if (
                     ((hitkeys >= Keys.D0 && hitkeys <= Keys.Z) ||
@@ -52,7 +44,6 @@ namespace SwordsOfExileGame
                         KeyHandler.FlushHitKey();
                         KillMe = true;
                         Handler.Invoke(hitkeys);
-                        //Game.FlushKeys();
                         return true;
                     }
                 }
@@ -113,8 +104,6 @@ namespace SwordsOfExileGame
             }
             return false;
         }
-
-
     }
 
     class InputTextWindow : GuiWindow
@@ -135,9 +124,9 @@ namespace SwordsOfExileGame
 
             ypos += textBox.Height + 20;
             var b1 = AddButton(pressDone, "Done", 0, 0);
-            OKKeyControl = b1;// b1.KeyShortcut = Keys.Enter;
+            OKKeyControl = b1;
             var b2 = AddButton(pressCancel, "Cancel", 0, 0);
-            CancelKeyControl = b2;//.KeyShortcut = Keys.Escape;
+            CancelKeyControl = b2;
 
             LineUpControlsRight(Width - Gfx.FRAME_WIDTH - 18, ypos, 10, b2, b1);
 
@@ -215,8 +204,6 @@ namespace SwordsOfExileGame
                 if ((tickon && !cursorTick) || (!tickon && cursorTick)) cursorFlash = !cursorFlash;
                 cursorTick = tickon;
 
-
-
                 //Is mouse inside bounds of button?
 
                 int dx = X + xOffset, dy = Y + yOffset;
@@ -245,84 +232,72 @@ namespace SwordsOfExileGame
                     }
                 }
 
-                //if (Gui.KeyFocusWindow == parent)
-                //{
                 var hitkeys = KeyHandler.GetAllKeysHit();
                 if (hitkeys != Keys.None)
                 {
-                    //for (int n = hitkeys.Count - 1; n >= 0; n--)
-                    //{
-                        Keys k = hitkeys;
-                        if (!((k >= Keys.A && k <= Keys.Z) ||
-                            (k >= Keys.D0 && k <= Keys.D9) ||
-                            (k >= Keys.NumPad0 && k <= Keys.Divide) ||
-                            (k >= Keys.OemSemicolon && k <= Keys.OemTilde) ||
-                            (k >= Keys.OemOpenBrackets && k <= Keys.Oem8) ||
-                            (k == Keys.Back || k == Keys.Delete || k == Keys.Multiply || k == Keys.Add ||
-                             k == Keys.Subtract || k == Keys.Decimal || k == Keys.Divide || k == Keys.Space ||
-                             k == Keys.Left || k == Keys.Right))) return false;//continue;
-                        //hitkeys.RemoveAt(n);
-                        KeyHandler.FlushHitKey();
-                    //}
+
+                    Keys k = hitkeys;
+                    if (!((k >= Keys.A && k <= Keys.Z) ||
+                        (k >= Keys.D0 && k <= Keys.D9) ||
+                        (k >= Keys.NumPad0 && k <= Keys.Divide) ||
+                        (k >= Keys.OemSemicolon && k <= Keys.OemTilde) ||
+                        (k >= Keys.OemOpenBrackets && k <= Keys.Oem8) ||
+                        (k == Keys.Back || k == Keys.Delete || k == Keys.Multiply || k == Keys.Add ||
+                         k == Keys.Subtract || k == Keys.Decimal || k == Keys.Divide || k == Keys.Space ||
+                         k == Keys.Left || k == Keys.Right))) return false;//continue;
+                            KeyHandler.FlushHitKey();
 
                     bool capson = KeyHandler.AnyKeysDown(Keys.LeftShift, Keys.RightShift);//false;
                     bool alton = KeyHandler.AnyKeysDown(Keys.LeftAlt, Keys.RightAlt);
-                    //if (Game.AnyKeysDown(Keys.LeftShift, Keys.RightShift)) capson = true;
 
-                    //if (hitkeys.Count > 0)
-                    //{
-                        char ch = ' ';
+                    char ch = ' ';
 
-                        switch (hitkeys)
-                        {
-                            //case Keys.OemQuotes:
-                            //case Keys.OemTilde: ch = '\''; break;
-                            //case Keys.OemMinus: ch = '-'; break;
-                            case Keys.Back:
-                                if (!deleteHighlight())
-                                {
-                                    if (cursorpos > 0)
-                                    {
-                                        Text = Text.Remove((cursorpos--) - 1, 1);
-                                        highlightPos = cursorpos;
-                                    }
-                                }
-                                cursorFlash = true;
-                                return true;
-                            case Keys.Delete:
-                                if (!deleteHighlight())
-                                {
-                                    if (cursorpos < Text.Length) Text = Text.Remove(cursorpos, 1);
-                                }
-                                cursorFlash = true;
-                                return true;
-                            case Keys.Left:
-                                cursorpos = Math.Max(0, cursorpos - 1); highlightPos = cursorpos; cursorFlash = true; return true;
-                            case Keys.Right:
-                                cursorpos = Math.Min(cursorpos + 1, Text.Length); highlightPos = cursorpos; cursorFlash = true; return true;
-                            default:
-                                ch = KeyHandler.GetCharsFromKeys(hitkeys, capson, alton); break;//(char)hitkeys[0]; break;
-                        }
-
-                        if (numbersOnly && !char.IsDigit(ch)) { cursorFlash = true; return true; };
-                        if (!capson) ch = char.ToLower(ch);
-
-                        //if (Gfx.TalkFontNormal.Characters.Contains(ch))
-                        {
-                            //Delete all highlighted text first.
-                            deleteHighlight();
-
-                            if (MaxChars == -1 || Text.Length < MaxChars)
+                    switch (hitkeys)
+                    {
+                        case Keys.Back:
+                            if (!deleteHighlight())
                             {
-                                Text = Text.Insert(cursorpos++, ch.ToString());
-                                highlightPos = cursorpos;
-                                cursorFlash = true;
-                                return true;
+                                if (cursorpos > 0)
+                                {
+                                    Text = Text.Remove((cursorpos--) - 1, 1);
+                                    highlightPos = cursorpos;
+                                }
                             }
+                            cursorFlash = true;
+                            return true;
+                        case Keys.Delete:
+                            if (!deleteHighlight())
+                            {
+                                if (cursorpos < Text.Length) Text = Text.Remove(cursorpos, 1);
+                            }
+                            cursorFlash = true;
+                            return true;
+                        case Keys.Left:
+                            cursorpos = Math.Max(0, cursorpos - 1); highlightPos = cursorpos; cursorFlash = true; return true;
+                        case Keys.Right:
+                            cursorpos = Math.Min(cursorpos + 1, Text.Length); highlightPos = cursorpos; cursorFlash = true; return true;
+                        default:
+                            ch = KeyHandler.GetCharsFromKeys(hitkeys, capson, alton); break;//(char)hitkeys[0]; break;
+                    }
+
+                    if (numbersOnly && !char.IsDigit(ch)) { cursorFlash = true; return true; };
+                    if (!capson) ch = char.ToLower(ch);
+
+                    {
+                        //Delete all highlighted text first.
+                        deleteHighlight();
+
+                        if (MaxChars == -1 || Text.Length < MaxChars)
+                        {
+                            Text = Text.Insert(cursorpos++, ch.ToString());
+                            highlightPos = cursorpos;
+                            cursorFlash = true;
+                            return true;
                         }
-                    //}
+                    }
+
                 }
-                //}
+
                 return false;
             }
 
@@ -350,7 +325,5 @@ namespace SwordsOfExileGame
                 cursorpos = Text.Length;
             }
         }
-
-
     }
 }

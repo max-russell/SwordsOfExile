@@ -4,12 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -38,8 +34,6 @@ namespace SwordsOfExileGame
 
         FileHandler Func;
 
-        //and_save: Also allow saving the current game
-        //free_parties: If true, only save games featuring parties not in a scenario, if false, only save games in a scenario
         public LoadGameWindow(bool loading, bool saving, bool parties_only, FileHandler func)
             : base(0, 0, 700, 500, true, false, true, true, false)
         {
@@ -96,7 +90,6 @@ namespace SwordsOfExileGame
             saveInfoBox.FormatText("");
 
             btnBack = AddButton(pressButton, "Back", 0, 0, 84, 30);
-            //btnNewParty = AddButton(pressButton, "Start with New Party", 0, 0, 123, 30);
             btnDelete = AddButton(pressButton, "Delete", 0, 0, 84, 30);
 
             if (allowLoading && allowSaving)
@@ -116,18 +109,6 @@ namespace SwordsOfExileGame
                 LineUpControls(280, 440, 10, btnBack, btnSave, btnDelete);
             }
 
-
-            //if (free_parties)
-            //    btnLoad = AddButton(pressButton, "Use", 0, 0, 84, 30);
-            //else
-            //    btnLoad = AddButton(pressButton, "Load", 0, 0, 84, 30);
-
-            //btnSave = AddButton(pressButton, "Save", 0, 0, 84, 30);
-            
-            
-
-            //if (!allowSaving) btnSave.Enabled = false;
-
             listSaves();
 
             if (savesList.Items.Count > 0) savesList.SelectedItem = savesList.Items[0];
@@ -142,40 +123,15 @@ namespace SwordsOfExileGame
             {
                 KillMe = true;
                 Func.Invoke(CANCEL,null);
-
-                //if (Game.InMainMenu) StartMenuWindow.Begin();
             }
             else if (b == btnLoad)
             {
 
                 if (KeyHandler.KeyDown(Keys.Oem8))
                     Game.DebugLoad = true;
-
-                //if (partiesOnly)
-                //{
-                //    
-                //}
-                //else
-                //{
-                    string savefile = ((SaveInfo)savesList.SelectedItem.Tag).Filename;
-                    //string scenfilename, scenname, partymap;
-                    //int scenpic;
-
-                    Func.Invoke(LOAD, savefile);
-
-                    //SaveInfo i = Game.LoadSaveInfo(savefile, false);
-                    //if (i != null)
-                    //{
-                    //    Scenario.Filename = Path.GetFileNameWithoutExtension(((SaveInfo)savesList.SelectedItem.Tag).ScenFile);
-                    //    Game.ScenarioDirectory = Path.Combine(Game.RootDirectory, "Scenarios", Scenario.Filename);
-                    //    Game.LastSaveFile = savefile;//.CurrentParty.SaveFileName = savefile;
-                    //    KillMe = true;
-                    //    Game.BeginLoadingThread(false);
-                    //}
-
-                    KillMe = true;
-
-                //}
+                string savefile = ((SaveInfo)savesList.SelectedItem.Tag).Filename;
+                Func.Invoke(LOAD, savefile);
+                KillMe = true;
             }
             else if (b == btnSave)
             {
@@ -204,10 +160,6 @@ namespace SwordsOfExileGame
                 var i = (SaveInfo)savesList.SelectedItem.Tag;
 
                 Func.Invoke(SAVE, i.Filename);
-
-
-                
-                //Game.SaveGame(i.Filename, i.SaveName);
                 KillMe = true;
             }
         }
@@ -222,9 +174,6 @@ namespace SwordsOfExileGame
                     if (f.Contains(c)) f = f.Replace(c, '_');
 
                 Func.Invoke(SAVE, f);
-
-
-                //Game.SaveGame(f, n);
                 KillMe = true;
             }
         }
@@ -295,7 +244,6 @@ namespace SwordsOfExileGame
         {
             if (i == null)
             {
-                //scenPic.SetPicture(Gfx.NewGui, new XnaRect(55, 190, 1, 1));
                 saveName.Text = "";
                 saveInfoBox.FormatText("");
                 if (allowLoading) btnLoad.Enabled = false;
@@ -348,23 +296,14 @@ namespace SwordsOfExileGame
                 StringBuilder infotext = new StringBuilder();
                 if (partiesOnly)
                 {
-                    //scenPic.SetPicture(Gfx.NewGui, new XnaRect(55, 190, 1, 1));
-                    //saveName.Text = i.Filename;
                     infotext.Append(string.Format("This party was saved on {0}", i.LastSavedDate.ToString()));
-                        
-                        //i.PartyName + "@n" + i.LastSavedDate.ToString());
                 }
                 else
                 {
                     var sr = new XnaRect((i.IntroPic % (Gfx.ScenarioGfx.Width / Gfx.SCENGFXWIDTH)) * Gfx.SCENGFXWIDTH, (i.IntroPic / (Gfx.ScenarioGfx.Width / Gfx.SCENGFXHEIGHT)) * Gfx.SCENGFXHEIGHT, Gfx.SCENGFXWIDTH, Gfx.SCENGFXHEIGHT);
-                    //scenPic.SetPicture(Gfx.ScenarioGfx, sr);
-                    //saveName.Text = i.ScenName;
                     infotext.Append(
                         String.Format("@b{0}@e are currently adventuring in @b{1}@e, where it is day @b{2}@e. Their current location is @b{3}@e. @n@nThis game was saved on {4}.",
                             i.PartyName, i.ScenName, i.Age / Constants.DAY_LENGTH + 1, i.CurrentMapName, i.LastSavedDate.ToString()));
-                        
-                        
-                        //i.Age + "@n" + i.CurrentMapName + "@n" + i.PartyName + "@n" + i.LastSavedDate.ToString());
                 }
                 infotext.Append(string.Format("@n@n@iTotal Damage Dealt: {0}@nTotal Monsters Killed: {1}@nTotal XP gained: {2}@nTotal Damage Taken: {3}", 
                     party.total_dam_done, party.total_m_killed, party.total_xp_gained, party.total_dam_taken));
@@ -378,8 +317,6 @@ namespace SwordsOfExileGame
         public override void Draw(SpriteBatch sb, int partial = 0)
         {
             base.Draw(sb, partial);
-
-            //Gfx.DrawFrame(X + 290, Y + 20, 390, 420, new Color(0, 0, 0, 255));
         }
 
     }

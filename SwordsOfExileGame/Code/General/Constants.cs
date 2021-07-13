@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace SwordsOfExileGame
+﻿namespace SwordsOfExileGame
 {
     static class Constants
     {
@@ -32,7 +27,6 @@ namespace SwordsOfExileGame
                                               //terrains between A and B is added one by one. When it gets above this value
                                               //the vision is completely opaque.
         public const int SIGHT_RANGE = 20;
-        //public const bool FOV_SHADOW_CASTING = true;
 
         public const int FLEE_PROBABILITY = 40; //Percentage chance the PC will leave the combat map
 

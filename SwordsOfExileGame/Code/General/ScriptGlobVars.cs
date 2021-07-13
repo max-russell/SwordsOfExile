@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
-using IronPython.Hosting;
-using Microsoft.Scripting;
-using Microsoft.Scripting.Hosting;
-using System.Reflection;
 
 namespace SwordsOfExileGame
 {
-
     public class GlobalVariables
     {
         static Dictionary<string, object> globalVariables = new Dictionary<string, object>();
@@ -82,7 +75,7 @@ namespace SwordsOfExileGame
 
             switch (t)
             {
-                case 0: //Int 32
+                case 0: 
                     value = In.ReadInt32();
                     break;
             }

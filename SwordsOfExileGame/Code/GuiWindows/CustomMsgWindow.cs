@@ -1,15 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
@@ -23,7 +14,6 @@ namespace SwordsOfExileGame
         Button recordButton;
         RichTextBox messageArea;
         string rawMessage;
-        //Texture2D customPic;
 
         public MessageWindow(MessageWindowHandler handler, string message, eDialogPic pictype, int pictureindex, params string[] buttons)
             : base(0, 0, 400, 400, true, false, true, true, false)
@@ -81,21 +71,6 @@ namespace SwordsOfExileGame
                         p = new PictureBox(this, sr, Gfx.TerrainGfx[sheet], new XnaRect(10, ypos, Gfx.TILEWIDTH, Gfx.SRCTILEHEIGHT), -1);
                     }
                     break;
-                //case eDialogPic.CUSTOM_SQUARE: 
-                //case eDialogPic.CUSTOM_TILE:
-                //    customPic = Gfx.MakeKludgyCustomDialogPic(pictureindex, pictype);
-                //    int w = pictype == eDialogPic.CUSTOM_SQUARE ? Gfx.CUSTOMGFXHEIGHT : Gfx.CUSTOMGFXWIDTH;
-                //    sr = new XnaRect(0, 0, w, Gfx.CUSTOMGFXHEIGHT);
-                //    p = new PictureBox(this, sr, customPic, new XnaRect(10, ypos, w, Gfx.CUSTOMGFXHEIGHT), -1);
-                //    break;
-                ////case eDialogPic.CREATURE_CUSTOM:
-                ////case eDialogPic.TERRAIN_CUSTOM:
-                ////    Gfx.MakeKludgyCustomDialogPic(pictureindex, pictype == eDialogPic.DIALOG_CUSTOM);
-
-                ////    int w = pictype == eDialogPic.DIALOG_CUSTOM ? Gfx.CUSTOMGFXHEIGHT : Gfx.CUSTOMGFXWIDTH;
-                ////    sr = new XnaRect(0, 0, w, Gfx.CUSTOMGFXHEIGHT);
-                ////    p = new PictureBox(this, sr, Gfx.CustomDialogPicKludge, new XnaRect(10, ypos, w, Gfx.CUSTOMGFXHEIGHT), -1);
-                ////    break;
             }
             if (p != null)
             {
@@ -150,111 +125,4 @@ namespace SwordsOfExileGame
         }
 
     }
-
-    //class CustomMessageWindow : GuiWindow
-    //{
-
-    //    public static short[] available_dlog_buttons = {0,63,64,65,1,4,5,8, 
-    //                            128,
-    //                            9,
-    //                            10, // 10
-    //                            11,12,13,
-    //                            14,15,16,17,29, 51,
-    //                            60,61,62, // 20
-    //                            66,69,70, 71,72,73,74,79,
-    //                            80,83,86,87,88, 91,92,93,99,100,
-    //                            101,102,104, 129,130,131,132,133,134,135,136,137};
-    //    public static string[] button_strs = {"Done ","Ask"," "," ","Keep", "Cancel","+","-","Buy","Leave",
-    //                    "Get","1","2","3","4","5","6","Cast"," "," ",
-    //                    " "," "," ","Buy","Sell","Other Spells","Buy x10"," "," ","Save",
-    //                    "Race","Train","Items","Spells","Heal Party","1","2","3","4","5",
-    //                    "6","7","8","9","10","11","12","13","14","15",
-    //            /*50*/  "16","Take","Create","Delete","Race/Special","Skill","Name","Graphic","Bash Door","Pick Lock",
-    //                    "Leave","Steal","Attack","OK","Yes","No","Step In"," ","Record","Climb",
-    //                    "Flee","Onward","Answer","Drink","Approach","Mage Spells","Priest Spells","Advantages","New Game","Land",
-    //                    "Under","Restore","Restart","Quit","Save First","Just Quit","Rest","Read","Pull","Alchemy",
-    //                    "17","Push","Pray","Wait","","","Delete","Graphic","Create","Give",
-    //            /*100*/		"Destroy","Pay","Free","Next Tip","Touch", "Select Icon","Create/Edit","Clear Special","Edit Abilities","Choose",
-    //                    "Go Back","Create New","General","One Shots","Affect PCs","If-Thens","Town Specs","Out Specs","Advanced","Weapon Abil",
-    //                    "General Abil.","NonSpell Use","Spell Usable","Reagents","Missiles","Abilities","Pick Picture","Animated","Enter","Burn",
-    //                    "Insert","Remove","Accept","Refuse","Open","Close","Sit","Stand","","",
-    //                    "18","19","20","Invisible!","","","","","",""};
-
-
-    //    List<Label> labels = new List<Label>();
-    //    Button doneButton, recordButton;
-    //    List<Button> mainButtons = new List<Button>();
-    //    List<SpecialNode> buttonNodes;
-    //    bool firstButtonCancels = false;
-
-    //    public CustomMessageWindow(string[] texts, int pictureindex, List<int> buttons, List<SpecialNode>bnodes, bool first_button_cancels)
-    //        : base(0, 0, 400, 400, true, false, true, true, false)
-    //    {
-    //        int ypos = 10;
-
-    //        //ToDO: Draw the correct picture in the window according to pictureindex
-
-    //        foreach(string t in texts)
-    //        {
-    //            if (t == null || t.Length == 0) break;
-
-    //            Label l = AddLabel(t, 10, ypos,-1,-1,true);
-    //            l.Resize(360, -1);
-    //            ypos += l.Height + 10;
-    //        }
-
-    //        ypos += 30;
-
-    //        if (buttons != null)
-    //        {
-    //            int xpos = 380;
-    //            bool first = true;
-
-    //            foreach (int s in buttons)
-    //            {
-    //                Button b = AddButton(pressMainButton, button_strs[available_dlog_buttons[s]], 0, ypos);
-    //                mainButtons.Add(b);
-    //                b.X = xpos - b.Width;
-    //                xpos = b.X - 10;
-    //                if (first && first_button_cancels) b.KeyShortcut = Keys.Enter;
-
-    //                first = false;
-    //            }
-    //            buttonNodes = bnodes;
-    //            firstButtonCancels = first_button_cancels;
-    //        }
-    //        recordButton = AddButton(null, "Record", 20, ypos);
-    //        Resize(400, ypos + recordButton.Height + 20);
-
-    //        if (buttons == null)
-    //        {
-    //            doneButton = AddButton(pressDone, "Done", 340, ypos);
-    //            doneButton.Position(-10, -10, 1, 1);
-    //            doneButton.KeyShortcut = Keys.Enter;
-    //        }
-
-    //        recordButton.Position(10, -10, -1, 1);
-    //        Position(-2, -2);
-    //    }
-
-    //    void pressDone(Button button_pressed)
-    //    {
-    //        KillMe = true;
-    //    }
-
-    //    void pressMainButton(Button button_pressed)
-    //    {
-    //        for (int n = 0; n < mainButtons.Count; n++)
-    //        {
-    //            if (button_pressed == mainButtons[n])
-    //            {
-    //                SpecialNode.SendDialogOutcomeToSpecials(n == 0 && firstButtonCancels ? true : false, buttonNodes[n]);
-    //                KillMe = true;
-    //                break;
-    //            }
-    //        }
-    //    }
-
-    //}
-
 }

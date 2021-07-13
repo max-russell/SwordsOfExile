@@ -1,20 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-////using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+﻿using System.Collections.Generic;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
 namespace SwordsOfExileGame
 {
-
     public class Field
     {
         public static uint ObscurityMask;
@@ -61,13 +49,6 @@ namespace SwordsOfExileGame
             List[num] = this;
             Bit = bit;
         }
-
-        //public static FieldRecord GetRecord(eField f)
-        //{
-        //    foreach (FieldRecord r in List)
-        //        if (r.F == f) return r;
-        //    return null;
-        //}
 
         public static Field[] List = new Field[27];//{
         public static List<Field> VisibleList = new List<Field>();

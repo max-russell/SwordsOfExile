@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -36,7 +30,6 @@ namespace SwordsOfExileGame
                     //Read whether the party in this save game is currently in a scenario.
                     bool in_scenario = file.ReadBoolean();
 
-                    //if (!in_scenario && !free_parties) return null;// false;
                     if (in_scenario == free_parties) return null;
 
                     //Load the party
@@ -72,7 +65,7 @@ namespace SwordsOfExileGame
             string fn = Path.ChangeExtension(filename, "sav2");
             fn = Path.Combine(RootDirectory, "Saves", fn);
 
-            if (!File.Exists(fn)) return null;// false;
+            if (!File.Exists(fn)) return null;
 
             List<Texture2D> pcpics = new List<Texture2D>();
 
@@ -83,8 +76,8 @@ namespace SwordsOfExileGame
             {
                 try
                 {
-                    if (file.ReadString() != Constants.SAVE_FILE_KEY) return null;// false;
-                    if (file.ReadInt32() != Constants.SAVE_FILE_VERSION) return null;// false;
+                    if (file.ReadString() != Constants.SAVE_FILE_KEY) return null;
+                    if (file.ReadInt32() != Constants.SAVE_FILE_VERSION) return null;
 
                     string savename = file.ReadString();
 
@@ -93,13 +86,6 @@ namespace SwordsOfExileGame
 
                     //Load the party
                     tempParty = new PartyType(file, filename);
-                    
-
-                    //foreach (PCType pc in tempParty.PCList)
-                    //{
-                    //    pcpics.Add(pc.PortraitTexture);
-                    //}
-
                 }
                 catch (EndOfStreamException)
                 {
@@ -149,19 +135,12 @@ namespace SwordsOfExileGame
                         i.LoadGame(file);
 
                     GlobalVariables.LoadGame(file);
-
-                    //Link party's known spells to the spells in the scenario.
-                    //foreach (PCType pc in CurrentParty.PCList)
-                    //    pc.SetupKnownSpells();
                 }
-                //InMainMenu = !in_scenario;
             }
 
             Game.SaveSettings();
 
-            //Action.Requested = eAction.NONE;
             new Action(eAction.NONE);
-            //DoneLeaveScript = false;
             return true;
         }
 
@@ -177,8 +156,7 @@ namespace SwordsOfExileGame
                 if (File.Exists(oldsav))
                     File.Move(oldsav, newsav);
             }
-
-            SaveGame("AutoSave01", false);//, "AutoSave");
+            SaveGame("AutoSave01", false);
         }
 
         public static void SaveGame(string filename, bool only_party)
@@ -211,12 +189,12 @@ namespace SwordsOfExileGame
                 else
                     file.Write(LastSaveFile);
 
-                file.Write(!only_party);//Game.InMainMenu); //Write whether the party is in a scenario.
+                file.Write(!only_party); //Write whether the party is in a scenario.
 
                 //Save Party
                 CurrentParty.SaveGame(file);
 
-                if (!only_party)//Game.InMainMenu)
+                if (!only_party)
                 {
                     //Write scenario
                     Scenario.SaveGame(file);
@@ -226,7 +204,6 @@ namespace SwordsOfExileGame
                         v.SaveGame(file);
                     if (CurrentParty.Vehicle == null) file.Write(-1);
                     else file.Write(Vehicle.List.IndexOf(CurrentParty.Vehicle));
-
 
                     //Save special items collected so far.
                     SpecialItem.SaveGame(file);
@@ -240,20 +217,12 @@ namespace SwordsOfExileGame
                     GlobalVariables.SaveGame(file);
                 }
                 //Save Game Preferences
-
             }
 
             Game.SaveSettings();
 
             if (!InMainMenu) AddMessage("Save: Done.");
             new Action(eAction.NONE);
-
-            //Assumes some fancy window has already let the player select a filename etc.
-
-            //Party
-
-            //Spell prefs (last spell cast, last spell caster
-            //Game preference
         }
     }
 
@@ -277,7 +246,6 @@ namespace SwordsOfExileGame
             Filename = filename;
             if (!Load())
             {
-                //Game.FlagError("Loading Error", new Exception("Scenario did not load correctly."), filename);
                 return false;
             }
             if (name != Name) return false;
@@ -285,8 +253,6 @@ namespace SwordsOfExileGame
             {
                 return false;
             }
-            //if (!MagicSpell.LoadSpellData()) return false; 
-            //if (!Recipe.LoadAlchemyData()) return false;
 
             Party.Pos = file.ReadLocation();
             Party.Direction = file.ReadDirection();
@@ -304,7 +270,7 @@ namespace SwordsOfExileGame
                 if (TownMap.List.TryGetValue(file.ReadString(), out t))
                     Game.CurrentMap = t;
                 else
-                    Game.CurrentMap = TownMap.List[0];//TownList[file.ReadInt32()];
+                    Game.CurrentMap = TownMap.List[0];
             }
 
             int count = file.ReadInt32();
@@ -495,7 +461,6 @@ namespace SwordsOfExileGame
 
             //Kill Count?
             //Abandoned?
-
             if (!Game.RecentTownList.Contains(this))
             {
                 file.Write(false);
@@ -576,7 +541,6 @@ namespace SwordsOfExileGame
                 {
                     //WRITE WHERE THE INSTANCE IS SO WE CAN LINK IT BACK WHEN THE GAME IS LOADED.
                     //Item instances could be held by a pc or in a town somewhere
-                    //file.Write(true);
                     WritePresetItemLinkInfo(i.Instance, file);
                 }
             }
@@ -617,7 +581,6 @@ namespace SwordsOfExileGame
             }
 
             file.Write(false);
-            //throw new Exception("So where the hell is this item then?");
         }
     }
 
@@ -654,22 +617,6 @@ namespace SwordsOfExileGame
                 Mobile, Summoned, Dir, health, Morale, sp, ap);
             for (int a = 0; a < status.Length; a++) file.Write(status[a]);
             file.Write(town.NPCStartIndex(Start));
-
-            //Save these.
-       /*     public ICharacter Target; //Who it's currently trying to fight.
-            Location WanderTarget; //Was monster_targs - this stores the square a creature wanders to when it is not hostile (used in rand_move)
-            int Provocation; //This is calculated at the end of every npcs turn based on what it did that turn. Attacking or casting a spell is a big provocation.
-            ICharacter LastAttacked; //Did the npc attack another character last turn? Used when an enemy npc is deciding who to target.
-            public eAttitude Attitude; //Whether the NPC is an ally or enemy of the PCs
-            public eActive Active; //Whether the NPC will attempt to attack its enemy
-            Location pos;
-            public NPCRecord Record;
-            public Boolean Mobile;
-            public int Summoned;
-            public NPCStart Start;
-            public Direction direction;
-            public int health, Morale, MP, AP;
-            int[] status = new int[15];*/
         }
 
         public void SaveGameCharLinks(BinaryWriter file, TownMap town)
@@ -789,9 +736,7 @@ namespace SwordsOfExileGame
 
             foreach (Encounter npc in NPCGroupList)
             {
-                
-                //int q = NPCGroupRecord.List.IndexOf(npc.Record);
-                file.Write(npc.Record.ID);//NPCGroupRecord.List.ElementAt(q).Key);
+                file.Write(npc.Record.ID);
                 file.Write(npc.Pos);
             }
         }
@@ -888,8 +833,6 @@ namespace SwordsOfExileGame
             }
 
             currentPC = PCList[file.ReadInt32()];
-
-            //activePC = null; //This forces the Highlight graphic to redraw for the current PC
             activePC = LeaderPC;
         }
     }
@@ -914,7 +857,6 @@ namespace SwordsOfExileGame
             file.Write(which_graphic);
 
             Gfx.SavePCGraphics(file, PCTexture, PortraitTexture);
-
 
             file.Write(ItemList.Count);
             foreach (Item i in ItemList) i.SaveGame(file);
@@ -961,8 +903,6 @@ namespace SwordsOfExileGame
 
             Gfx.LoadPCGraphics(file, out PCTexture, out PortraitTexture);
 
-
-            //lastSlot = file.ReadInt32();
             int count = file.ReadInt32();
             for (int n = 0; n < count; n++)
             {
@@ -986,28 +926,8 @@ namespace SwordsOfExileGame
             for (int n = 0; n < count; n++)
                 KnownSpells.Add(file.ReadString(), null);
 
-            //count = file.ReadInt32();
-            //for (int n = 0; n < count; n++)
-            //    file.ReadString();// FavouriteSpells.Add(file.ReadString(), null);
-
             for (int n = 0; n < Trait.Index.Length; n++)
                 if (file.ReadBoolean()) Traits.Add(Trait.Index[n]);
-
-
-
-            //if (Slot == 3)
-            //{
-            //    KnownSpells.Add("m_capture_soul", null);//MagicSpell.List["m_capture_soul"]);
-            //    KnownSpells.Add("m_simulacrum", null);//MagicSpell.List["m_simulacrum"]);
-            //    SetSkill(eSkill.MAGE_SPELLS, 7);
-            //    max_sp = 100;
-            //    SP = 100;
-            //}
-
-
-
-
-
         }
 
     }

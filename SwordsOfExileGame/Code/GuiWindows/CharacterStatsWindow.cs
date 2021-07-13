@@ -1,15 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 using MonoGame.Extended.BitmapFonts;
 
@@ -61,11 +53,7 @@ namespace SwordsOfExileGame
                 controls.Add(c[n]);
             }
 
-            LineUpControlsDown(10, l.Y + l.Height + 4, 1, c);/*controls[0], controls[1], controls[2], controls[3],
-                                           controls[4], controls[5], controls[6], controls[7],
-                                           controls[8], controls[9], controls[10], controls[11],
-                                           controls[12], controls[13], controls[14], controls[15],
-                                           controls[16], controls[17], controls[18]*/
+            LineUpControlsDown(10, l.Y + l.Height + 4, 1, c);
 
             var cn = new StatControl(this, 10, c[18].Y + 26, -1, eSkill.HEALTH, false, false);
             controls.Add(cn);
@@ -95,17 +83,12 @@ namespace SwordsOfExileGame
 
             encumbranceLbl = new Label(this, "Encumbrance:", 10, expLbl.Y + 15, -1, -1, false, -1);
             encumbranceLbl.SetStandardToolTip("Your encumbrance rating is increased by wearing heavy armour and decreased by the Defence skill. Encumbrance slows you down and makes it harder to hit enemies in combat. Wearing armor with a total encumbrance of more that 1 spoils any mage spell you try to cast in combat. High defense skill sometimes prevents this from happening, but it will only go so far. If any single item has encumb. higher than 2, spells always fail.",200);
-            //weap1Lbl = new Label(this, "Weapon 1:", 10, encumbranceLbl.Y + 15, -1, -1, false, -1);
-            //weap2Lbl = new Label(this, "Weapon 2:", 10, weap1Lbl.Y + 15, -1, -1, false, -1);
-            encumbranceLbl.Font = /*weap1Lbl.Font = weap2Lbl.Font = */Gfx.SmallBoldFont; 
-            encumbranceLbl.TextColour = /*weap1Lbl.TextColour = weap2Lbl.TextColour =*/ Color.LightGray;
+            encumbranceLbl.Font = Gfx.SmallBoldFont; 
+            encumbranceLbl.TextColour = Color.LightGray;
             controls.Add(encumbranceLbl);
-            //controls.Add(weap1Lbl);
-            //controls.Add(weap2Lbl);
 
             traitsBox = new RichTextBox(this, null, 10, encumbranceLbl.Y + 18, 226, 80, -1);
             traitsBox.SetFonts(1);
-            //traitsBox.BackColour = Color.DarkGray;
             traitsBox.FormatText(makeTraitString());
 
             controls.Add(traitsBox);
@@ -123,7 +106,7 @@ namespace SwordsOfExileGame
             sb.Draw(Gfx.StatAreaGfx, wpos, new XnaRect(0, 116, InnerWidth, 17), Color.White);
             sb.DrawString(Gfx.SmallBoldFont, Party.CurrentPC.Name + " (Level " + Party.CurrentPC.Level + ")", wpos + new Vector2(3, 1), Color.White);
 
-            int y = Y + Gfx.FRAME_HEIGHT;// +skillPtsLbl.Y;
+            int y = Y + Gfx.FRAME_HEIGHT;
             int x = X + Gfx.FRAME_WIDTH;
 
             sb.DrawString(Gfx.SmallBoldFont, Convert.ToString(Party.CurrentPC.SkillPoints), new Vector2(x + 80, y + skillPtsLbl.Y), Color.White);
@@ -155,11 +138,6 @@ namespace SwordsOfExileGame
         {
             Visible = false;
         }
-
-        //void handleStatPress(eSkill stat, bool inc)
-        //{
-        //
-        //}
     }
 
 }

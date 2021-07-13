@@ -1,15 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-//using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace SwordsOfExileGame
 {
@@ -23,7 +13,7 @@ namespace SwordsOfExileGame
         bool Enabled = true;
         int StartCount; //The starting count of the timer
         int Count;      //The current count of the timer. It goes down by 1 every turn.
-        string Func; //SpecialNode Node;
+        string Func; 
         bool Recurring; //The scenario/town timers that are created when the scenario is loaded are all recurring - Once they count down to zero and the event is triggered, they reset back to StartCount and repeat.
 
         //Timers that are created during play by the special node types 13 & 195 (Start General Timer) are deactivated once the timer hits 0
@@ -106,7 +96,7 @@ namespace SwordsOfExileGame
         public void Load(BinaryReader In)
         {
             id = In.ReadString();
-            In.ReadString(); //Folder: disregard
+            In.ReadString();
             Enabled = In.ReadBoolean();
             StartCount = In.ReadInt16();
             Count = StartCount;
@@ -135,7 +125,7 @@ namespace SwordsOfExileGame
             id = _id;
             StartCount = moves;
             Count = StartCount;
-            Func = func;//if (nodeno > -1) Node = list[nodeno];
+            Func = func;
             Behaviour = behaviour;
             Domain = domain;
             Recurring = recurring;
