@@ -1,0 +1,8 @@
+﻿<Settings>
+  <LastSave />
+  <Volume>10</Volume>
+  <DisplayWidth>1280</DisplayWidth>
+  <DisplayHeight>1024</DisplayHeight>
+  <FullScreen>False</FullScreen>
+  <KeyMap LookSearch="76" Talk="84" GatherLoot="71" Use="85" CastMageSpell="77" CastPriestSpell="80" FireRanged="83" Alchemy="89" SetUpCamp="72" StartCombat="70" EndCombat="70" Wait="87" StandReady="101" Defend="68" ToggleSingleCharacter="75" MoveNorth-West="103" MoveNorth="104" MoveNorth-East="105" MoveWest="100" MoveEast="102" MoveSouth-West="97" MoveSouth="98" MoveSouth-East="99" QuickSave="116" QuickLoad="120" ToggleMapView="65" ZoomInMap="107" ZoomOutMap="109" ShowHideInventory="73" ShowHideCharacterStats="67" />
+</Settings>

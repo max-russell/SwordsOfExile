@@ -1,0 +1,7 @@
+
+def NeartheEdge_588_MapTrigger_14_25(p):
+    result = ChoiceBox("The prospect of a stunning panorama has drawn you through the marshes to the edge of the cliff. You are not disappointed. The two mightiest rivers of Chimney meet in this place, the lowest point on the Chimney ledge.\n\nThat is to say, they almost meet. The two flows of water bounce off the cliff less than one hundred meters apart, and the watery beams stretch out to meet in the fall. They land as a soft, drizzling rain, five hundred meters below in the slith jungle.\n\nYou peer down, and see lush plants and trees reaching up to capture the falling drops. Far, far below, in another world.\n\n\"Beautiful, right?\" a voice mutters behind you. You startle and reach for your weapons, embarrassed to be caught off guard. But there is no need for arms. A crouched, old woman stands next to you, marvelling at the sight.\n\n\"I come here from time to time. Someday there will be a restaurant with a souvenir shop in this spot. But we live in primitive times, without a road or signpost leading here. So we are safe for a while longer.\"\n\nThe woman tells you she lives by selling herbs and love potions in the towns. She is out of love potions for the moment, but offers instead to sell you some recipes. You settle for this, and promise to come back for the love potion some other day.", eDialogPic.TERRAIN, 239, ["Leave", "Buy"])
+    if result == 1:
+        OpenShop("Shop_Alchemy_Outside_1_3_3")
+        p.CancelAction = True
+        return

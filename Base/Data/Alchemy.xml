@@ -1,0 +1,256 @@
+﻿<Alchemy>
+
+  <IngredientKey ID ="holly" Name="Holly"/>
+  <IngredientKey ID ="comfrey_root" Name="Comfrey Root"/>
+  <IngredientKey ID ="wormgrass" Name="Wormgrass"/>
+  <IngredientKey ID ="glowing_nettle" Name="Glowing Nettle"/>
+  <IngredientKey ID ="graymold" Name="Graymold"/>
+  <IngredientKey ID ="asptongue" Name="Asptongue Mold"/>
+  <IngredientKey ID ="mandrake" Name="Mandrake Root"/>
+  <IngredientKey ID ="ember_flowers" Name="Ember Flowers"/>
+
+  <!--
+  ID: Unique identifier for the alchemical recipe.
+  Name: Display name for the recipe. What the player sees in game.
+  Description: Just that.
+  Skill: Minimum Alchemy skill needed to create, and difficulty level to create
+  Price: Base cost to buy from a shop
+  Creates: ID of item created
+  Amount: How many instances of item each use creates
+  Ingredient:
+      Required: Any item with an 'Alchemy Key' matching this value can be used for this ingredient
+      Amount: How many instances of the item required
+  -->
+  
+  <Recipe ID="weak_curing" 
+          Name="Weak Curing" 
+          Description="Cures poison somewhat."
+          Skill="1"
+          Price="50"
+          Creates="WeakCuringP_260"
+          Amount="1"
+          >
+      <Ingredient Required="holly" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="weak_healing"
+          Name="Weak Healing"
+          Description="Provides mild healing."
+          Skill="1"
+          Price="75"
+          Creates="WeakHealingP_261"
+          Amount="1"
+          >
+    <Ingredient Required="comfrey_root" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="weak_poison"
+        Name="Weak Poison"
+        Description="The lowest level poison."
+        Skill="1"
+        Price="30"
+        Creates="WeakPoison_172"
+        Amount="1"
+          >
+      <Ingredient Required="holly" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="weak_speed"
+            Name="Weak Speed"
+            Description="Hastes drinker."
+            Skill="3"
+            Price="130"
+            Creates="WeakSpeedP_264"
+            Amount="1"
+          >
+      <Ingredient Required="comfrey_root" Amount="1"/>
+      <Ingredient Required="wormgrass" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="medium_poison"
+            Name="Medium Poison"
+            Description="A Stronger poison."
+            Skill="3"
+            Price="100"
+            Creates="MediumPoison_173"
+            Amount="1"
+          >
+      <Ingredient Required="wormgrass" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="medium_healing_potion"
+          Name="Medium Healing Potion"
+          Description="Quality Healing."
+          Skill="4"
+          Price="150"
+          Creates="MediumHealingP_254"
+          Amount="1"
+          >
+    <Ingredient Required="glowing_nettle" Amount="1"/>
+  </Recipe>
+ 
+  <Recipe ID="strong_curing_potion"
+        Name="Strong Curing Potion"
+        Description="A decent antidote for poison."
+        Skill="5"
+        Price="200"
+        Creates="StrongCuringP_246"
+        Amount="1"
+          >
+      <Ingredient Required="glowing_nettle" Amount="1"/>
+  </Recipe>
+    
+  <Recipe ID="medium_speed"
+        Name="Medium Speed"
+        Description="Hastes drinker a lot."
+        Skill="5"
+        Price="200"
+        Creates="MediumSpeedP_257"
+        Amount="1"
+          >
+      <Ingredient Required="glowing_nettle" Amount="1"/>
+      <Ingredient Required="wormgrass" Amount="1"/>
+  </Recipe>
+  
+  <Recipe ID="graymold_salve"
+        Name="Graymold Salve"
+        Description="Cures disease of all sorts."
+        Skill="7"
+        Price="300"
+        Creates="GraymoldSalve_335"
+        Amount="1"
+          >
+      <Ingredient Required="graymold" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="weak_energy_potion"
+      Name="Weak Energy Potion"
+      Description="Restores some of your spell points"
+      Skill="9"
+      Price="250"
+      Creates="WeakEnergyP_262"
+      Amount="1"
+          >
+        <Ingredient Required="wormgrass" Amount="1"/>
+        <Ingredient Required="asptongue" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="potion_of_clarity"
+      Name="Potion of Clarity"
+      Description="Cures dumbfounding."
+      Skill="9"
+      Price="300"
+      Creates="PotionofClarity_272"
+      Amount="1"
+          >
+    <Ingredient Required="graymold" Amount="1"/>
+    <Ingredient Required="holly" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="strong_poison"
+      Name="Strong Poison"
+      Description="Powerful stuff."
+      Skill="10"
+      Price="500"
+      Creates="StrongPoison_174"
+      Amount="1"
+          >
+    <Ingredient Required="asptongue" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="strong_healing_potion"
+    Name="Strong Healing Potion"
+    Description="Provides excellent healing."
+    Skill="12"
+    Price="600"
+    Creates="StrongHealingP_247"
+    Amount="1"
+          >
+    <Ingredient Required="graymold" Amount="1"/>
+    <Ingredient Required="comfrey_root" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="killer_poison"
+    Name="Killer Poison"
+    Description="The strongest poison."
+    Skill="12"
+    Price="750"
+    Creates="KillerPoison_175"
+    Amount="1"
+          >
+    <Ingredient Required="mandrake" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="resurrection_balm"
+    Name="Resurrection Balm"
+    Description="Necessary to cast Raise Dead or Resurrection."
+    Skill="9"
+    Price="700"
+    Creates="RessurectionBalm_336"
+    Amount="1"
+          >
+    <Ingredient Required="ember_flowers" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="medium_energy_potion"
+    Name="Medium Energy Potion"
+    Description="Restores a fair amount of spell points."
+    Skill="14"
+    Price="1000"
+    Creates="MediumEnergyP_255"
+    Amount="1"
+          >
+    <Ingredient Required="mandrake" Amount="1"/>
+    <Ingredient Required="asptongue" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="knowledge_brew"
+    Name="Knowledge Brew"
+    Description="Brings enlightenment."
+    Skill="19"
+    Price="10000"
+    Creates="BrewofKnowledge_211"
+    Amount="1"
+          >
+    <Ingredient Required="mandrake" Amount="1"/>
+    <Ingredient Required="ember_flowers" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="strength_potion"
+    Name="Strength Potion"
+    Description="This brew is a great aid in combat."
+    Skill="10"
+    Price="5000"
+    Creates="StrongStrengthP_249"
+    Amount="1"
+          >
+    <Ingredient Required="glowing_nettle" Amount="1"/>
+    <Ingredient Required="ember_flowers" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="bliss_potion"
+    Name="Bliss"
+    Description="Combines the best elements of healing and strength potions."
+    Skill="16"
+    Price="7000"
+    Creates="PotionofBliss_268"
+    Amount="1"
+          >
+    <Ingredient Required="asptongue" Amount="1"/>
+    <Ingredient Required="graymold" Amount="1"/>
+  </Recipe>
+
+  <Recipe ID="strong_energy_potion"
+    Name="Strong Energy Potion"
+    Description="This is the hardest potion to make, but the energy boost it provides can't be matched."
+    Skill="20"
+    Price="12000"
+    Creates="StrongEnergyP_248"
+    Amount="1"
+          >
+    <Ingredient Required="ember_flowers" Amount="1"/>
+    <Ingredient Required="mandrake" Amount="1"/>
+  </Recipe>
+  
+  
+</Alchemy>
