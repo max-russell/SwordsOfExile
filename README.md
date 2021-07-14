@@ -7,4 +7,4 @@ This version is a full rewrite from the ground up in C#/NET. It was started a fe
 
 My aim is to provide a slightly updated experience to the original game, while allowing all Blades of Exiles scenarios to be played (once they have been converted with the included utility). BoE included a very rudimentary 'scripting' ability, creating event nodes in the editor and allowing simple conditional checking and branching. Swords of Exile, by contrast, uses Python scripting. The conversion utility attempts to automatically write Python code to replicate the original scenario's behaviour. The resulting code is certainly not pretty, but should hopefully run.
 
-It has been built and tested under Windows 10. It should be possible to build it for Linux/MacOS too without too much trouble, but so far this has not been attempted!
+It has been built and tested under Windows 10. It should be possible to build it for Linux/MacOS too without too much trouble, but so far this has not been attempted! This applies to the scenario converter too, which is a command-line program. There's also a simple GUI for the converter, which uses WinForms so is likely to be restricted to Windows.
