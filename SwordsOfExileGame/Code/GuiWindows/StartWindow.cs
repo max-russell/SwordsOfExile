@@ -71,11 +71,7 @@ namespace SwordsOfExileGame
             }
             else if (b == b_about)
             {
-                new MessageWindow(pressAbout, "@bSwords of Exile@e is a ground-up remake of @bBlades of Exile@e by Spiderweb Software. It was written " +
-                    "by @bCory K Mattison@e in C#.@n@nVisit @bwww.swordsofexile.net78.net@e for updates. Email me with any bug reports, suggestions, poetry, " +
-                    "etc, at @bckmattison@@gmail.com@e.@n@nMany thanks to Jeff Vogel and Spiderweb Software, a true bastion of old-school indie RPG " +
-                    "excellence. Without them this would not exist, so please lend your support by visiting spiderwebsoftware.com and purchasing their games.@n@n" + 
-                    "Also thanks to the various people who have helped tidy up and improve the Blades of Exile source code since it was released to the general public.", eDialogPic.SCENARIO, 0, "Ok", "Visit Spiderweb Software", "Visit SoE website");
+                new MessageWindow(pressAbout, "@bSwords of Exile@e is a ground-up remake of @bBlades of Exile@e by Spiderweb Software.", eDialogPic.SCENARIO, 0, "Ok", "Visit Spiderweb Software", "Visit SoE website");
             }
             else if (b == b_quit)
                 Game.Quit = true;
@@ -84,7 +80,7 @@ namespace SwordsOfExileGame
         void pressAbout(int option)
         {
             if (option == 2)
-                System.Diagnostics.Process.Start("http://www.swordsofexile.net78.net");
+                System.Diagnostics.Process.Start("https://github.com/max-russell/SwordsOfExile");
             else if (option == 1)
                 System.Diagnostics.Process.Start("http://www.spiderwebsoftware.com");
         }

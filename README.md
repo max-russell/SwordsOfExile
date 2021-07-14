@@ -12,3 +12,5 @@ My aim is to provide a slightly updated experience to the original game, while a
 It has been built and tested under Windows 10. It should be possible to build it for Linux/MacOS too without too much trouble, but so far this has not been attempted! This applies to the scenario converter too, which is a command-line program. There's also a simple GUI for the converter, which uses WinForms so is likely to be restricted to Windows.
 
 ![image](screenshot01.jpg)
+
+This project has not been extensively stress-tested, especially since it was migrated to MonoGame. Bugs will almost inevitably abound, so use entirely at your own risk!
