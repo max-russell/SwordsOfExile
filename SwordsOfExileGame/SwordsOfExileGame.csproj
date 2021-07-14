@@ -9,6 +9,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>SwordsOfExile3.ico</ApplicationIcon>
     <StartupObject>SwordsOfExileGame.Program</StartupObject>
+    <Version>0.1.5</Version>
+    <PackageId>Swords Of Exile</PackageId>
+    <Authors>Max Russell</Authors>
+    <Company />
+    <Product />
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Code\General\Program.cs" />

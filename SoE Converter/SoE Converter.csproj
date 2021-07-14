@@ -6,10 +6,25 @@
     <RootNamespace>SoE_Converter</RootNamespace>
     <StartupObject>SoE_Converter.Program</StartupObject>
     <ApplicationIcon>SwordsOfExile3.ico</ApplicationIcon>
+    <Version>0.1.5</Version>
+    <Authors>Max Russell</Authors>
+    <PackageIcon></PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="SwordsOfExile3.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Content\SwordsOfExile3.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
