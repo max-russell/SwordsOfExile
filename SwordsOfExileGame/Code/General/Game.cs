@@ -791,10 +791,10 @@ namespace SwordsOfExileGame
             CurrentParty = null;
             Scenario.Filename = "";
             CurrentMap = null;
-            TownMap.List = null;
+            TownMap.List.Clear();
             WorldMap = null;
             RecentTownList = null;
-            portraitWindows = null;// = new List<PortraitWindow>();
+            portraitWindows.Clear();
             InventoryWindow.Close();
             inventoryWindow = null;
             StatsWindow.Close();
