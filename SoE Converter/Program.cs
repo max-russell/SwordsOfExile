@@ -9,66 +9,66 @@ using System.Drawing.Imaging;
 
 namespace SoE_Converter
 {
-    partial class Program
+    internal partial class Program
     {
-        const ushort SCENARIO_FILE_VERSION = 3;
-        const string SCENARIO_FILE_KEY = "SWORDSOFEXILESCENARIO";
+        private const ushort SCENARIO_FILE_VERSION = 3;
+        private const string SCENARIO_FILE_KEY = "SWORDSOFEXILESCENARIO";
 
-        static bool LEGACY_DAY_DELAY = true; //If true, 20 days are added before an event day is triggered (As in original Blades of Exile)
-        static bool LEGACY_NO_TOWN_ANGRY_FUNC = true; //To ignore counting the town res1 property as the special node to call when Town gets Angry 
-        static bool LEGACY_NO_WATERFALL_IN_TOWN = true;
+        private static bool LEGACY_DAY_DELAY = true; //If true, 20 days are added before an event day is triggered (As in original Blades of Exile)
+        private static bool LEGACY_NO_TOWN_ANGRY_FUNC = true; //To ignore counting the town res1 property as the special node to call when Town gets Angry 
+        private static bool LEGACY_NO_WATERFALL_IN_TOWN = true;
 
-        static bool DoStartupMap = false;
+        private static bool DoStartupMap = false;
 
-        static string Filename = "", NewFilename;
+        private static string Filename = "", NewFilename;
 
-        static scenario_data_type Scenario;
-        static scen_item_data_type ScenItems;
-        static piles_of_stuff_dumping_type5 DataStore5;
-        static string[] scen_strs_2;
+        private static scenario_data_type Scenario;
+        private static scen_item_data_type ScenItems;
+        private static piles_of_stuff_dumping_type5 DataStore5;
+        private static string[] scen_strs_2;
 
-        static town_record_type Town;
-        static big_tr_type TownTerrain;
-        static piles_of_stuff_dumping_type DataStore1;
-        static talking_record_type Talking;
-        static piles_of_stuff_dumping_type3 DataStore3;
-        
-        static outdoor_record_type Outdoors;
-        static piles_of_stuff_dumping_type4 DataStore4;
+        private static town_record_type Town;
+        private static big_tr_type TownTerrain;
+        private static piles_of_stuff_dumping_type DataStore1;
+        private static talking_record_type Talking;
+        private static piles_of_stuff_dumping_type3 DataStore3;
 
-        static bool MacFormat = false;
-        static bool HasTownPreEntryFunc = false;
+        private static outdoor_record_type Outdoors;
+        private static piles_of_stuff_dumping_type4 DataStore4;
 
-        static List<ushort[]> NewTownTerrain = new List<ushort[]>();
-        static ushort[,][] NewOutsideTerrain;
+        private static bool MacFormat = false;
+        private static bool HasTownPreEntryFunc = false;
 
-        static StreamWriter ScriptFile;
+        private static List<ushort[]> NewTownTerrain = new List<ushort[]>();
+        private static ushort[,][] NewOutsideTerrain;
 
-        static int CurrentlyLoadedTown = -1;
-        static int CurrentlyLoadedOutX = -1, CurrentlyLoadedOutY = -1;
+        private static StreamWriter ScriptFile;
 
-        static List<string> Town_IDs = new List<string>();
-        static List<int> Personality_IDs = new List<int>();
+        private static int CurrentlyLoadedTown = -1;
+        private static int CurrentlyLoadedOutX = -1, CurrentlyLoadedOutY = -1;
+
+        private static List<string> Town_IDs = new List<string>();
+        private static List<int> Personality_IDs = new List<int>();
 
         //Custom graphics lists - used for slicing up the BoE custom graphics into new graphics sheets for SoE
-        static List<int> CustomTerrainList = new List<int>();
-        static List<int> CustomAnimTerrainList = new List<int>();
-        static List<int> CustomNPC1x1List = new List<int>();
-        static List<int> CustomNPC2x1List = new List<int>();
-        static List<int> CustomNPC1x2List = new List<int>();
-        static List<int> CustomNPC2x2List = new List<int>();
-        static List<int> CustomItemList = new List<int>();
-        static List<int> CustomDialogPicList = new List<int>();
-        static List<int> CustomFacePicList = new List<int>();
+        private static List<int> CustomTerrainList = new List<int>();
+        private static List<int> CustomAnimTerrainList = new List<int>();
+        private static List<int> CustomNPC1x1List = new List<int>();
+        private static List<int> CustomNPC2x1List = new List<int>();
+        private static List<int> CustomNPC1x2List = new List<int>();
+        private static List<int> CustomNPC2x2List = new List<int>();
+        private static List<int> CustomItemList = new List<int>();
+        private static List<int> CustomDialogPicList = new List<int>();
+        private static List<int> CustomFacePicList = new List<int>();
 
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
 #if DEBUG
             Directory.SetCurrentDirectory(@"..\..\..\..");
 #endif
 
-            bool legacy = true;
-            foreach (string s in args)
+            var legacy = true;
+            foreach (var s in args)
             {
                 if (s.ToUpper() == "-L") {}
                 else
@@ -116,13 +116,13 @@ namespace SoE_Converter
                 if (Directory.Exists("Scripts")) Directory.Delete("Scripts", true);
                 Directory.CreateDirectory("Scripts");
                 if (!Directory.Exists("Scripts")) throw new Exception("Could not create directory 'Scripts'");
-                foreach (string f in Directory.EnumerateFiles(Path.Combine(BaseDirectory, "Scripts")))
+                foreach (var f in Directory.EnumerateFiles(Path.Combine(BaseDirectory, "Scripts")))
                     File.Copy(f, Path.Combine("Scripts", Path.GetFileName(f)));
 
                 if (Directory.Exists("EditorScripts")) Directory.Delete("EditorScripts", true);
                 Directory.CreateDirectory("EditorScripts");
                 if (!Directory.Exists("EditorScripts")) throw new Exception("Could not create directory 'EditorScripts'");
-                foreach (string f in Directory.EnumerateFiles(Path.Combine(BaseDirectory, "EditorScripts")))
+                foreach (var f in Directory.EnumerateFiles(Path.Combine(BaseDirectory, "EditorScripts")))
                     File.Copy(f, Path.Combine("EditorScripts", Path.GetFileName(f)));
 
                 if (Directory.Exists("Data")) Directory.Delete("Data", true);
@@ -137,7 +137,7 @@ namespace SoE_Converter
 
                 SaveScenario();
 
-                string customgfxfile = Path.ChangeExtension(Filename, "BMP");//"PNG");
+                var customgfxfile = Path.ChangeExtension(Filename, "BMP");//"PNG");
                 SaveCustomGraphics(customgfxfile);
                 Console.WriteLine("ALL DONE!");
                 Console.WriteLine("FINISH");
@@ -147,16 +147,16 @@ namespace SoE_Converter
             return -1;
         }
 
-        static void CopyBitmapArea(Bitmap dest_bmp, Bitmap src_bmp, int sx, int sy, int dx, int dy, int w, int h, bool opaque)
+        private static void CopyBitmapArea(Bitmap dest_bmp, Bitmap src_bmp, int sx, int sy, int dx, int dy, int w, int h, bool opaque)
         {
-            for (int y = 0; y < h; y++)
+            for (var y = 0; y < h; y++)
             {
                 if (sy + y >= src_bmp.Height) continue;
-                for (int x = 0; x < w; x++)
+                for (var x = 0; x < w; x++)
                 {
                     if (sx + x >= src_bmp.Width) continue;
 
-                    Color c = src_bmp.GetPixel(sx + x, sy + y);
+                    var c = src_bmp.GetPixel(sx + x, sy + y);
                     if (c.R == 255 && c.G == 255 && c.B == 255 && !opaque)
                         c = Color.FromArgb(0, c);
                     else
@@ -166,7 +166,7 @@ namespace SoE_Converter
             }
         }
 
-        static void SaveCustomGraphics(string customgfxfile)
+        private static void SaveCustomGraphics(string customgfxfile)
         {
             //Convert BMP to PNG
             //We need to work out if a custom tile is used for terrain, dialog picture or custom face. If so, do not make white pixels transparent.
@@ -174,7 +174,7 @@ namespace SoE_Converter
             {
                 Console.WriteLine("Converting custom graphics sheet to PNG");
 
-                Bitmap oldbmp = new Bitmap(customgfxfile);
+                var oldbmp = new Bitmap(customgfxfile);
                 
 
                 if (oldbmp.Width != 280)
@@ -191,16 +191,16 @@ namespace SoE_Converter
                 if (CustomTerrainList.Count > 0)
                 {
                     newbmp = new Bitmap(280, (int)Math.Ceiling((double)CustomTerrainList.Count / 10d) * 36);
-                    int dn = 0;
-                    foreach (int sn in CustomTerrainList)
+                    var dn = 0;
+                    foreach (var sn in CustomTerrainList)
                     {
                         CopyBitmapArea(newbmp, oldbmp, (sn % 10) * 28, (sn / 10) * 36, (dn % 10) * 28, (dn / 10) * 36, 28, 36, true);
                         dn++;
                     }
 
                     //Resize terrains from 28x36 to 48x48
-                    Bitmap b = new Bitmap(480, (int)Math.Ceiling((double)CustomTerrainList.Count / 10d) * 48);
-                    using (Graphics g = Graphics.FromImage((Image)b))
+                    var b = new Bitmap(480, (int)Math.Ceiling((double)CustomTerrainList.Count / 10d) * 48);
+                    using (var g = Graphics.FromImage((Image)b))
                     {
                         g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;// HighQualityBicubic;
                         g.DrawImage(newbmp, 0, 0, b.Width, b.Height);
@@ -212,10 +212,10 @@ namespace SoE_Converter
                 {
                     //Now animated terrains
                     newbmp = new Bitmap(336, (int)Math.Ceiling((double)CustomAnimTerrainList.Count / 3d) * 36);
-                    int dn = 0;
-                    foreach (int sn in CustomAnimTerrainList)
+                    var dn = 0;
+                    foreach (var sn in CustomAnimTerrainList)
                     {
-                        for (int f = 0; f < 4; f++)
+                        for (var f = 0; f < 4; f++)
                         {
                             CopyBitmapArea(newbmp, oldbmp, ((sn + f) % 10) * 28, ((sn + f) / 10) * 36, ((dn * 4 + f) % 12) * 28, (dn / 3) * 36, 28, 36, true);
                         }
@@ -223,8 +223,8 @@ namespace SoE_Converter
                     }
 
                     //Resize terrains from 28x36 to 48x48
-                    Bitmap b = new Bitmap(576, (int)Math.Ceiling((double)CustomAnimTerrainList.Count / 3d) * 48);
-                    using (Graphics g = Graphics.FromImage((Image)b))
+                    var b = new Bitmap(576, (int)Math.Ceiling((double)CustomAnimTerrainList.Count / 3d) * 48);
+                    using (var g = Graphics.FromImage((Image)b))
                     {
                         g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                         g.DrawImage(newbmp, 0, 0, b.Width, b.Height);
@@ -237,10 +237,10 @@ namespace SoE_Converter
                 {
                     //Now NPCs 1x1
                     newbmp = new Bitmap(560, (int)Math.Ceiling((double)CustomNPC1x1List.Count / 5d) * 36);
-                    int dn = 0;
-                    foreach (int sn in CustomNPC1x1List)
+                    var dn = 0;
+                    foreach (var sn in CustomNPC1x1List)
                     {
-                        for (int f = 0; f < 4; f++)
+                        for (var f = 0; f < 4; f++)
                         {
                             CopyBitmapArea(newbmp, oldbmp, ((sn + f) % 10) * 28, ((sn + f) / 10) * 36, 
                                 (f * 28) + (dn % 5) * 28 * 4, (dn / 5) * 36, 28, 36, false);
@@ -254,10 +254,10 @@ namespace SoE_Converter
                 {
                     //Now NPCs 2x1
                     newbmp = new Bitmap(224, CustomNPC2x1List.Count * 36);
-                    int dn = 0;
-                    foreach (int sn in CustomNPC2x1List)
+                    var dn = 0;
+                    foreach (var sn in CustomNPC2x1List)
                     {
-                        for (int f = 0; f < 8; f++)
+                        for (var f = 0; f < 8; f++)
                         {
                             CopyBitmapArea(newbmp, oldbmp, ((sn + f) % 10) * 28, ((sn + f) / 10) * 36, 
                                 f * 28, dn * 36, 28, 36, false);
@@ -271,10 +271,10 @@ namespace SoE_Converter
                 {
                     //Now NPCs 1x2
                     newbmp = new Bitmap(112, CustomNPC1x2List.Count * 36 * 2);
-                    int dn = 0;
-                    foreach (int sn in CustomNPC1x2List)
+                    var dn = 0;
+                    foreach (var sn in CustomNPC1x2List)
                     {
-                        for (int f = 0; f < 8; f++)
+                        for (var f = 0; f < 8; f++)
                         {
                             CopyBitmapArea(newbmp, oldbmp, ((sn + f) % 10) * 28, ((sn + f) / 10) * 36,
                                 (f / 2) * 28, (f % 2) * 36 + (dn * 36) * 2, 28, 36, false);
@@ -288,10 +288,10 @@ namespace SoE_Converter
                 {
                     //Now NPCs 2x2
                     newbmp = new Bitmap(224, CustomNPC2x2List.Count * 36 * 2);
-                    int dn = 0;
-                    foreach (int sn in CustomNPC2x2List)
+                    var dn = 0;
+                    foreach (var sn in CustomNPC2x2List)
                     {
-                        for (int f = 0; f < 16; f++)
+                        for (var f = 0; f < 16; f++)
                         {
                             CopyBitmapArea(newbmp, oldbmp, ((sn + f) % 10) * 28, ((sn + f) / 10) * 36,
                                 ((f % 2) * 28) + ((f / 4) * (28 * 2)),
@@ -306,8 +306,8 @@ namespace SoE_Converter
                 if (CustomItemList.Count > 0)
                 {
                     newbmp = new Bitmap(280, (int)Math.Ceiling((double)CustomItemList.Count / 10d) * 36);
-                    int dn = 0;
-                    foreach (int sn in CustomItemList)
+                    var dn = 0;
+                    foreach (var sn in CustomItemList)
                     {
                         CopyBitmapArea(newbmp, oldbmp, (sn % 10) * 28, (sn / 10) * 36, (dn % 10) * 28, (dn / 10) * 36, 28, 36, false);
                         dn++;
@@ -318,8 +318,8 @@ namespace SoE_Converter
                 if (CustomDialogPicList.Count > 0)
                 {
                     newbmp = new Bitmap(360, (int)Math.Ceiling((double)CustomDialogPicList.Count / 10d) * 36);
-                    int dn = 0;
-                    foreach (int sn in CustomDialogPicList)
+                    var dn = 0;
+                    foreach (var sn in CustomDialogPicList)
                     {
                         CopyBitmapArea(newbmp, oldbmp, (sn % 10) * 28, (sn / 10) * 36, (dn % 10) * 36, (dn / 10) * 36, 18, 36, true);
                         CopyBitmapArea(newbmp, oldbmp, ((sn+1) % 10) * 28, ((sn+1) / 10) * 36, (dn % 10) * 36 + 18, (dn / 10) * 36, 18, 36, true);
@@ -331,8 +331,8 @@ namespace SoE_Converter
                 if (CustomFacePicList.Count > 0)
                 {
                     newbmp = new Bitmap(320, (int)Math.Ceiling((double)CustomFacePicList.Count / 10d) * 32);
-                    int dn = 0;
-                    foreach (int sn in CustomFacePicList)
+                    var dn = 0;
+                    foreach (var sn in CustomFacePicList)
                     {
                         CopyBitmapArea(newbmp, oldbmp, (sn % 10) * 28, (sn / 10) * 36, (dn % 10) * 32, (dn / 10) * 32, 16, 32, true);
                         CopyBitmapArea(newbmp, oldbmp, ((sn + 1) % 10) * 28, ((sn + 1) / 10) * 36, (dn % 10) * 32 + 16, (dn / 10) * 32, 16, 32, true);
@@ -344,39 +344,39 @@ namespace SoE_Converter
         }
 
 #if DEBUG
-        static void SaveStartupMap()
+        private static void SaveStartupMap()
         {
-            using (FileStream fs = new FileStream(@"..\..\Base\Data\Startupmap.dat", FileMode.Create, FileAccess.Write))
-            using (BinaryWriter Out = new BinaryWriter(fs))
+            using (var fs = new FileStream(@"..\..\Base\Data\Startupmap.dat", FileMode.Create, FileAccess.Write))
+            using (var Out = new BinaryWriter(fs))
             {
                 Out.Write((short)256);
-                for (int x = 0; x < 256; x++)
+                for (var x = 0; x < 256; x++)
                 {
                     Out.Write(Scenario.ter_types[x].picture);
                 }
 
                 Out.Write((short)16);
-                for (int x = 0; x < 15; x++)
+                for (var x = 0; x < 15; x++)
                     Out.Write((short)(x + 260)); //Picture
                 Out.Write((short)414);
 
                 Out.Write(Scenario.out_width * 48);
                 Out.Write(Scenario.out_height * 48);
 
-                for(int y = 0; y < Scenario.out_height * 48; y++)
-                    for (int x = 0; x < Scenario.out_width * 48; x++)
+                for(var y = 0; y < Scenario.out_height * 48; y++)
+                    for (var x = 0; x < Scenario.out_width * 48; x++)
                     {
-                        int sx = x / 48;
-                        int sy = y / 48;
-                        int lx = x % 48;
-                        int ly = y % 48;
+                        var sx = x / 48;
+                        var sy = y / 48;
+                        var lx = x % 48;
+                        var ly = y % 48;
                         Out.Write(NewOutsideTerrain[sx, sy][lx * 48 + ly]);
                     }
             }
         }
 #endif
 
-        static int GetTownSize(int townnum)
+        private static int GetTownSize(int townnum)
         {
             switch (Scenario.town_size[townnum])
             {
@@ -386,7 +386,7 @@ namespace SoE_Converter
             }
         }
 
-        static int UpdateCustomList(List<int> list, int index)
+        private static int UpdateCustomList(List<int> list, int index)
         {
             if (!list.Contains(index))
                 list.Add(index);
@@ -397,14 +397,14 @@ namespace SoE_Converter
                 return list.IndexOf(index) + 1024;
         }
 
-        static bool IsUsedEncounter(out_wandering_type o)
+        private static bool IsUsedEncounter(out_wandering_type o)
         {
-            for (int n = 0; n < 7; n++)
+            for (var n = 0; n < 7; n++)
                 if (o.monst[n] != 0) return true;
             return false;
         }
 
-        static void SaveNPCGroupRecord(int x, int y, int num, out_wandering_type o, short foldernum, BinaryWriter Out)
+        private static void SaveNPCGroupRecord(int x, int y, int num, out_wandering_type o, short foldernum, BinaryWriter Out)
         {
             //Don't write anything if this group is empty (has no hostile NPCs in it)
             if (!IsUsedEncounter(o)) return;
@@ -417,7 +417,7 @@ namespace SoE_Converter
             Out.Write(String.Format("Group_{0}_{1}_{2}", x, y, num)); //Write ID for this group
             Out.Write("\t" + foldernum); //Folder ID
 
-            for (int n = 0; n < 7; n++)
+            for (var n = 0; n < 7; n++)
             {
                 if (o.monst[n] == 0) continue; //No NPCs in this slot
                 Out.Write(true); //Write true to indicate an npc component follows
@@ -426,7 +426,7 @@ namespace SoE_Converter
                 Out.Write(low[n]); //Write minimum number;
                 Out.Write(high[n]); //Write maximum number;
             }
-            for (int n = 0; n < 3; n++)
+            for (var n = 0; n < 3; n++)
             {
                 if (o.friendly[n] == 0) continue; //No NPCs in this slot
                 Out.Write(true); //Write true to indicate an npc component follows
@@ -444,7 +444,7 @@ namespace SoE_Converter
             Out.Write(GetNodeToFuncName(o.spec_on_win, 2, x, y));  
         }
 
-        static int GetMonsterPicNum(int num)
+        private static int GetMonsterPicNum(int num)
         {
             int[] pic_index = {
                         1,2,3,4,5,6,7,8,9,10, //0 - 9
@@ -493,18 +493,20 @@ namespace SoE_Converter
             }
         }
 
-        static string[] MageSpellIDs = {"m_poison", "m_ice_bolt", "m_slow_group", "m_magic_map", "m_capture_soul", "m_simulacrum", "m_venom_arrows", "m_wall_of_ice",
+        private static string[] MageSpellIDs = {"m_poison", "m_ice_bolt", "m_slow_group", "m_magic_map", "m_capture_soul", "m_simulacrum", "m_venom_arrows", "m_wall_of_ice",
                             "m_stealth", "m_major_haste", "m_fire_storm", "m_dispel_barrier", "m_fire_barrier", "m_summoning", "m_shockstorm",
                             "m_spray_fields", "m_major_poison", "m_group_fear", "m_kill", "m_paralyze", "m_daemon", "m_antimagic_cloud",
                             "m_mindduel", "m_flight", "m_shockwave", "m_major_blessing", "m_mass_paralysis", "m_protection", "m_major_summon",
                             "m_force_barrier", "m_quickfire", "m_death_arrows"};
-        static string[] PriestSpellIDs = {"p_cure_all_poison", "p_curse_all", "p_dispel_undead",
+
+        private static string[] PriestSpellIDs = {"p_cure_all_poison", "p_curse_all", "p_dispel_undead",
                             "p_remove_curse", "p_sticks_to_snakes", "p_martyrs_shield", "p_cleanse", "p_firewalk", "p_bless_party",
                             "p_major_heal", "p_raise_dead", "p_flamestrike", "p_mass_sanctuary", "p_summon_host", "p_shatter",
                             "p_dispel_fields", "p_heal_all", "p_revive", "p_hyperactivity", "p_destone", "p_summon_guardian",
                             "p_mass_charm", "p_protective_circle", "p_pestilence", "p_revive_all", "p_ravage_spirit", "p_resurrect",
                             "p_divine_thud", "p_avatar", "p_wall_of_blades", "p_word_of_recall", "p_major_cleansing"};
-        static string[] AlchemyIndex = 
+
+        private static string[] AlchemyIndex = 
         {
             "weak_curing", "weak_healing", "weak_poison", "weak_speed", "medium_poison",
             "medium_healing_potion", "strong_curing_potion", "medium_speed", "graymold_salve", "weak_energy_potion",
@@ -525,18 +527,18 @@ namespace SoE_Converter
             STEP_ON_CMBT = 128,//1------- //Triggered by step on in combat mode
         }
 
-        static bool ValidStuffDone(int x, int y)
+        private static bool ValidStuffDone(int x, int y)
         {
             return x >= 0 && x < 300 && y >= 0 && y < 10;
         }
 
-        static void SaveLocation(location l, BinaryWriter Out)
+        private static void SaveLocation(location l, BinaryWriter Out)
         {
             Out.Write((short)l.x);
             Out.Write((short)l.y);
         }
 
-        static void SaveRECT16(RECT16 r, BinaryWriter Out)
+        private static void SaveRECT16(RECT16 r, BinaryWriter Out)
         {
             if (MacFormat)
             {
@@ -554,10 +556,10 @@ namespace SoE_Converter
             }
         }
 
-        static bool LoadScenario() {
+        private static bool LoadScenario() {
 
-            using (FileStream fs = new FileStream(Filename, FileMode.Open, FileAccess.Read))
-            using (BinaryReader In = new BinaryReader(fs)) {
+            using (var fs = new FileStream(Filename, FileMode.Open, FileAccess.Read))
+            using (var In = new BinaryReader(fs)) {
 
                 MarshallyFunkyRead(ref Scenario, In);
 
@@ -581,7 +583,7 @@ namespace SoE_Converter
                 DataStore5.scen_strs = new string[160];
                 scen_strs_2 = new string[270 - 160];
 
-                for (int i = 0; i < 270; i++) {
+                for (var i = 0; i < 270; i++) {
                     int len = Scenario.scen_str_len[i];
 
                     if (i < 160) {
@@ -592,7 +594,7 @@ namespace SoE_Converter
                 }
 
                 //Are there any variable town entry things?
-                for (int y = 0; y < 10; y++)
+                for (var y = 0; y < 10; y++)
                     if (Scenario.town_to_add_to[y] != -1)
                     {
                         HasTownPreEntryFunc = true; break;
@@ -601,19 +603,19 @@ namespace SoE_Converter
                 Console.WriteLine("Converting terrain maps...");
 
                 //Convert all the terrain to NEW terrain (with ushorts not bytes)
-                for (int x = 0; x < Scenario.num_towns; x++)
+                for (var x = 0; x < Scenario.num_towns; x++)
                 {
                     LoadTown(x);
                     Console.WriteLine("  Town " + x + ": " + DataStore1.town_strs[0]);
-                    int sz = Scenario.town_size[x] == 0 ? 64 : (Scenario.town_size[x] == 1 ? 48 : 32);
+                    var sz = Scenario.town_size[x] == 0 ? 64 : (Scenario.town_size[x] == 1 ? 48 : 32);
                     NewTownTerrain.Add(new ushort[sz * sz]);
                     ConvertTerrain(NewTownTerrain[x], true, sz);
                 }
 
 
                 NewOutsideTerrain = new ushort[Scenario.out_width, Scenario.out_height][];
-                for (int x = 0; x < Scenario.out_width; x++)
-                    for (int y = 0; y < Scenario.out_height; y++)
+                for (var x = 0; x < Scenario.out_width; x++)
+                    for (var y = 0; y < Scenario.out_height; y++)
                     {                       
                         NewOutsideTerrain[x, y] = new ushort[48 * 48];
                         LoadOutdoors(x, y);
@@ -625,11 +627,11 @@ namespace SoE_Converter
             return true;
         }
 
-        static void ConvertTerrain(ushort[] ter, bool is_town, int sz, int secx = 0, int secy = 0)
+        private static void ConvertTerrain(ushort[] ter, bool is_town, int sz, int secx = 0, int secy = 0)
         {
-            int pos = 0;
-            for(int x = 0; x < sz; x++)
-                for (int y = 0; y < sz; y++)
+            var pos = 0;
+            for(var x = 0; x < sz; x++)
+                for (var y = 0; y < sz; y++)
                 {
                     ter[pos] = is_town ? TownTerrain.terrain[pos] : Outdoors.terrain[pos];
 
@@ -766,7 +768,7 @@ namespace SoE_Converter
             //  272: Special node dot
         }
 
-        static bool is_nature(int n)
+        private static bool is_nature(int n)
         {
             if (n == -1) 
                 return false;
@@ -781,7 +783,7 @@ namespace SoE_Converter
             return false;
         }
 
-        static bool extend_road_terrain(int n) 
+        private static bool extend_road_terrain(int n) 
         {
             if (n == -1) return true;
             int picture = Scenario.ter_types[n].picture;
@@ -789,12 +791,12 @@ namespace SoE_Converter
 							    203,204,215,216,90, 91,92,93,102,103,
 							    104,105,112,113,114, 115,187,188,189,190,
 							    192,193,194,195,196, 197,191,200,201};
-            for (int i = 0; i < 39; i++)
+            for (var i = 0; i < 39; i++)
                 if (picture == extend_pics[i]) return true;
             return false;
         }
 
-        static bool LoadTown(int which_town)
+        private static bool LoadTown(int which_town)
         {
 
             if (which_town == CurrentlyLoadedTown) return true;
@@ -814,8 +816,8 @@ namespace SoE_Converter
                     store += (Scenario.town_data_size[i * 5 + j]);
             len_to_jump += store;
 
-            using (FileStream fs = new FileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Filename), FileMode.Open, FileAccess.Read))
-            using (BinaryReader In = new BinaryReader(fs)) {
+            using (var fs = new FileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Filename), FileMode.Open, FileAccess.Read))
+            using (var In = new BinaryReader(fs)) {
 
                 fs.Seek(len_to_jump, SeekOrigin.Begin);
                 MarshallyFunkyRead(ref Town, In);
@@ -827,7 +829,7 @@ namespace SoE_Converter
                         MarshallyFunkyRead(ref TownTerrain, In);
                         break;
                     case 1:
-                        ave_tr_type ave_t =new ave_tr_type();
+                        var ave_t =new ave_tr_type();
                         MarshallyFunkyRead(ref ave_t, In);
                         TownTerrain.terrain = ave_t.terrain;
                         TownTerrain.lighting = ave_t.lighting;
@@ -835,7 +837,7 @@ namespace SoE_Converter
                         TownTerrain.creatures = ave_t.creatures;
                         break;
                     case 2:
-                        tiny_tr_type tiny_t = new tiny_tr_type();
+                        var tiny_t = new tiny_tr_type();
                         MarshallyFunkyRead(ref tiny_t, In);
                         TownTerrain.terrain = tiny_t.terrain;
                         TownTerrain.lighting = tiny_t.lighting;
@@ -874,27 +876,27 @@ namespace SoE_Converter
 
         }
 
-        static bool LoadOutdoors(int x, int y) {
+        private static bool LoadOutdoors(int x, int y) {
 
             if (CurrentlyLoadedOutX == x && CurrentlyLoadedOutY == y) return true;
             CurrentlyLoadedOutX = x;
             CurrentlyLoadedOutY = y;
 
-            int out_sec_num = Scenario.out_width * y + x;
+            var out_sec_num = Scenario.out_width * y + x;
             int i, j;
 
-            int len_to_jump = scenario_data_type.SIZE;
+            var len_to_jump = scenario_data_type.SIZE;
             len_to_jump += scen_item_data_type.SIZE;
             for (i = 0; i < 300; i++)
                 len_to_jump += Scenario.scen_str_len[i];
-            int store = 0;
+            var store = 0;
             for (i = 0; i < out_sec_num; i++)
                 for (j = 0; j < 2; j++)
                     store += Scenario.out_data_size[i * 2 + j];
             len_to_jump += store;
 
-            using (FileStream fs = new FileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Filename), FileMode.Open, FileAccess.Read))
-            using (BinaryReader In = new BinaryReader(fs)) {
+            using (var fs = new FileStream(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Filename), FileMode.Open, FileAccess.Read))
+            using (var In = new BinaryReader(fs)) {
 
                 fs.Seek(len_to_jump, SeekOrigin.Begin);
                 MarshallyFunkyRead(ref Outdoors, In);
@@ -915,9 +917,9 @@ namespace SoE_Converter
 
         }
 
-        static List<ItemShop> ItemShops = new List<ItemShop>();
+        private static List<ItemShop> ItemShops = new List<ItemShop>();
 
-        class ItemShop
+        private class ItemShop
         {
             public string ID;
             public string Name;
@@ -941,22 +943,22 @@ namespace SoE_Converter
             public int JumbleShopNo;
         }
 
-        static void MakeShops()
+        private static void MakeShops()
         {
 
             Console.WriteLine("Making shops...");
 
             //First do all the outdoor shops. These are triggered by an outside  special node
-            for(int x = 0; x < Scenario.out_width; x++)
-                for (int y = 0; y < Scenario.out_height; y++)
+            for(var x = 0; x < Scenario.out_width; x++)
+                for (var y = 0; y < Scenario.out_height; y++)
                 {
                     LoadOutdoors(x, y);
 
-                    for (int n = 0; n < Outdoors.specials.Length; n++)
+                    for (var n = 0; n < Outdoors.specials.Length; n++)
                     {
                         if (Outdoors.specials[n].type == 229 && Outdoors.specials[n].ex1b < 4) //Outdoor store
                         {
-                            ItemShop shop = new ItemShop();
+                            var shop = new ItemShop();
                             shop.Type = Outdoors.specials[n].ex1b == 0 ? 0 : (Outdoors.specials[n].ex1b == 3 ? 2 : 1);
                             if (Outdoors.specials[n].ex1b == 2) shop.SpecificallyPriest = true;
                             shop.Outdoors = true;
@@ -976,13 +978,13 @@ namespace SoE_Converter
                 }
 
             //Now do all the town item shops. There are triggered by a talking node
-            for (int n = 0; n < Scenario.num_towns; n++)
+            for (var n = 0; n < Scenario.num_towns; n++)
             {
                 LoadTown(n);
 
                 //Make a quick list of all the personalities in the town and what they will sell: Weapons, Armour, All
                 var psell = new Dictionary<int, Tuple<bool, bool, bool, int, bool>>();
-                for (int x = 0; x < 60; x++) //Go through all talking nodes
+                for (var x = 0; x < 60; x++) //Go through all talking nodes
                 {
                     if (Talking.talk_nodes[x].personality >= 0)
                     {
@@ -1008,9 +1010,9 @@ namespace SoE_Converter
                     }
                 }
 
-                for (int x = 0; x < 60; x++) //Now go through all talking nodes and get the shops
+                for (var x = 0; x < 60; x++) //Now go through all talking nodes and get the shops
                 {
-                    talking_node_type t = Talking.talk_nodes[x];
+                    var t = Talking.talk_nodes[x];
 
                     if (t.personality == -1) continue;
 
@@ -1019,13 +1021,13 @@ namespace SoE_Converter
                         //Don't yet consider a shop that buys off the player but whose personality also has a shop that sells to the player.
                         if ((t.type == 13 || t.type == 14 || t.type == 15) && psell[t.personality].Item4 != -1 /*&& !psell[t.personality].Item5*/) continue;
 
-                        bool sellall = psell[t.personality].Item3;
-                        bool sellweapons = psell[t.personality].Item1;
-                        bool sellarmour = psell[t.personality].Item2;
+                        var sellall = psell[t.personality].Item3;
+                        var sellweapons = psell[t.personality].Item1;
+                        var sellarmour = psell[t.personality].Item2;
 
                         
 
-                        ItemShop shop = new ItemShop(); 
+                        var shop = new ItemShop(); 
                         shop.Outdoors = false;
                         shop.TownNo = n;
                         shop.NodeNo = x;
@@ -1068,7 +1070,7 @@ namespace SoE_Converter
                     }
                     else if (t.type >= 9 && t.type <= 11) //Mage spells, priest spells, recipes
                     {
-                        ItemShop shop = new ItemShop();
+                        var shop = new ItemShop();
                         shop.Type = t.type == 11 ? 2 : 1;
                         if (t.type == 10) shop.SpecificallyPriest = true;
                         shop.Outdoors = false;
@@ -1086,16 +1088,16 @@ namespace SoE_Converter
                 }
 
                 //NOW - go through the nodes again and look for nodes that buy stuff off the player. If the personality with that node also has an item shop that sells to the player, link to that shop instead.
-                for (int x = 0; x < 60; x++)
+                for (var x = 0; x < 60; x++)
                 {
-                    talking_node_type t = Talking.talk_nodes[x];
+                    var t = Talking.talk_nodes[x];
                     if (t.personality == -1) continue;
 
                     if (t.type == 13 || t.type == 14 || t.type == 15)
                     {
                         if (psell[t.personality].Item4 != -1) //This personality that buys stuff off the player, also sells stuff to the player (in at least one other talking node) so link to that shop
                         {
-                            ItemShop shop = ItemShops.Find(s => s.Type == 0 && !s.Outdoors && s.TownNo == n && s.NodeNo == psell[t.personality].Item4 && !s.JumbleShop);
+                            var shop = ItemShops.Find(s => s.Type == 0 && !s.Outdoors && s.TownNo == n && s.NodeNo == psell[t.personality].Item4 && !s.JumbleShop);
                             if (shop != null)
                             {
                                 shop.OtherBuyOffNodes.Add(x);
@@ -1109,14 +1111,14 @@ namespace SoE_Converter
 
         }
 
-        static void FixBoatSpecialNodes(ref special_node_type[] spcs)
+        private static void FixBoatSpecialNodes(ref special_node_type[] spcs)
         {
-            for(int x = 0; x < spcs.Length; x++)
+            for(var x = 0; x < spcs.Length; x++)
                 if (spcs[x].type == 15 || spcs[x].type ==16) //15 is horses, 16 boats
                 {
                     short i=-1;
                     //Extra1a is the horse or boat to change
-                    for (int y = 0; y < 30; y++)
+                    for (var y = 0; y < 30; y++)
                     {
                         if (Scenario.scen_horses[y].which_town != -1)
                         {
@@ -1124,7 +1126,7 @@ namespace SoE_Converter
                             if (spcs[x].type == 15 && spcs[x].ex1a == y) spcs[x].ex1a = i;
                         }
                     }
-                    for (int y = 0; y < 30; y++)
+                    for (var y = 0; y < 30; y++)
                     {
                         if (Scenario.scen_boats[y].which_town != -1)
                         {
@@ -1136,38 +1138,38 @@ namespace SoE_Converter
         }
 
         //Very spiffy generic function that will automatically load in any of our legacy structures, provided we've put its data size in a 'SIZE' field
-        static void MarshallyFunkyRead<T>(ref T o, BinaryReader In)
+        private static void MarshallyFunkyRead<T>(ref T o, BinaryReader In)
         {
-            FieldInfo f = o.GetType().GetField("SIZE");
+            var f = o.GetType().GetField("SIZE");
             if (f == null || f.FieldType != typeof(int)) throw new Exception("Object must have a 'SIZE' field wot is an integer!");
 
-            int size = (int) f.GetValue(o);
+            var size = (int) f.GetValue(o);
 
-            byte[] packet = In.ReadBytes(size);
-            GCHandle pinnedPacket = GCHandle.Alloc(packet, GCHandleType.Pinned);
+            var packet = In.ReadBytes(size);
+            var pinnedPacket = GCHandle.Alloc(packet, GCHandleType.Pinned);
             o = (T) Marshal.PtrToStructure(
                 pinnedPacket.AddrOfPinnedObject(),
                 o.GetType());
             pinnedPacket.Free();
         }
 
-        static void Port<T>(ref T o)
+        private static void Port<T>(ref T o)
         {
             if (!MacFormat) return;
 
-            FieldInfo[] fields = o.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var fields = o.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            foreach (FieldInfo f in fields)
+            foreach (var f in fields)
             {
                 if (f.FieldType.IsArray)
                 {
                     if (f.FieldType == typeof(short[]))
                     {
-                        short[] arr = (short[])f.GetValue(o);
-                        for(int x =0;x<arr.Length;x++)
+                        var arr = (short[])f.GetValue(o);
+                        for(var x =0;x<arr.Length;x++)
                         {
-                            byte[] b = BitConverter.GetBytes(arr[x]);
-                            byte c = b[0];
+                            var b = BitConverter.GetBytes(arr[x]);
+                            var c = b[0];
                             b[0] = b[1];
                             b[1] = c;
                             arr[x] = BitConverter.ToInt16(b, 0);
@@ -1178,10 +1180,10 @@ namespace SoE_Converter
                     {
                         if (f.FieldType == typeof(byte[]) || f.FieldType == typeof(sbyte[]) || f.FieldType == typeof(location[])) continue;
 
-                        Array arr = (Array) f.GetValue(o);
-                        for(int x = 0; x < arr.Length;x++)
+                        var arr = (Array) f.GetValue(o);
+                        for(var x = 0; x < arr.Length;x++)
                         {
-                            object o2 = arr.GetValue(x);
+                            var o2 = arr.GetValue(x);
                             Port(ref o2);
                             arr.SetValue(o2, x);
                         }
@@ -1191,21 +1193,21 @@ namespace SoE_Converter
                 } else {
                     if (f.FieldType == typeof(short))
                     {
-                        byte[] b = BitConverter.GetBytes((short)f.GetValue(o));
-                        byte c = b[0];
+                        var b = BitConverter.GetBytes((short)f.GetValue(o));
+                        var c = b[0];
                         b[0] = b[1];
                         b[1] = c;
 
-                        TypedReference tr = __makeref(o);
+                        var tr = __makeref(o);
                         f.SetValueDirect(tr, BitConverter.ToInt16(b, 0));
                     }
                     else
                     {
                         if (f.FieldType == typeof(byte) || f.FieldType == typeof(sbyte) || f.FieldType == typeof(location)) continue;
 
-                        object o2 = f.GetValue(o);
+                        var o2 = f.GetValue(o);
                         Port(ref o2);
-                        TypedReference tr = __makeref(o);
+                        var tr = __makeref(o);
                         f.SetValueDirect(tr, o2);
                     }
                 } 

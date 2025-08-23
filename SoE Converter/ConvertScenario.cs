@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.Xml.Linq;
 
 namespace SoE_Converter
 {
-    partial class Program
+    internal partial class Program
     {
-        static void SaveScenario()
+        private static void SaveScenario()
         {
 
             Console.WriteLine("Writing scenario: \"" + DataStore5.scen_strs[0] + "\"");
@@ -19,8 +14,8 @@ namespace SoE_Converter
 
             short count; int x, y;
 
-            using (FileStream fs = new FileStream(NewFilename, FileMode.Create, FileAccess.Write))
-            using (BinaryWriter Out = new BinaryWriter(fs))
+            using (var fs = new FileStream(NewFilename, FileMode.Create, FileAccess.Write))
+            using (var Out = new BinaryWriter(fs))
             {
                 Console.WriteLine("Writing scenario header...");
 
@@ -33,7 +28,7 @@ namespace SoE_Converter
                 Out.Write(DataStore5.scen_strs[0]); //Scenario name
                 Out.Write(Scenario.ver);   //Version numbers
 
-                string f = Path.GetFileNameWithoutExtension(NewFilename).ToUpper();
+                var f = Path.GetFileNameWithoutExtension(NewFilename).ToUpper();
 
                 //If one of Jeff's 3 original scenarios, use the longer description from the BoE program.
                 if (f == "VALLEYDY")
@@ -104,7 +99,7 @@ namespace SoE_Converter
 
                     Out.Write(Scenario.town_hidden[x] == 0 ? false : true);
 
-                    short sz = (short)GetTownSize(x);
+                    var sz = (short)GetTownSize(x);
                     Out.Write(sz); Out.Write(sz);
 
                     //Write item storage rectangles, if there is one here. There can only be one per town, so if there isn't one here, write FALSE
@@ -208,7 +203,7 @@ namespace SoE_Converter
                         //Cos global no timer behaviour needed
                     }
 
-                for (int townnum = 0; townnum < Scenario.num_towns; townnum++)
+                for (var townnum = 0; townnum < Scenario.num_towns; townnum++)
                 {
                     LoadTown(townnum);
 
@@ -261,7 +256,7 @@ namespace SoE_Converter
                     Out.Write((short)x); //Terrain number
                     Out.Write((byte)0);  //Underlay layer.
 
-                    string m = Encoding.ASCII.GetString(ScenItems.ter_names, x * 30, 30);
+                    var m = Encoding.ASCII.GetString(ScenItems.ter_names, x * 30, 30);
                     m = m.Remove(m.IndexOf((char)0));
 
                     Out.Write(m); //Name
@@ -498,7 +493,7 @@ namespace SoE_Converter
 
                 for (x = 0; x < 400; x++)
                 {
-                    string m = Encoding.ASCII.GetString(ScenItems.scen_items[x].full_name);
+                    var m = Encoding.ASCII.GetString(ScenItems.scen_items[x].full_name);
                     m = m.Remove(m.IndexOf((char)0));
                     if (m == "Empty") continue;
 
@@ -598,13 +593,13 @@ namespace SoE_Converter
 
                     for (y = 0; y < 10; y++)
                         if (DataStore3.talk_strs[y] != "Unused") towncount++;
-                    string has_general_personality = "";
+                    var has_general_personality = "";
 
                     SaveFolder((short)x, DataStore1.town_strs[0], Out);
 
                     //Are there any -2 dialogue nodes in this town? If so we make an abstract personality and all the real personalities
                     //in the town will link to it.
-                    for (int n = 0; n < 60; n++)
+                    for (var n = 0; n < 60; n++)
                     {
                         if (Talking.talk_nodes[n].personality == -2)
                         {
@@ -666,7 +661,7 @@ namespace SoE_Converter
                 //First write the 'Jumble Shops'
                 for (x = 0; x < 5; x++)
                 {
-                    foreach (ItemShop shop in ItemShops)
+                    foreach (var shop in ItemShops)
                     {
                         if (shop.JumbleShop && shop.JumbleShopNo == x)
                         {
@@ -687,7 +682,7 @@ namespace SoE_Converter
                 }
 
                 //Now all the normal shops (except the Jumble Shops in the list)
-                foreach (ItemShop shop in ItemShops)
+                foreach (var shop in ItemShops)
                 {
                     if (!shop.JumbleShop)
                     {
@@ -715,7 +710,7 @@ namespace SoE_Converter
                     Out.Write((byte)1);
                     Out.Write(GetNPCID(x));
                     Out.Write(""); //Folder
-                    string m = Encoding.ASCII.GetString(ScenItems.monst_names, x * 20, 20);
+                    var m = Encoding.ASCII.GetString(ScenItems.monst_names, x * 20, 20);
                     m = m.Remove(m.IndexOf((char)0));
                     Out.Write(m);
 
@@ -820,13 +815,13 @@ namespace SoE_Converter
                 #region Outside Encounters
 
                 short foldercount = 0;
-                for (int x2 = 0; x2 < Scenario.out_width; x2++)
-                    for (int y2 = 0; y2 < Scenario.out_height; y2++)
+                for (var x2 = 0; x2 < Scenario.out_width; x2++)
+                    for (var y2 = 0; y2 < Scenario.out_height; y2++)
                     {
                         LoadOutdoors(x2, y2);
 
                         //Write wandering monsters
-                        bool donethis = false;
+                        var donethis = false;
                         for (x = 0; x < 4; x++)
                         {
                             if (!donethis && (IsUsedEncounter(Outdoors.wandering[x]) || IsUsedEncounter(Outdoors.special_enc[x])))
@@ -868,7 +863,7 @@ namespace SoE_Converter
             }
         }
 
-        static void SaveFolder(short num, string name, BinaryWriter Out)
+        private static void SaveFolder(short num, string name, BinaryWriter Out)
         {
             Out.Write((byte)2); //Write 2 to indicate a folder follows
             Out.Write("\t" + num); //Folder ID
@@ -877,23 +872,23 @@ namespace SoE_Converter
             Out.Write(""); // Folder containing this folder
         }
 
-        static void SaveTalkNodes(BinaryWriter o, int townnum, int personality)
+        private static void SaveTalkNodes(BinaryWriter o, int townnum, int personality)
         {
             //Saves all the talk nodes for a personality with that personality, rather than with the town
 
             LoadTown(townnum);
 
             //Write the number of nodes
-            int count = 0;
-            for (int x = 0; x < 60; x++)
+            var count = 0;
+            for (var x = 0; x < 60; x++)
             {
                 if (Talking.talk_nodes[x].personality == personality) count++;
             }
-            long filepos = o.BaseStream.Position;
+            var filepos = o.BaseStream.Position;
             o.Write((short)count);
 
             //Write node
-            for (int x = 0; x < 60; x++)
+            for (var x = 0; x < 60; x++)
             {
                 if (Talking.talk_nodes[x].personality == personality)
                 {
@@ -1115,7 +1110,7 @@ namespace SoE_Converter
             }
 
             //Update count, if we've put any more in there.
-            long curpos = o.BaseStream.Position;
+            var curpos = o.BaseStream.Position;
             o.BaseStream.Seek(filepos, SeekOrigin.Begin);
             o.Write((short)count);
             o.BaseStream.Seek(curpos, SeekOrigin.Begin);

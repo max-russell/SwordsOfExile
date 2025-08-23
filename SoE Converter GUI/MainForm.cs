@@ -12,24 +12,24 @@ namespace SoE_Converter_GUI
 {
     public partial class MainForm : Form
     {
-        const string SETTINGS_FILE = "Converter Gui Settings.xml";
-        string scenDir = "";
-        string SoEPath = "SoE Converter";
-        int sortedColumn = -1;
+        private const string SETTINGS_FILE = "Converter Gui Settings.xml";
+        private string scenDir = "";
+        private string SoEPath = "SoE Converter";
+        private int sortedColumn = -1;
 
-        Process converterProcess;
+        private Process converterProcess;
 
         public MainForm()
         {
             InitializeComponent();
 #if DEBUG
             Directory.SetCurrentDirectory(@"..\..\..");
-            string s = Directory.GetCurrentDirectory();
+            var s = Directory.GetCurrentDirectory();
 #endif
             Text = "Swords of Exile Scenario Converter " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         }
 
-        void ShowHelp()
+        private void ShowHelp()
         {
             MessageBox.Show("You can use the Blades of Exile Converter to convert Blades of Exile scenario\n" +
                 "to one that can be played in Swords of Exile. Click 'Browse' and find the 'scenarios'" +
@@ -48,19 +48,19 @@ namespace SoE_Converter_GUI
             }
         }
 
-        void updateScenList()
+        private void updateScenList()
         {
             txtScenarioDir.Text = scenDir;
             lstScenarios.SuspendLayout();
             lstScenarios.Items.Clear();
-            foreach (string s in Directory.EnumerateFiles(scenDir, "*.exs", SearchOption.TopDirectoryOnly))
+            foreach (var s in Directory.EnumerateFiles(scenDir, "*.exs", SearchOption.TopDirectoryOnly))
             {
-                using (FileStream fs = new FileStream(s, FileMode.Open))
+                using (var fs = new FileStream(s, FileMode.Open))
                 {
                     fs.Seek(0xA2A4, SeekOrigin.Begin);
-                    int len = fs.ReadByte();
+                    var len = fs.ReadByte();
                     fs.Seek(0x13CF6, SeekOrigin.Begin);
-                    byte[] nm = new byte[len];
+                    var nm = new byte[len];
                     fs.Read(nm, 0, len);
 
                     string[] items = { Path.GetFileName(s), Encoding.ASCII.GetString(nm), Convert.ToString(new FileInfo(s).Length / 1024) + " KB" };
@@ -79,7 +79,7 @@ namespace SoE_Converter_GUI
 
             if (lstScenarios.SelectedIndices.Count > 0)
             {
-                string scen = Path.Combine(scenDir, Path.ChangeExtension((string)lstScenarios.SelectedItems[0].Text, "exs"));
+                var scen = Path.Combine(scenDir, Path.ChangeExtension((string)lstScenarios.SelectedItems[0].Text, "exs"));
 
                 txtOutputHeader.Text = "Converting '" + scen + "'...";
                 txtOutput.Clear();
@@ -88,21 +88,21 @@ namespace SoE_Converter_GUI
             }
         }
 
-        delegate void SetTextCallback(string text, bool error);
+        private delegate void SetTextCallback(string text, bool error);
 
-        void dataOut(string text, bool error)
+        private void dataOut(string text, bool error)
         {
             // InvokeRequired required compares the thread ID of the
             // calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
             if (txtOutput.InvokeRequired)
             {
-                SetTextCallback d = new SetTextCallback(dataOut);
+                var d = new SetTextCallback(dataOut);
                 this.Invoke(d, new object[] { text, error });
             }
             else
             {
-                int l = txtOutput.Text.Length;
+                var l = txtOutput.Text.Length;
                 txtOutput.Text += text + Environment.NewLine;
 
                 txtOutput.Select(l, text.Length);
@@ -119,7 +119,7 @@ namespace SoE_Converter_GUI
             if (output == null)
                 throw new ArgumentNullException("output");
 
-            ProcessStartInfo psi = new ProcessStartInfo();
+            var psi = new ProcessStartInfo();
             psi.UseShellExecute = false;
             psi.RedirectStandardError = true;
             psi.RedirectStandardOutput = true;
@@ -131,7 +131,7 @@ namespace SoE_Converter_GUI
             psi.FileName = exe;
             psi.Arguments = args;
 
-            Process process = Process.Start(psi);
+            var process = Process.Start(psi);
 
             process.OutputDataReceived += (o, e) => { if (e.Data != null) /*mreOut.Set(); else*/ output(e.Data, false); };
             process.BeginOutputReadLine();
@@ -146,7 +146,7 @@ namespace SoE_Converter_GUI
             return process;
         }
 
-        void LoadSettings()
+        private void LoadSettings()
         {
             //Here's where the game's settings are loaded from the XML file in the game root directory
 
@@ -158,7 +158,7 @@ namespace SoE_Converter_GUI
                 xml = XElement.Load(SETTINGS_FILE);
                 if (xml.Name != "Settings") throw new Exception("Corrupt settings file.");
 
-                foreach (XElement e in xml.Elements())
+                foreach (var e in xml.Elements())
                 {
                     if (e.Name.ToString() == "BoE_Dir")
                         scenDir = e.Value;
@@ -170,14 +170,15 @@ namespace SoE_Converter_GUI
                 ShowHelp();
             }
         }
-        void SaveSettings()
+
+        private void SaveSettings()
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
+            var settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.OmitXmlDeclaration = true;
             settings.ConformanceLevel = ConformanceLevel.Fragment;
 
-            using (XmlWriter writer = XmlWriter.Create(SETTINGS_FILE, settings))
+            using (var writer = XmlWriter.Create(SETTINGS_FILE, settings))
             {
                 writer.WriteStartElement("Settings");
                 writer.WriteElementString("BoE_Dir", scenDir);
@@ -221,10 +222,10 @@ namespace SoE_Converter_GUI
     }
 
     // Implements the manual sorting of items by columns.
-    class ListViewItemComparer : IComparer
+    internal class ListViewItemComparer : IComparer
     {
         private int col;
-        SortOrder order;
+        private SortOrder order;
 
         public ListViewItemComparer()
         {

@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Reflection;
 using System.Xml.Linq;
 
 namespace SoE_Converter
 {
-    partial class Program
+    internal partial class Program
     {
-        class Recipe
+        private class Recipe
         {
             public string ID = "";
             public string Name = "", Description = "";
@@ -21,10 +17,10 @@ namespace SoE_Converter
             public int Amount;
             public List<Tuple<string, int>> Ingredients = new List<Tuple<string, int>>();
 
-            static List<Recipe> List;
-            static Dictionary<string, string> IngredientKeys = new Dictionary<string, string>();
+            private static List<Recipe> List;
+            private static Dictionary<string, string> IngredientKeys = new Dictionary<string, string>();
 
-            void Write(BinaryWriter Out)
+            private void Write(BinaryWriter Out)
             {
                 Console.WriteLine("    " + ID);
                 Out.Write((byte)1);
@@ -48,15 +44,15 @@ namespace SoE_Converter
             {
                 List = new List<Recipe>();
 
-                XElement xml = XElement.Load("../../Base/Data/Alchemy.xml");
+                var xml = XElement.Load("../../Base/Data/Alchemy.xml");
 
-                foreach (XElement recipe in xml.Elements())
+                foreach (var recipe in xml.Elements())
                 {
                     if (recipe.Name.LocalName == "Recipe")
                     {
-                        Recipe r = new Recipe();
+                        var r = new Recipe();
 
-                        foreach (XAttribute attr in recipe.Attributes())
+                        foreach (var attr in recipe.Attributes())
                         {
                             switch (attr.Name.LocalName)
                             {
@@ -70,14 +66,14 @@ namespace SoE_Converter
                             }
                         }
 
-                        foreach (XElement ing in recipe.Elements())
+                        foreach (var ing in recipe.Elements())
                         {
-                            string req = "";
-                            int amt = 1;
+                            var req = "";
+                            var amt = 1;
 
                             if (ing.Name.LocalName != "Ingredient") continue;
 
-                            foreach (XAttribute attr2 in ing.Attributes())
+                            foreach (var attr2 in ing.Attributes())
                                 if (attr2.Name.LocalName == "Required")
                                     req = attr2.Value;
                                 else if (attr2.Name.LocalName == "Amount")
@@ -90,7 +86,7 @@ namespace SoE_Converter
                     else if (recipe.Name.LocalName == "IngredientKey")
                     {
                         string id = "", name = "";
-                        foreach (XAttribute attr in recipe.Attributes())
+                        foreach (var attr in recipe.Attributes())
                         {
                             switch (attr.Name.LocalName)
                             {
@@ -112,31 +108,31 @@ namespace SoE_Converter
                     Out.Write(key.Value);
                 }
 
-                foreach (Recipe r in List)
+                foreach (var r in List)
                     r.Write(Out);
                 Out.Write((byte)0);
             }
         }
 
-        class MagicSpell
+        private class MagicSpell
         {
-            string ID="";
-            string Name = "Spell", Description = "";
-            bool Mage = true;
-            int Level = 1;
-            int Cost = 1;
-            int Price = 0;
-            int Where = 0;
-            int Range = 0;
-            eSpellTarget Target = eSpellTarget.CASTER;
-            int TargetPattern;
-            bool MultiTarget = false;
-            int Missile = -1;
-            string FuncCast="", FuncTargetCount="";
+            private string ID="";
+            private string Name = "Spell", Description = "";
+            private bool Mage = true;
+            private int Level = 1;
+            private int Cost = 1;
+            private int Price = 0;
+            private int Where = 0;
+            private int Range = 0;
+            private eSpellTarget Target = eSpellTarget.CASTER;
+            private int TargetPattern;
+            private bool MultiTarget = false;
+            private int Missile = -1;
+            private string FuncCast="", FuncTargetCount="";
 
-            static List<MagicSpell> List;
+            private static List<MagicSpell> List;
 
-            void Write(BinaryWriter Out)
+            private void Write(BinaryWriter Out)
             {
                 Console.WriteLine("    " + ID);
                 Out.Write((byte)1);
@@ -162,15 +158,15 @@ namespace SoE_Converter
             {
                 List = new List<MagicSpell>();
 
-                XElement xml = XElement.Load("../../Base/Data/SpellData.xml");
+                var xml = XElement.Load("../../Base/Data/SpellData.xml");
 
-                foreach (XElement spell in xml.Elements())
+                foreach (var spell in xml.Elements())
                 {
                     if (spell.Name.LocalName != "Spell") continue;
 
-                    MagicSpell s = new MagicSpell();
+                    var s = new MagicSpell();
 
-                    foreach (XAttribute attr in spell.Attributes())
+                    foreach (var attr in spell.Attributes())
                     {
                         switch (attr.Name.LocalName)
                         {
@@ -200,12 +196,12 @@ namespace SoE_Converter
 
                 Console.WriteLine("Writing Spells:");
 
-                foreach (MagicSpell spell in List)
+                foreach (var spell in List)
                     spell.Write(Out);
                 Out.Write((byte)0); //End of spells
             }
 
-            enum eSpellTarget
+            private enum eSpellTarget
             {
                 CASTER = 0,
                 LIVING_PC = 1,

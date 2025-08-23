@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.Xml.Linq;
 
 namespace SoE_Converter
 {
-    partial class Program
+    internal partial class Program
     {
-        static void SaveTown(int townnum, BinaryWriter Out)
+        private static void SaveTown(int townnum, BinaryWriter Out)
         {
             short count;
             int x, y;
@@ -71,12 +66,12 @@ namespace SoE_Converter
                         count++;
                 }
 
-            List<location> waterfalls = new List<location>();
+            var waterfalls = new List<location>();
             if (!LEGACY_NO_WATERFALL_IN_TOWN)
             {
                 //Find all waterfall terrains. Waterfalls are now handled by a script Function, so they need a special trigger on the tile above them.
 
-                int sz = Scenario.town_size[townnum] == 0 ? 64 : (Scenario.town_size[townnum] == 1 ? 48 : 32);
+                var sz = Scenario.town_size[townnum] == 0 ? 64 : (Scenario.town_size[townnum] == 1 ? 48 : 32);
 
                 for (x = 0; x < sz; x++)
                     for (y = 1; y < sz; y++) //Not on the very top row as we can't put a trigger on the tile above it.
@@ -138,7 +133,7 @@ namespace SoE_Converter
             if (!LEGACY_NO_WATERFALL_IN_TOWN)
             {
                 //Now write the waterfall triggers to the end.
-                foreach (location l in waterfalls)
+                foreach (var l in waterfalls)
                 {
                     SaveLocation(l, Out);
                     Out.Write(true); //Active
@@ -204,7 +199,7 @@ namespace SoE_Converter
                 }
             }
 
-            List<location> secretpassagelist = new List<location>();
+            var secretpassagelist = new List<location>();
             //FIND SECRET PASSAGES:
             //These were stored as special encounters that trigger special node type 4 - but now they are stored as a preset field type
             //So search all the special encounter spots on the map that directly trigger a node type 4
@@ -235,7 +230,7 @@ namespace SoE_Converter
                     SaveLocation(Town.preset_fields[x].field_loc, Out);
                 }
             }
-            foreach (location l in secretpassagelist)
+            foreach (var l in secretpassagelist)
             {
                 Out.Write((short)22);
                 SaveLocation(l, Out);
@@ -267,8 +262,8 @@ namespace SoE_Converter
                         Out.Write((short)-1);
                     else
                     {
-                        bool found = false;
-                        for (int z = 0; z < Personality_IDs.Count; z++)
+                        var found = false;
+                        for (var z = 0; z < Personality_IDs.Count; z++)
                         {
 
                             if (Personality_IDs[z] == TownTerrain.creatures[x].personality)

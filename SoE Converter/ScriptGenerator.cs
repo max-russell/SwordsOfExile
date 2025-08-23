@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 
 namespace SoE_Converter
 {
-    partial class Program
+    internal partial class Program
     {
         public enum eNodeFields
         {
             None, SD1, SD2, Msg1, Msg2, Pic, Ex1a, Ex1b, Ex2a, Ex2b, JumpTo, BREAK
         }
 
-        class ScriptInstruction
+        private class ScriptInstruction
         {
             public int NodeType;
             public eNodeFields Branch1To, Branch2To;
@@ -49,14 +48,14 @@ namespace SoE_Converter
 
             static public ScriptInstruction Get(special_node_type n)
             {
-                foreach(ScriptInstruction i in Instructions)
+                foreach(var i in Instructions)
                     if (i.NodeType == n.type) return i;
                 return null;
             }
 
         }
 
-        static ScriptInstruction[] Instructions = {
+        private static ScriptInstruction[] Instructions = {
             new ScriptInstruction{NodeType = 1, NodeString = "Set Flag", StandardMsg=true},
             new ScriptInstruction{NodeType = 2, NodeString = "Increment Flag", StandardMsg=true},
             new ScriptInstruction{NodeType = 3, NodeString = "Display Message", StandardMsg=true},
@@ -215,7 +214,7 @@ namespace SoE_Converter
             //Town: Change Creature Attitude
         };
 
-        class ScriptEntryPoint
+        private class ScriptEntryPoint
         {
             public string FuncName;
             public int Node;
@@ -228,7 +227,7 @@ namespace SoE_Converter
         }
 
 
-        enum eTrigger
+        private enum eTrigger
         {
             //NORMAL, 
             GENERAL,
@@ -244,8 +243,8 @@ namespace SoE_Converter
             TOWNENTRY
         }
 
-        static List<ScriptEntryPoint> EntryPoints = new List<ScriptEntryPoint>();
-        static List<ScriptEntryPoint> LoopbackEntryPoints = new List<ScriptEntryPoint>();
+        private static List<ScriptEntryPoint> EntryPoints = new List<ScriptEntryPoint>();
+        private static List<ScriptEntryPoint> LoopbackEntryPoints = new List<ScriptEntryPoint>();
 
         public static special_node_type GetNode(int node_num, int domain, int x, int y = 0)
         {
@@ -262,19 +261,19 @@ namespace SoE_Converter
             }
         }
 
-        static List<sd> StuffDoneList = new List<sd>(); //Keep track of all the stuff done flags used in the script - to convert to script global variables.
-        static int indent = 0;
-        static bool specific_pc_selected = false;
-        static List<int> NodesVisited = new List<int>();
-        static bool TalkingFunc = false;
+        private static List<sd> StuffDoneList = new List<sd>(); //Keep track of all the stuff done flags used in the script - to convert to script global variables.
+        private static int indent = 0;
+        private static bool specific_pc_selected = false;
+        private static List<int> NodesVisited = new List<int>();
+        private static bool TalkingFunc = false;
 
-        static int LoopbackCount = 0;
-        static bool WritingScript = false;
+        private static int LoopbackCount = 0;
+        private static bool WritingScript = false;
 
         public static void WriteScriptFile()
         {
             //Save all the Town IDs so we can refer to them without having to load the town each time
-            for (int x = 0; x < Scenario.num_towns; x++)
+            for (var x = 0; x < Scenario.num_towns; x++)
             {
                 LoadTown(x);
                 Town_IDs.Add(GetFriendlyIDString(DataStore1.town_strs[0]) + "_" + x); 
@@ -292,7 +291,7 @@ namespace SoE_Converter
             //First we write the general script functions for the scenario in 'Main.py'
             Console.WriteLine("Writing 'Main.py'...");
 
-            FileStream f = new FileStream("Scripts\\Main.py", FileMode.Create);
+            var f = new FileStream("Scripts\\Main.py", FileMode.Create);
             ScriptFile = new StreamWriter(f);
 
             WriteScript("def Initialise_Scenario():");
@@ -302,10 +301,10 @@ namespace SoE_Converter
             //We make the introductory message into its own function, called 'Intro_Message()'
             ScriptFile.WriteLine("def Intro_Message(p):");
 
-                string m = "";
-                for (int n = 0; n < 6; n++)
+                var m = "";
+                for (var n = 0; n < 6; n++)
                 {
-                    string s = GetString(1004 + n, 0);
+                    var s = GetString(1004 + n, 0);
                     if (s != null && s != "") m += (n == 0 ? s : ("\\n\\n" + s));
                 }
 
@@ -319,7 +318,7 @@ namespace SoE_Converter
                 ScriptFile.WriteLine("");
                 ScriptFile.WriteLine("def Town_Pre_Entry(town):");
 
-                for (int t = 0; t < 10; t++)
+                for (var t = 0; t < 10; t++)
 
                     if (Scenario.town_to_add_to[t] != -1)
                     {
@@ -333,7 +332,7 @@ namespace SoE_Converter
             //Now parse the rest of the functions from the scenario's special node branches.
 
             //First the global functions
-            foreach (ScriptEntryPoint entry in EntryPoints)
+            foreach (var entry in EntryPoints)
             {
                 if (entry.Domain == 0 && entry.Trigger != eTrigger.TERRAINTRIGGER)
                     ParseFunction(entry);
@@ -348,8 +347,8 @@ namespace SoE_Converter
             indent = 0;
 
             ///Write Restock Shop scripts here!
-            bool[] donejumbleshop = new bool[5];
-            foreach (ItemShop shop in ItemShops)
+            var donejumbleshop = new bool[5];
+            foreach (var shop in ItemShops)
             {
                 if (shop.JumbleShop && !donejumbleshop[shop.JumbleShopNo])
                 {
@@ -372,7 +371,7 @@ namespace SoE_Converter
                     if (shop.SellsStuff)
                     {
 
-                        for (int a = shop.FirstItem; a < shop.FirstItem + shop.NumItems; a++)
+                        for (var a = shop.FirstItem; a < shop.FirstItem + shop.NumItems; a++)
                         {
                             if (shop.Type == 0)
                             {
@@ -438,7 +437,7 @@ namespace SoE_Converter
             WriteScript("        Party.Food = (Party.Food * 19) / 20");
 
             //Write the behaviour for conveyor belts (but only if there's a conveyor belt terrain record in the scenario)
-            for (int z = 0; z < 256; z++) //Go through each terrain...
+            for (var z = 0; z < 256; z++) //Go through each terrain...
             {
                 if (Scenario.ter_types[z].special >= 16 && Scenario.ter_types[z].special <= 19)
                 {
@@ -476,7 +475,7 @@ namespace SoE_Converter
             }
 
             //First the terrain trigger global functions
-            foreach (ScriptEntryPoint entry in EntryPoints)
+            foreach (var entry in EntryPoints)
             {
                 if (entry.Domain == 0 && entry.Trigger == eTrigger.TERRAINTRIGGER)
                     ParseFunction(entry);
@@ -484,11 +483,11 @@ namespace SoE_Converter
             indent = 0;
 
             //Now the special function for a terrain record that calls a LOCAL special node when stepped on. It just runs another script depending on where the player is when they step on it.
-            for (int z = 0; z < 256; z++) //Go through each terrain...
+            for (var z = 0; z < 256; z++) //Go through each terrain...
             {
                 if (Scenario.ter_types[z].special == 12) //...Looking for one that triggers a local special node 
                 {
-                    string tername = Encoding.ASCII.GetString(ScenItems.ter_names, z * 30, 30);
+                    var tername = Encoding.ASCII.GetString(ScenItems.ter_names, z * 30, 30);
                     tername = tername.Remove(tername.IndexOf((char)0));
                     tername = GetFriendlyIDString(tername);
 
@@ -496,18 +495,18 @@ namespace SoE_Converter
                     WriteScript("def TerrainLocal_{0}_{1}(p):", tername, z);
 
                     //First, count if there are any actual functions
-                    int count = 0;
-                    for (int t = 0; t < Scenario.num_towns; t++)
+                    var count = 0;
+                    for (var t = 0; t < Scenario.num_towns; t++)
                         if (GetNodeToFuncName(Scenario.ter_types[z].flag1, 1, t, 0) != "") count++;
-                    for (int y = 0; y < Scenario.out_height; y++)
-                        for (int x = 0; x < Scenario.out_width; x++)
+                    for (var y = 0; y < Scenario.out_height; y++)
+                        for (var x = 0; x < Scenario.out_width; x++)
                             if (GetNodeToFuncName(Scenario.ter_types[z].flag1, 2, x, y) != "") count++;
 
                     if (count == 0)
                         WriteScript("    pass");
                     else
                     {
-                        for (int t = 0; t < Scenario.num_towns; t++)
+                        for (var t = 0; t < Scenario.num_towns; t++)
                         {
                             if (GetNodeToFuncName(Scenario.ter_types[z].flag1, 1, t, 0) != "")
                             {
@@ -516,8 +515,8 @@ namespace SoE_Converter
                                 WriteScript("        return");
                             }
                         }
-                        for (int y = 0; y < Scenario.out_height; y++)
-                            for (int x = 0; x < Scenario.out_width; x++)
+                        for (var y = 0; y < Scenario.out_height; y++)
+                            for (var x = 0; x < Scenario.out_width; x++)
                                 if (GetNodeToFuncName(Scenario.ter_types[z].flag1, 2, x, y) != "")
                                 {
                                     WriteScript("    if Game.Mode == eMode.OUTSIDE and WorldMap.SectorAt(p.Target).SectorPos == Location({0}, {1}):", x, y);
@@ -532,7 +531,7 @@ namespace SoE_Converter
 
             //Now each town's functions into its own python file
 
-            for (int townno = 0; townno < Scenario.num_towns; townno++)
+            for (var townno = 0; townno < Scenario.num_towns; townno++)
             {
                 LoadTown(townno);
                 Console.WriteLine("Writing 'Town_{0:000}_{1}.py'...", townno, GetFriendlyIDString(DataStore1.town_strs[0]));
@@ -541,7 +540,7 @@ namespace SoE_Converter
                 indent = 0;
                 WriteWanderingMonstFunc(townno);
 
-                foreach (ScriptEntryPoint entry in EntryPoints)
+                foreach (var entry in EntryPoints)
                 {
                     if (entry.Domain == 1 && entry.X == townno)
                         ParseFunction(entry);
@@ -550,9 +549,9 @@ namespace SoE_Converter
                 indent = 0;
                 //Now each talking node in the town that doesn't call a special node, but does something other than just display text. Eg, talking node type 18 - Display response if the party has enough gold.
                 //This is now handled by a script
-                for (int x = 0; x < 60; x++)
+                for (var x = 0; x < 60; x++)
                 {
-                    talking_node_type tn = Talking.talk_nodes[x];
+                    var tn = Talking.talk_nodes[x];
                     if (tn.personality == -1) continue;
 
                     switch (Talking.talk_nodes[x].type)
@@ -618,8 +617,8 @@ namespace SoE_Converter
                             WriteScript("");
                             WriteScript("def Talking_{0}_{1}(p):", townno, x);
                             WriteScript("    if Party.Gold >= {0}:", tn.extras[0]);
-                            string boatids = "";
-                            for(int a = 0; a < tn.extras[2]; a++)
+                            var boatids = "";
+                            for(var a = 0; a < tn.extras[2]; a++)
                             {
                                 if (a > 0) boatids += ", ";
                                 boatids += "\"Boat_" + (tn.extras[1]+a) + "\"";
@@ -643,8 +642,8 @@ namespace SoE_Converter
                             WriteScript("");
                             WriteScript("def Talking_{0}_{1}(p):", townno, x);
                             WriteScript("    if Party.Gold >= {0}:", tn.extras[0]);
-                            string horseids = "";
-                            for(int a = 0; a < tn.extras[2]; a++)
+                            var horseids = "";
+                            for(var a = 0; a < tn.extras[2]; a++)
                             {
                                 if (a > 0) horseids += ", ";
                                 horseids += "\"Horse_" + (tn.extras[1]+a) + "\"";
@@ -716,7 +715,7 @@ namespace SoE_Converter
 
             int outx = -1, outy = -1;
             //Now each outdoor section
-            foreach (ScriptEntryPoint entry in EntryPoints)
+            foreach (var entry in EntryPoints)
             {
                 if (entry.Domain == 2)
                 {
@@ -736,9 +735,9 @@ namespace SoE_Converter
             ScriptFile.Close();
 
             //Write Loopback functions
-            for(int n = 0; n < LoopbackEntryPoints.Count; n++)
+            for(var n = 0; n < LoopbackEntryPoints.Count; n++)
             {
-                ScriptEntryPoint entry = LoopbackEntryPoints[n];
+                var entry = LoopbackEntryPoints[n];
 
                 Console.WriteLine("Writing '{0}.py'...", FindFuncName(entry.Node, entry.Domain, entry.X, entry.Y));
 
@@ -762,11 +761,11 @@ namespace SoE_Converter
 
         }
 
-        static void WriteWanderingMonstFunc(int townno)
+        private static void WriteWanderingMonstFunc(int townno)
         {
-            bool has_wandering = false;
+            var has_wandering = false;
 
-            for (int x = 0; x < 4; x++)
+            for (var x = 0; x < 4; x++)
             {
                 if (Town.wandering_locs[x].x >= 0 || Town.wandering_locs[x].y >= 0)
                 {
@@ -779,7 +778,7 @@ namespace SoE_Converter
           
             has_wandering = false;
 
-                for (int x = 0; x < 4; x++)
+                for (var x = 0; x < 4; x++)
                     if (!(Town.wandering[x].monst[0] == 0 && Town.wandering[x].monst[1] == 0 && Town.wandering[x].monst[2] == 0 && Town.wandering[x].monst[3] == 0))
                     {
                         has_wandering = true;
@@ -795,7 +794,7 @@ namespace SoE_Converter
             WriteScript("        r1 = Maths.Rand(1,0,3)");
             WriteScript("        npcs = []");
 
-            for (int x = 0; x < 4; x++)
+            for (var x = 0; x < 4; x++)
                 if (!(Town.wandering[x].monst[0] == 0 && Town.wandering[x].monst[1] == 0 && Town.wandering[x].monst[2] == 0 && Town.wandering[x].monst[3] == 0))
                 {
                     WriteScript("        {0} r1 == {1}:", x == 0 ? "if" : "elif", x);
@@ -812,7 +811,7 @@ namespace SoE_Converter
             WriteScript("            while l == Location.Zero and num_tries < 100:");
             WriteScript("                num_tries += 1");
             WriteScript("                r2 = Maths.Rand(1,0,3)");
-            for (int l = 0; l < 4; l++)
+            for (var l = 0; l < 4; l++)
             {
                 if (Town.wandering_locs[l].x >= 0 && Town.wandering_locs[l].y >= 0)
                     WriteScript("                {0} r2 == {1}: l = Location({2},{3})",l==0 ? "if" : "elif", l, Town.wandering_locs[l].x, Town.wandering_locs[l].y);
@@ -833,7 +832,7 @@ namespace SoE_Converter
 
         }
 
-        static void ParseFunction(ScriptEntryPoint entry)
+        private static void ParseFunction(ScriptEntryPoint entry)
         {
             //This the start point for parsing each function.
             ScriptFile.WriteLine("");
@@ -843,10 +842,10 @@ namespace SoE_Converter
             NodesVisited.Clear();
             indent = 4;
             specific_pc_selected = false;
-            int domain = entry.Domain;
-            int x = entry.X;
-            int y = entry.Y;
-            int nextnode = entry.Node;
+            var domain = entry.Domain;
+            var x = entry.X;
+            var y = entry.Y;
+            var nextnode = entry.Node;
             TalkingFunc = entry.Trigger == eTrigger.TALKING;
             
             string[] dirstr = { "North", "West", "South", "East" };
@@ -854,11 +853,11 @@ namespace SoE_Converter
             if (entry.Trigger == eTrigger.TOWNEXIT)
             {
                 
-                bool elif_yet = false;
+                var elif_yet = false;
 
-                List<int> exitDirSpecs = new List<int>();
+                var exitDirSpecs = new List<int>();
 
-                for (int n = 0; n < Town.exit_specs.Length; n++)
+                for (var n = 0; n < Town.exit_specs.Length; n++)
                 {
                     if (Town.exit_specs[n] >= 0 && !exitDirSpecs.Contains(Town.exit_specs[n]))
                         exitDirSpecs.Add(Town.exit_specs[n]);
@@ -886,14 +885,14 @@ namespace SoE_Converter
                 }
 
                 elif_yet = false;
-                foreach(int spec in exitDirSpecs)
+                foreach(var spec in exitDirSpecs)
                 {
-                    StringBuilder ifline = new StringBuilder();
-                    bool first = true;
+                    var ifline = new StringBuilder();
+                    var first = true;
                     if (!elif_yet) {ifline.Append("if "); elif_yet = true;}
                     else ifline.Append("elif ");
 
-                    for (int n = 0; n < Town.exit_specs.Length; n++)
+                    for (var n = 0; n < Town.exit_specs.Length; n++)
                     {
                         if (Town.exit_specs[n] == spec)
                         {
@@ -969,7 +968,7 @@ namespace SoE_Converter
         }
 
 
-        static bool IsValidNodeNumber(int num, int domain)
+        private static bool IsValidNodeNumber(int num, int domain)
         {
             if (domain == 0) //Global
                 return num >= 0 && num < 256;
@@ -980,7 +979,7 @@ namespace SoE_Converter
             return false;
         }
 
-        static void AddStuffDone(int x, int y)
+        private static void AddStuffDone(int x, int y)
         {
              if (x >= 0 && x < 300 && y >= 0 && y < 10)
              {
@@ -991,15 +990,15 @@ namespace SoE_Converter
              }
         }
 
-        static short GetStuffDoneIndex(int x, int y)
+        private static short GetStuffDoneIndex(int x, int y)
         {  
             return (short)StuffDoneList.FindIndex(n => n.X == x && n.Y == y);
         }
 
 
-        static int ParseNode(int node_num, int ParseDomain, int ParseX, int ParseY = 0)
+        private static int ParseNode(int node_num, int ParseDomain, int ParseX, int ParseY = 0)
         {
-            special_node_type nd = GetNode(node_num, ParseDomain, ParseX, ParseY);
+            var nd = GetNode(node_num, ParseDomain, ParseX, ParseY);
 
             if (nd.type == 0) { WriteScript("return"); return -1; }
 
@@ -1012,7 +1011,7 @@ namespace SoE_Converter
             }
             NodesVisited.Add(node_num);
 
-            ScriptInstruction i = ScriptInstruction.Get(nd);
+            var i = ScriptInstruction.Get(nd);
             if (i == null) return nd.jumpto; //Unrecognised node - by default just move onto jumpto.
 
             //Standard stuff done check here
@@ -1143,7 +1142,7 @@ namespace SoE_Converter
             case 21:
                 WriteScript("RunScript(\"{0}\", ScriptParameters(eCallOrigin.CUSTOM))", FindFuncName(nd.jumpto, 0, 0, 0)); break;
             case 22: //Set many flags
-                for (int n = 0; n < 10; n++)
+                for (var n = 0; n < 10; n++)
                 {
                     WriteScript("StuffDone[\"{0}_{1}\"] = {2}", nd.sd1, n, nd.ex1a);
                     if (nd.ex1a == 250)
@@ -1199,13 +1198,13 @@ namespace SoE_Converter
             case 56:
             case 57: //Display Dialog
 
-                string pic = "";
-                int picnum = GetDialogPic(nd.pic, i.NodeType - 55, out pic);
+                var pic = "";
+                var picnum = GetDialogPic(nd.pic, i.NodeType - 55, out pic);
 
-                string m1 = "";
-                for (int n = 0; n < 6; n++)
+                var m1 = "";
+                for (var n = 0; n < 6; n++)
                 {
-                    string s = GetString(nd.m1 + n, ParseDomain);
+                    var s = GetString(nd.m1 + n, ParseDomain);
                     if (s != null && s != "") m1 += (n == 0 ? s : ("\\n\\n" + s));
                 }
 
@@ -1279,9 +1278,9 @@ namespace SoE_Converter
                 picnum = GetDialogPic(nd.pic, i.NodeType - 58, out pic);
 
                 m1 = "";
-                for (int n = 0; n < 6; n++)
+                for (var n = 0; n < 6; n++)
                 {
-                    string s = GetString(nd.m1 + n, ParseDomain);
+                    var s = GetString(nd.m1 + n, ParseDomain);
                     if (s != null && s != "") m1 += (n == 0 ? s : ("\\n\\n" + s));
                 }
                 WriteScript("result = ChoiceBox(\"{0}\", {1}, {2}, [\"Take\", \"Leave\"])", m1, pic, picnum);
@@ -1315,7 +1314,7 @@ namespace SoE_Converter
                     WriteScript("Town.PlaceEncounterGroup({0})", nd.ex1a);
                 break;
             case 63: //Trap
-                string msg = GetStandardMessage(nd, ParseDomain);
+                var msg = GetStandardMessage(nd, ParseDomain);
                 if (msg == null) msg = "You've found a trap. Do you want to try to disarm it?";
                 string[] traptype = {
                     "RANDOM",
@@ -1332,7 +1331,7 @@ namespace SoE_Converter
                     "DISEASE",
                     "DISEASE_ALL"
                 };
-                string t = nd.ex1a >= 0 && nd.ex1a < traptype.Length ? traptype[nd.ex1a] : "BLADE";
+                var t = nd.ex1a >= 0 && nd.ex1a < traptype.Length ? traptype[nd.ex1a] : "BLADE";
 
                 WriteScript("if Game.Mode == eMode.COMBAT:");
                 WriteScript("    if ChoiceBox(\"{0}\", eDialogPic.NONE, 0, [\"Disarm\", \"Leave\"]) == 1:", msg);
@@ -1368,7 +1367,7 @@ namespace SoE_Converter
                 }
                 break;
             case 81: //Do Damage
-                string damtype = GetDamageTypeString(nd.ex2b);
+                var damtype = GetDamageTypeString(nd.ex2b);
 
                 if (specific_pc_selected)
                     WriteScript("pc.Damage()");
@@ -1444,7 +1443,7 @@ namespace SoE_Converter
                 }
                 break;
             case 87: //Affect poison
-                string what = nd.ex1b == 0 ? "Cure" : "Poison";
+                var what = nd.ex1b == 0 ? "Cure" : "Poison";
 
                 if (specific_pc_selected) WriteScript("pc.{0}({1})", what, nd.ex1a);
                 else
@@ -1464,8 +1463,8 @@ namespace SoE_Converter
             case 96:
             case 97://Affect slow/haste
 
-                bool zero_adds = true; int min = 0, max = 8;
-                string stat = "";
+                var zero_adds = true; int min = 0, max = 8;
+                var stat = "";
                 switch (i.NodeType)
                 {
                 case 88: stat = "HASTE_SLOW"; min = -8; break;
@@ -1688,14 +1687,14 @@ namespace SoE_Converter
                 WriteScript("response = response[0:{0}].upper()", nd.pic);
                 if (nd.ex1a != -1)
                 {
-                    string response = GetString(nd.ex1a + 1000, 0).ToUpper();
+                    var response = GetString(nd.ex1a + 1000, 0).ToUpper();
                     if (nd.pic < response.Length) response = response.Substring(0, nd.pic);
                     WriteScript("if response == \"{0}\":", response);
                     ParseBranch(nd.ex1b, ParseDomain, ParseX, ParseY);
                 }
                 if (nd.ex2a != -1)
                 {
-                    string response = GetString(nd.ex2a + 1000, 0).ToUpper();
+                    var response = GetString(nd.ex2a + 1000, 0).ToUpper();
                     if (nd.pic < response.Length) response = response.Substring(0, nd.pic);
                     WriteScript("elif response == \"{0}\":", response);
                     ParseBranch(nd.ex2b, ParseDomain, ParseX, ParseY);
@@ -1826,7 +1825,7 @@ namespace SoE_Converter
                 WriteScript("if Game.Mode != eMode.TOWN or p.Origin != eCallOrigin.MOVING:");
                 WriteScript("    p.CancelAction = True");
                 WriteScript("    return");
-                string desc = "";
+                var desc = "";
                 switch (nd.ex2b)
                 {
                 case 0: desc = "You find a stairway heading up."; break;
@@ -1853,9 +1852,9 @@ namespace SoE_Converter
             case 188: //Lever
 
                 m1 = "";
-                for (int n = 0; n < 6; n++)
+                for (var n = 0; n < 6; n++)
                 {
-                    string s = GetString(nd.m1 + n, ParseDomain);
+                    var s = GetString(nd.m1 + n, ParseDomain);
                     if (s != null && s != "") m1 += (n==0 ? s : ("\\n" + s));
                 }
                 WriteScript("if ChoiceBox(\"{0}\", eDialogPic.STANDARD, {1}, [\"Yes\", \"No\"]) == 0:", m1, nd.pic);
@@ -1869,9 +1868,9 @@ namespace SoE_Converter
                 WriteScript("    p.CancelAction = True");
                 WriteScript("    return");
                 m1 = "";
-                for (int n = 0; n < 6; n++)
+                for (var n = 0; n < 6; n++)
                 {
-                    string s = GetString(nd.m1 + n, ParseDomain);
+                    var s = GetString(nd.m1 + n, ParseDomain);
                     if (s != null && s != "") m1 += (n == 0 ? s : ("\\n" + s));
                 }
                 WriteScript("if ChoiceBox(\"{0}\", eDialogPic.STANDARD, {1}, [\"Yes\", \"No\"]) == 0:", m1, nd.pic);
@@ -1900,9 +1899,9 @@ namespace SoE_Converter
                 if (nd.ex2b != 1) // 1 means the move is forced and no window is displayed.
                 {
                     m1 = "";
-                    for (int n = 0; n < 6; n++)
+                    for (var n = 0; n < 6; n++)
                     {
-                        string s = GetString(nd.m1 + n, ParseDomain);
+                        var s = GetString(nd.m1 + n, ParseDomain);
                         if (s != null && s != "") m1 += (n == 0 ? s : ("\\n" + s));
                     }
                     WriteScript("if ChoiceBox(\"{0}\", eDialogPic.STANDARD, {1}, [\"Yes\", \"No\"]) == 1:", m1, nd.pic);
@@ -1960,7 +1959,7 @@ namespace SoE_Converter
             case 207:
             case 208:
             case 209:
-                string field = "";
+                var field = "";
                 switch (nd.type)
                 {
                 case 200: field = "FIRE_WALL"; break;
@@ -2204,12 +2203,12 @@ namespace SoE_Converter
             return nd.jumpto;
         }
 
-        static bool ValidButtonLabel(int b)
+        private static bool ValidButtonLabel(int b)
         {
             return b >= 0 && b < ButtonLabel.Length;
         }
 
-        static int GetDialogPic(int picnum, int pictype,  out string pic)
+        private static int GetDialogPic(int picnum, int pictype,  out string pic)
         {
             //pictype: 0=Dialog 1=Terrain 2=Monster
 
@@ -2252,24 +2251,24 @@ namespace SoE_Converter
             return picnum;
         }
 
-        static bool WriteEraseDotsScript(short sd1, short sd2, int indent)
+        private static bool WriteEraseDotsScript(short sd1, short sd2, int indent)
         {
             //Go through all special triggers on all maps. If the first node in the chain the trigger sets off has it's sd1 and sd2 properties the same as
             //the 'nd' parameter, write script to deactivate this trigger
             //Need to check if this script was called from stepping on a terrain with a dot, and then put in a script line to erase that
             //dot on the map. IN ALL maps, both towns and outside.
 
-            bool wrotesomething = false;
-            string indentstr = "";
+            var wrotesomething = false;
+            var indentstr = "";
             while (indent-- > 0) indentstr += " ";
 
             int ct = CurrentlyLoadedTown, ctx = CurrentlyLoadedOutX, cty = CurrentlyLoadedOutY;
 
             //First towns
-            for (int m = 0; m < Scenario.num_towns; m++)
+            for (var m = 0; m < Scenario.num_towns; m++)
             {
                 LoadTown(m);
-                for (int n = 0; n < 50; n++)
+                for (var n = 0; n < 50; n++)
                 {
                     if (Town.special_locs[n].x != 100)
                     {
@@ -2277,12 +2276,12 @@ namespace SoE_Converter
                         if (nd2.sd1 == sd1 && nd2.sd2 == sd2)
                         {
                             //If terrain at this special_loc is a dot, write script line to remove it.
-                            int wd = 0;
+                            var wd = 0;
                             if (Scenario.town_size[m] == 0) wd = 64;//Big
                             else if (Scenario.town_size[m] == 1) wd = 48; //Average
                             else if (Scenario.town_size[m] == 2) wd = 32; //Small
-                            int t = Town.special_locs[n].x * wd + Town.special_locs[n].y;
-                            int changeto = -1;
+                            var t = Town.special_locs[n].x * wd + Town.special_locs[n].y;
+                            var changeto = -1;
                             switch (Scenario.ter_types[TownTerrain.terrain[t]].picture)// >= 207 && TownTerrain.terrain[t] <= 212)
                             {
                                 case 207: changeto = 0; break;
@@ -2302,20 +2301,20 @@ namespace SoE_Converter
             }
 
             //Now outdoors
-            for (int sx = 0; sx < Scenario.out_width; sx++)
-                for (int sy = 0; sy < Scenario.out_height; sy++)
+            for (var sx = 0; sx < Scenario.out_width; sx++)
+                for (var sy = 0; sy < Scenario.out_height; sy++)
                 {
                     LoadOutdoors(sx, sy);
 
-                    for (int n = 0; n < 18; n++)
+                    for (var n = 0; n < 18; n++)
                     {
                         if (Outdoors.special_locs[n].x != 100)
                         {
                             var nd2 = Outdoors.specials[Outdoors.special_id[n]];
                             if (nd2.sd1 == sd1 && nd2.sd2 == sd2)
                             {
-                                int t = Outdoors.special_locs[n].x * 48 + Outdoors.special_locs[n].y;
-                                int changeto = -1;
+                                var t = Outdoors.special_locs[n].x * 48 + Outdoors.special_locs[n].y;
+                                var changeto = -1;
                                 switch (Scenario.ter_types[Outdoors.terrain[t]].picture)// >= 207 && TownTerrain.terrain[t] <= 212)
                                 {
                                     case 207: changeto = 0; break;
@@ -2341,7 +2340,7 @@ namespace SoE_Converter
         }
 
 
-        static void ParseBranch(int nextnode, int domain, int x, int y = 0)
+        private static void ParseBranch(int nextnode, int domain, int x, int y = 0)
         {
             indent += 4;
 
@@ -2352,8 +2351,8 @@ namespace SoE_Converter
                 return;
             }
 
-            int nodesvisitedupto = NodesVisited.Count;
-            bool backup_s_pc_s = specific_pc_selected;
+            var nodesvisitedupto = NodesVisited.Count;
+            var backup_s_pc_s = specific_pc_selected;
 
             do
             {
@@ -2369,11 +2368,11 @@ namespace SoE_Converter
                 NodesVisited.RemoveRange(nodesvisitedupto, NodesVisited.Count - nodesvisitedupto);
         }
 
-        static short GetVehicleIndex(bool horse, int no)
+        private static short GetVehicleIndex(bool horse, int no)
         {
             short ind = -1;
             //ex1a is the horse or boat to change
-            for (int y = 0; y < 30; y++)
+            for (var y = 0; y < 30; y++)
             {
                 if (Scenario.scen_horses[y].which_town != -1)
                 {
@@ -2381,7 +2380,7 @@ namespace SoE_Converter
                     if (horse && no == y) return ind; //spcs[x].ex1a = i;
                 }
             }
-            for (int y = 0; y < 30; y++)
+            for (var y = 0; y < 30; y++)
             {
                 if (Scenario.scen_boats[y].which_town != -1)
                 {
@@ -2393,7 +2392,7 @@ namespace SoE_Converter
         }
 
 
-        static string GetStandardMessage(special_node_type nd, int domain)
+        private static string GetStandardMessage(special_node_type nd, int domain)
         {
             string m1="", m2="";
 
@@ -2412,15 +2411,15 @@ namespace SoE_Converter
             else return null;
         }
 
-        static void WriteScript(String s, params object[] args)
+        private static void WriteScript(String s, params object[] args)
         {
             s = String.Format(s,args);
             ScriptFile.WriteLine(s.PadLeft(s.Length + indent));
         }
 
-        static string GetString(int n, int domain, bool not_a_script_string = false)
+        private static string GetString(int n, int domain, bool not_a_script_string = false)
         {
-            string s = ""; ;
+            var s = ""; ;
             //Assumes the correct town/outdoors is loaded!
             if (n == -1) return s;
             if (domain == 0)
@@ -2465,7 +2464,7 @@ namespace SoE_Converter
             return s;
         }
 
-        static string GetDamageTypeString(int n)
+        private static string GetDamageTypeString(int n)
         {
             switch (n)
             {
@@ -2480,33 +2479,34 @@ namespace SoE_Converter
             }
         }
 
-        static string[] ButtonLabel = {"Done ","OK", "Yes", "No", "Ask","Keep", "Cancel","Buy","Enter", "Leave",
+        private static string[] ButtonLabel = {"Done ","OK", "Yes", "No", "Ask","Keep", "Cancel","Buy","Enter", "Leave",
 						"Get","1","2","3","4","5","6","Cast","Save", "Take", "Leave", "Steal","Attack",
                         "Step In","Climb",
 						"Flee","Onward","Answer","Drink","Approach","Land",
 						"Under","Quit","Rest","Read","Pull","Push","Pray","Wait","Give",
 				/*100*/		"Destroy","Pay","Free","Touch", "Burn","Insert","Remove","Accept","Refuse","Open","Close","Sit","Stand"};
 
-        static string FindFuncName(int ndno, int domain, int x, int y)
+        private static string FindFuncName(int ndno, int domain, int x, int y)
         {
-            foreach (ScriptEntryPoint ep in EntryPoints)
+            foreach (var ep in EntryPoints)
             {
                 if (ep.Domain == domain && ep.X == x && ep.Y == y && ndno == ep.Node) return ep.FuncName;
             }
 
-            foreach (ScriptEntryPoint ep in LoopbackEntryPoints)
+            foreach (var ep in LoopbackEntryPoints)
             {
                 if (ep.Domain == domain && ep.X == x && ep.Y == y && ndno == ep.Node) return ep.FuncName;
             }
             return "_UNKNOWN_";
         }
 
-        static List<string> SpecialItemList = new List<string>();
-        static void GetSpecialItems()
+        private static List<string> SpecialItemList = new List<string>();
+
+        private static void GetSpecialItems()
         {
-            for (int n = 0; n < 50; n++)
+            for (var n = 0; n < 50; n++)
             {
-                string s = GetFriendlyIDString(DataStore5.scen_strs[n * 2 + 60]);
+                var s = GetFriendlyIDString(DataStore5.scen_strs[n * 2 + 60]);
 
                 if (SpecialItemList.Contains(s))
                 {
@@ -2516,31 +2516,31 @@ namespace SoE_Converter
             }
         }
 
-        static string GetItemID(int n)
+        private static string GetItemID(int n)
         {
             if (n == -1) return "";
             if (n == 0) return "gold";
-            string m = Encoding.ASCII.GetString(ScenItems.scen_items[n].full_name);
+            var m = Encoding.ASCII.GetString(ScenItems.scen_items[n].full_name);
             m = m.Remove(m.IndexOf((char)0));
             return String.Format("{0}_{1}", GetFriendlyIDString(m), n);
         }
 
-        static string GetNPCID(int n)
+        private static string GetNPCID(int n)
         {
             if (n == -1) return "";
-            string m = Encoding.ASCII.GetString(ScenItems.monst_names, n * 20, 20);
+            var m = Encoding.ASCII.GetString(ScenItems.monst_names, n * 20, 20);
             m = m.Remove(m.IndexOf((char)0));
             return String.Format("{0}_{1}", GetFriendlyIDString(m), n);
         }
 
-        static string GetTerrainID(int n)
+        private static string GetTerrainID(int n)
         {
-            string m = Encoding.ASCII.GetString(ScenItems.ter_names, n * 30, 30);
+            var m = Encoding.ASCII.GetString(ScenItems.ter_names, n * 30, 30);
             m = m.Remove(m.IndexOf((char)0));
             return String.Format("{0}_{1}", GetFriendlyIDString(m), n);
         }
 
-        static string GetSoundID(int n)
+        private static string GetSoundID(int n)
         {
             string[] sounds = { "000_highbeep",
                     "001_lowbeep",
@@ -2646,17 +2646,17 @@ namespace SoE_Converter
             else return sounds[n];
         }
 
-        static string GetSpecialItemName(int no)
+        private static string GetSpecialItemName(int no)
         {
             if (no < 0 || no >= 50) return "UNKNOWN";
-            string s = SpecialItemList[no];
+            var s = SpecialItemList[no];
 
             return s;
         }
 
-        static string GetNodeToFuncName(int nd, int d, int x, int y, bool sanctify_only=false)
+        private static string GetNodeToFuncName(int nd, int d, int x, int y, bool sanctify_only=false)
         {
-            foreach (ScriptEntryPoint e in EntryPoints)
+            foreach (var e in EntryPoints)
             {
                 if (nd == e.Node && d == e.Domain && x == e.X && y == e.Y)
 
@@ -2666,7 +2666,7 @@ namespace SoE_Converter
             return "";
         }
 
-        static void AddToEntryPoints(int nd, int d, int x, int y, string s, eTrigger what, bool no_duplicate_check = false)
+        private static void AddToEntryPoints(int nd, int d, int x, int y, string s, eTrigger what, bool no_duplicate_check = false)
         {
             if (!IsValidNodeNumber(nd, d)) return;
 
@@ -2675,7 +2675,7 @@ namespace SoE_Converter
                     LoopbackEntryPoints.FindIndex(n => n.Node == nd && n.Domain == d && n.X == x && n.Y == y) != -1)
                     return;
 
-            ScriptEntryPoint ep = new ScriptEntryPoint { Node = nd, Domain = d, X = x, Y = y, Trigger = what };
+            var ep = new ScriptEntryPoint { Node = nd, Domain = d, X = x, Y = y, Trigger = what };
             ep.FuncName = s;
 
             if (!WritingScript)
@@ -2684,7 +2684,7 @@ namespace SoE_Converter
                 LoopbackEntryPoints.Add(ep);
         }
 
-        static string DirToString(int dir)
+        private static string DirToString(int dir)
         {
             if (dir == 0) return "North";
             if (dir == 1) return "West";
@@ -2692,11 +2692,11 @@ namespace SoE_Converter
             return "East";
         }
 
-        static string GetFriendlyIDString(string s)
+        private static string GetFriendlyIDString(string s)
         {
             var sb = new StringBuilder();
             if (s.Length == 0 || !char.IsLetter(s[0])) sb.Append("_");
-            foreach (char c in s)
+            foreach (var c in s)
             {
                 if (char.IsLetterOrDigit(c)) sb.Append(c);
             }
@@ -2705,19 +2705,19 @@ namespace SoE_Converter
 
         public static void GetScriptEntryPoints()
         {
-            int count=0;
+            var count=0;
 
             //---------------------------------------------- TOWNS ----------------------------------------------
-            for (int t = 0; t < Scenario.num_towns; t++)
+            for (var t = 0; t < Scenario.num_towns; t++)
             {
                 LoadTown(t);
 
-                string functownname = GetFriendlyIDString(DataStore1.town_strs[0]); 
+                var functownname = GetFriendlyIDString(DataStore1.town_strs[0]); 
 
                 //Find all the possible entry points for special node chains in this town. So we can convert them to script functions.
 
                 //Map specials
-                for (int n = 0; n < Town.spec_id.Length; n++)
+                for (var n = 0; n < Town.spec_id.Length; n++)
                     if (Town.special_locs[n].x != 100)
                     {
                         if (Town.specials[Town.spec_id[n]].type == 24) //Ritual of sanctification block!
@@ -2732,12 +2732,12 @@ namespace SoE_Converter
                     }
 
                 //Town timers (Saved with the town, not created by node type 195
-                for (int n = 0; n < Town.timer_specs.Length; n++)
+                for (var n = 0; n < Town.timer_specs.Length; n++)
                     if (Town.timer_spec_times[n] > 0)
                         AddToEntryPoints(Town.timer_specs[n], 1, t, 0, String.Format("{0}_{1}_TownTimer_{2}", functownname, count++, n), eTrigger.GENERAL);
 
                 //Town timers (Created by node type 195) - not recurring, and deleted when the party leaves town.
-                for (int n = 0; n < Town.specials.Length; n++)
+                for (var n = 0; n < Town.specials.Length; n++)
                 {
                     if (Town.specials[n].type == 195 && Town.specials[n].ex1a > 0)
                     {
@@ -2756,7 +2756,7 @@ namespace SoE_Converter
                 }
 
                 //Town exits
-                for (int n = 0; n < Town.exit_specs.Length; n++)
+                for (var n = 0; n < Town.exit_specs.Length; n++)
                 {
                     if (IsValidNodeNumber(Town.exit_specs[n], 1) || Town.exit_locs[n].x != -1)
                     {
@@ -2766,12 +2766,12 @@ namespace SoE_Converter
                 }
 
 
-                for (int n = 0; n < TownTerrain.creatures.Length; n++)
+                for (var n = 0; n < TownTerrain.creatures.Length; n++)
                     if (TownTerrain.creatures[n].number > 0 && TownTerrain.creatures[n].special_on_kill >= 0)
                         AddToEntryPoints(TownTerrain.creatures[n].special_on_kill, 1, t, 0, String.Format("{0}_{1}_CreatureDeath{2}", functownname, count++, n),eTrigger.NPCDEATH);
 
                 //Talking nodes
-                for (int n = 0; n < Talking.talk_nodes.Length; n++)
+                for (var n = 0; n < Talking.talk_nodes.Length; n++)
                     if (Talking.talk_nodes[n].type == 29 && Talking.talk_nodes[n].extras[0] >= 0)
                     { //Calls town special node
                         if ((Talking.talk_nodes[n].personality >= t * 10 && Talking.talk_nodes[n].personality < t * 10 + 10) || Talking.talk_nodes[n].personality == -2)
@@ -2782,7 +2782,7 @@ namespace SoE_Converter
                         AddToEntryPoints(Talking.talk_nodes[n].extras[0], 0, 0, 0, String.Format("{0}_{1}_GlobalTalkingTrigger_{2}", functownname, count++, n), eTrigger.TALKING);
                     }
 
-                for (int n = 0; n < Town.specials.Length; n++)
+                for (var n = 0; n < Town.specials.Length; n++)
                     if (Town.specials[n].type == 195 && Town.specials[n].ex1b >= 0)
                         AddToEntryPoints(Town.specials[n].ex1b, 1, t, 0, String.Format("{0}_{1}_NewTownTimerFrom{2}", functownname, count++, n), eTrigger.GENERAL);
 
@@ -2790,11 +2790,11 @@ namespace SoE_Converter
 
             //Check for a town that has a 'Stairway' or 'Generic Stairway' special node. When the player triggers that node, they will move to a new town and trigger
             //a special node in that new town.
-            for (int t = 0; t < Scenario.num_towns; t++)
+            for (var t = 0; t < Scenario.num_towns; t++)
             {
                 LoadTown(t);
 
-                for (int n = 0; n < Town.specials.Length; n++)
+                for (var n = 0; n < Town.specials.Length; n++)
                 {
                     if (Town.specials[n].type == 187 || Town.specials[n].type == 190) //Generic stairway or stairway
                     {
@@ -2802,7 +2802,7 @@ namespace SoE_Converter
 
                         {
                             LoadTown(Town.specials[n].ex2a);
-                            string functownname = GetFriendlyIDString(DataStore1.town_strs[0]);
+                            var functownname = GetFriendlyIDString(DataStore1.town_strs[0]);
                             LoadTown(t);
                             AddToEntryPoints(Town.specials[n].jumpto, 1, Town.specials[n].ex2a, 0, String.Format("{0}_{1}_StairwayDestination{2}", functownname, count++, Town.specials[n].jumpto), eTrigger.GENERAL);
                         }
@@ -2812,23 +2812,23 @@ namespace SoE_Converter
             }
 
             //---------------------------------------------- OUTSIDE AREAS ---------------------------------------------- 
-            for (int y = 0; y < Scenario.out_height; y++)
+            for (var y = 0; y < Scenario.out_height; y++)
             {
-                for (int x = 0; x < Scenario.out_width; x++)
+                for (var x = 0; x < Scenario.out_width; x++)
                 {
                     LoadOutdoors(x, y);
 
-                    string outdoorsid = GetFriendlyIDString(DataStore4.outdoor_text[0]);
+                    var outdoorsid = GetFriendlyIDString(DataStore4.outdoor_text[0]);
 
-                    for (int n = 0; n < Outdoors.special_id.Length; n++)
+                    for (var n = 0; n < Outdoors.special_id.Length; n++)
                         if (Outdoors.special_locs[n].x != 100)
                             if (!(Outdoors.specials[Outdoors.special_id[n]].type == 4 && Outdoors.specials[Outdoors.special_id[n]].jumpto == -1))
                                 AddToEntryPoints(Outdoors.special_id[n], 2, x, y, String.Format("{0}_{1}_MapTrigger_{2}_{3}", outdoorsid, count++, Outdoors.special_locs[n].x, Outdoors.special_locs[n].y), eTrigger.MAPTRIGGER);
 
-                    for (int n = 0; n < Outdoors.wandering.Length; n++)
+                    for (var n = 0; n < Outdoors.wandering.Length; n++)
                     {
-                        bool notempty = false;
-                        foreach (byte b in Outdoors.wandering[n].monst)
+                        var notempty = false;
+                        foreach (var b in Outdoors.wandering[n].monst)
                             if (b > 0) notempty = true;
                         if (notempty)
                         {
@@ -2840,10 +2840,10 @@ namespace SoE_Converter
                                 AddToEntryPoints(Outdoors.wandering[n].spec_on_flee, 2, x, y, String.Format("{0}_{1}_WanderingOnFlee{2}", outdoorsid, count++, n), eTrigger.OUTDOOR_ENCOUNTER);
                         }
                     }
-                    for (int n = 0; n < Outdoors.special_enc.Length; n++)
+                    for (var n = 0; n < Outdoors.special_enc.Length; n++)
                     {
-                        bool notempty = false;
-                        foreach (byte b in Outdoors.special_enc[n].monst)
+                        var notempty = false;
+                        foreach (var b in Outdoors.special_enc[n].monst)
                             if (b > 0) notempty = true;
                         if (notempty)
                         {
@@ -2861,17 +2861,17 @@ namespace SoE_Converter
 
             //-----------------------------------------------GLOBAL SCRIPTS-----------------------------------------------------------------
             //On using a special item
-            for (int n = 0; n < Scenario.special_item_special.Length; n++)
+            for (var n = 0; n < Scenario.special_item_special.Length; n++)
                 if (Scenario.special_item_special[n] >= 0)
                     AddToEntryPoints(Scenario.special_item_special[n], 0, 0, 0, String.Format("On_Using_SI_{0}_{1}", GetSpecialItemName(n), count++), eTrigger.USE_SPECIAL_ITEM);
 
             //On death of an NPC
-            for (int n = 0; n < Scenario.scen_monsters.Length; n++)
+            for (var n = 0; n < Scenario.scen_monsters.Length; n++)
             {
-                monster_record_type mon = Scenario.scen_monsters[n];
+                var mon = Scenario.scen_monsters[n];
                 if (mon.radiate_1 == 15)
                 {
-                    string monname = Encoding.ASCII.GetString(ScenItems.monst_names, n * 20, 20);
+                    var monname = Encoding.ASCII.GetString(ScenItems.monst_names, n * 20, 20);
                     monname = monname.Remove(monname.IndexOf((char)0));
                     monname = GetFriendlyIDString(monname);
                     AddToEntryPoints(mon.radiate_2, 0, 0, 0, String.Format("On_Death_Of_{0}_{1}",monname, count++), eTrigger.NPCDEATH);
@@ -2879,10 +2879,10 @@ namespace SoE_Converter
             }
 
             //Stepping on/using a terrain type
-            for (int n = 0; n < Scenario.ter_types.Length; n++)
+            for (var n = 0; n < Scenario.ter_types.Length; n++)
             {
-                terrain_type_type ter = Scenario.ter_types[n];
-                string tername = Encoding.ASCII.GetString(ScenItems.ter_names, n * 30, 30);
+                var ter = Scenario.ter_types[n];
+                var tername = Encoding.ASCII.GetString(ScenItems.ter_names, n * 30, 30);
                 tername = tername.Remove(tername.IndexOf((char)0));
                 tername = GetFriendlyIDString(tername);
 
@@ -2893,21 +2893,21 @@ namespace SoE_Converter
             }
 
             //Global timers (not created by special nodes)
-            for (int n = 0; n < Scenario.scenario_timer_times.Length; n++)
+            for (var n = 0; n < Scenario.scenario_timer_times.Length; n++)
                 if (Scenario.scenario_timer_times[n] > 0 && Scenario.scenario_timer_specs[n] >= 0)
                     AddToEntryPoints(Scenario.scenario_timer_specs[n], 0, 0, 0, String.Format("ScenarioTimer{0}_{1}", n, count++), eTrigger.GENERAL);
 
             //Global timers (created by special node)
-            for (int n = 0; n < Scenario.scen_specials.Length; n++)
+            for (var n = 0; n < Scenario.scen_specials.Length; n++)
                 if (Scenario.scen_specials[n].type == 13 && Scenario.scen_specials[n].ex1a > 0)
                     AddToEntryPoints(Scenario.scen_specials[n].ex1b, 0, 0, 0, String.Format("ScenarioTimer_x_{0}", count++), eTrigger.GENERAL);
             
-            for (int t = 0; t < Scenario.num_towns; t++)
+            for (var t = 0; t < Scenario.num_towns; t++)
             {
                 LoadTown(t);
-                string functownname = GetFriendlyIDString(DataStore1.town_strs[0]);
+                var functownname = GetFriendlyIDString(DataStore1.town_strs[0]);
 
-                for (int n = 0; n < Town.specials.Length; n++)
+                for (var n = 0; n < Town.specials.Length; n++)
                 {
                     //Town Local node directly calling a global node: node type 21
                     if (Town.specials[n].type == 21 && Town.specials[n].jumpto >= 0)
@@ -2919,13 +2919,13 @@ namespace SoE_Converter
                 }
             }
 
-            for (int y = 0; y < Scenario.out_height; y++)
-                for (int x = 0; x < Scenario.out_width; x++)
+            for (var y = 0; y < Scenario.out_height; y++)
+                for (var x = 0; x < Scenario.out_width; x++)
                 {
                     LoadOutdoors(x, y);
-                    string outdoorsid = GetFriendlyIDString(DataStore4.outdoor_text[0]);
+                    var outdoorsid = GetFriendlyIDString(DataStore4.outdoor_text[0]);
 
-                    for (int n = 0; n < Outdoors.specials.Length; n++)
+                    for (var n = 0; n < Outdoors.specials.Length; n++)
                     {
                         //Outdoors Local node directly calling a global node
                         if (Outdoors.specials[n].type == 21 && Outdoors.specials[n].jumpto >= 0)
@@ -2939,26 +2939,26 @@ namespace SoE_Converter
 
             //A terrain type can trigger a LOCAL special. This could lead to conversion problems as every town/outdoor section might potentially have this terrain and need a local node set up to trigger,
             //and the terrain could change during play by a special node!
-            for (int n = 0; n < Scenario.ter_types.Length; n++)
+            for (var n = 0; n < Scenario.ter_types.Length; n++)
             {
                 if (Scenario.ter_types[n].special == 12)
                 {
-                    string tername = Encoding.ASCII.GetString(ScenItems.ter_names, n * 30, 30);
+                    var tername = Encoding.ASCII.GetString(ScenItems.ter_names, n * 30, 30);
                     tername = tername.Remove(tername.IndexOf((char)0));
                     tername = GetFriendlyIDString(tername);
 
-                    for (int t = 0; t < Scenario.num_towns; t++)
+                    for (var t = 0; t < Scenario.num_towns; t++)
                         if (theDreadedTerrainTypeCallsLocalSpecialCheckPart1_Towns(n, t))
                         {
-                            string functownname = GetFriendlyIDString(DataStore1.town_strs[0]);
+                            var functownname = GetFriendlyIDString(DataStore1.town_strs[0]);
 
                             AddToEntryPoints(Scenario.ter_types[n].flag1, 1, t, 0, String.Format("TerrainTypeStepOn_{0}_{1}_{2}", tername, functownname, count++), eTrigger.TERRAINTRIGGER);
                         }
-                    for (int y = 0; y < Scenario.out_height; y++)
-                        for (int x = 0; x < Scenario.out_width; x++)
+                    for (var y = 0; y < Scenario.out_height; y++)
+                        for (var x = 0; x < Scenario.out_width; x++)
                             if (theDreadedTerrainTypeCallsLocalSpecialCheckPart2_Outdoors(n, x, y))
                             {
-                                string outdoorsid = GetFriendlyIDString(DataStore4.outdoor_text[0]);
+                                var outdoorsid = GetFriendlyIDString(DataStore4.outdoor_text[0]);
                                 AddToEntryPoints(Scenario.ter_types[n].flag1, 2, x, y, String.Format("TerrainTypeStepOn_{0}_{1}_{2}", tername, outdoorsid, count++), eTrigger.TERRAINTRIGGER);
                             }
                 }
@@ -2966,9 +2966,9 @@ namespace SoE_Converter
 
         }
 
-        static bool theDreadedTerrainTypeCallsLocalSpecialCheckPart1_Towns(int n, int t)
+        private static bool theDreadedTerrainTypeCallsLocalSpecialCheckPart1_Towns(int n, int t)
         {
-            terrain_type_type ter = Scenario.ter_types[n];
+            var ter = Scenario.ter_types[n];
             LoadTown(t);
 
             //Does this town's terrain have...
@@ -2982,12 +2982,12 @@ namespace SoE_Converter
             else if (Scenario.town_size[t] == 1) sz = 48;
             else sz = 32;
 
-            for (int y = 0; y < sz; y++)
-                for (int x = 0; x < sz; x++)
+            for (var y = 0; y < sz; y++)
+                for (var x = 0; x < sz; x++)
                 {
                     if (TownTerrain.terrain[y * sz + x] == n) return true;
 
-                    terrain_type_type tt = Scenario.ter_types[TownTerrain.terrain[y * sz + x]];
+                    var tt = Scenario.ter_types[TownTerrain.terrain[y * sz + x]];
                     if (tt.flag1 == n)
                     {
                         if (tt.special == 1 || //Change when step on
@@ -2998,14 +2998,14 @@ namespace SoE_Converter
                     }
                 }
 
-            for (int s = 0; s < Town.specials.Length; s++)
+            for (var s = 0; s < Town.specials.Length; s++)
             {
-                special_node_type nd = Town.specials[s];
+                var nd = Town.specials[s];
                 if (nd.type == 171 && nd.ex2a == n) return true; //Change terrain
                 if (nd.type == 172 && (nd.ex2a == n || nd.ex2b == n)) return true; //Swap terrain
                 if (nd.type == 173 || nd.type == 216 || nd.type == 184 || nd.type == 188) //Transform terrain, Rectangle transform terrain, generic lever, lever
                 {
-                    for (int q = 0; n < Scenario.ter_types.Length; n++) //Check if any terrain type has our terrain as the 'transform to' property.
+                    for (var q = 0; n < Scenario.ter_types.Length; n++) //Check if any terrain type has our terrain as the 'transform to' property.
                     {
                         if (Scenario.ter_types[q].trans_to_what == n)
                         {
@@ -3019,17 +3019,17 @@ namespace SoE_Converter
             return false;
         }
 
-        static bool theDreadedTerrainTypeCallsLocalSpecialCheckPart2_Outdoors(int n, int ox, int oy)
+        private static bool theDreadedTerrainTypeCallsLocalSpecialCheckPart2_Outdoors(int n, int ox, int oy)
         {
-            terrain_type_type ter = Scenario.ter_types[n];
+            var ter = Scenario.ter_types[n];
             LoadOutdoors(ox, oy);
 
-            for (int y = 0; y < 48; y++)
-                for (int x = 0; x < 48; x++)
+            for (var y = 0; y < 48; y++)
+                for (var x = 0; x < 48; x++)
                 {
                     if (Outdoors.terrain[y * 48 + x] == n) return true;
 
-                    terrain_type_type tt = Scenario.ter_types[Outdoors.terrain[y * 48 + x]];
+                    var tt = Scenario.ter_types[Outdoors.terrain[y * 48 + x]];
                     if (tt.flag1 == n)
                     {
                         if (tt.special == 1 || //Change when step on
@@ -3038,15 +3038,15 @@ namespace SoE_Converter
                     }
                 }
 
-            for (int s = 0; s < Outdoors.specials.Length; s++)
+            for (var s = 0; s < Outdoors.specials.Length; s++)
             {
-                special_node_type nd = Outdoors.specials[s];
+                var nd = Outdoors.specials[s];
                 if (nd.type == 226 && nd.ex2a == n) return true;
             }
             return false;
         }
 
-        static byte[] m_pic_index_x = {
+        private static byte[] m_pic_index_x = {
 
             1,1,1,1,1,1,1,1,1,1,
             1,1,1,1,1,1,1,1,1,1,
@@ -3071,7 +3071,7 @@ namespace SoE_Converter
             1,1,1,1,1,1,1,1,1,1,
             1,1,1,1,1,1,1,1,1,1};
 
-        static byte[] m_pic_index_y = {
+        private static byte[] m_pic_index_y = {
             1,1,1,1,1,1,1,1,1,1,
             1,1,1,1,1,1,1,1,1,1,
             1,1,1,1,1,1,1,1,1,1,

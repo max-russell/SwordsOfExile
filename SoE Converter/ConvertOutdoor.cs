@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.Xml.Linq;
 
 namespace SoE_Converter
 {
-    partial class Program
+    internal partial class Program
     {
-        static void SaveOutdoors(BinaryWriter Out, int ox, int oy)
+        private static void SaveOutdoors(BinaryWriter Out, int ox, int oy)
         {
             int x, y;
             short count = 0;
@@ -28,7 +24,7 @@ namespace SoE_Converter
             }
 
             //Find all waterfall terrains. Waterfalls are now handled by a script Function, so they need a special trigger on the tile above them.
-            List<location> waterfalls = new List<location>();
+            var waterfalls = new List<location>();
             for (x = 0; x < 48; x++)
                 for (y = 1; y < 48; y++) //Not on the very top row as we can't put a trigger on the tile above it.
                 {
@@ -62,7 +58,7 @@ namespace SoE_Converter
                     Out.Write((short)0); //No extra variables.
                 }
             //Now write the waterfall triggers to the end.
-            foreach (location l in waterfalls)
+            foreach (var l in waterfalls)
             {
                 SaveLocation(l, Out);
                 Out.Write(true); //Active
@@ -85,7 +81,7 @@ namespace SoE_Converter
                 }
 
 
-            List<location> secretpassagelist = new List<location>();
+            var secretpassagelist = new List<location>();
             //FIND SECRET PASSAGES:
             //These were stored as special encounters that trigger special node type 4 - but now they are stored as a preset field type
             //So search all the special encounter spots on the map that directly trigger a node type 4
@@ -94,7 +90,7 @@ namespace SoE_Converter
                     if (Outdoors.specials[Outdoors.special_id[x]].type == 4)
                         secretpassagelist.Add(new location { x = Outdoors.special_locs[x].x, y = Outdoors.special_locs[x].y });
             Out.Write((short)secretpassagelist.Count);
-            foreach (location l in secretpassagelist)
+            foreach (var l in secretpassagelist)
             {
                 SaveLocation(l, Out);
             }
@@ -135,7 +131,7 @@ namespace SoE_Converter
             //We don't save wandering/special monster groups here anymore - but we do save a list of all the groups that could spawn in this sector
             for (x = 0; x < 4; x++)
             {
-                bool emptygroup = true;
+                var emptygroup = true;
                 for (y = 0; y < 7; y++)
                     if (Outdoors.wandering[x].monst[y] != 0) { emptygroup = false; break; }
                 if (emptygroup) continue;
