@@ -10,7 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:C:\Users\maxru\.nuget\packages\monogame.extended.content.pipeline\3.8.0\tools\MonoGame.Extended.Content.Pipeline.dll
+/reference:..\pipeline-references\MonoGame.Extended.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -34,11 +34,6 @@
 /processorParam:TextureFormat=Compressed
 /build:ItalicFont.spritefont
 
-#begin NewBoldFont.fnt
-/importer:BitmapFontImporter
-/processor:BitmapFontProcessor
-/build:NewBoldFont.fnt
-
 #begin NewBoldFont_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -51,10 +46,10 @@
 /processorParam:TextureFormat=Color
 /build:NewBoldFont_0.png
 
-#begin NewItalicFont.fnt
+#begin NewBoldFont.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
-/build:NewItalicFont.fnt
+/build:NewBoldFont.fnt
 
 #begin NewItalicFont_0.png
 /importer:TextureImporter
@@ -68,10 +63,10 @@
 /processorParam:TextureFormat=Color
 /build:NewItalicFont_0.png
 
-#begin NewSmallBoldFont.fnt
+#begin NewItalicFont.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
-/build:NewSmallBoldFont.fnt
+/build:NewItalicFont.fnt
 
 #begin NewSmallBoldFont_0.png
 /importer:TextureImporter
@@ -85,10 +80,10 @@
 /processorParam:TextureFormat=Color
 /build:NewSmallBoldFont_0.png
 
-#begin NewTalkFontBold.fnt
+#begin NewSmallBoldFont.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
-/build:NewTalkFontBold.fnt
+/build:NewSmallBoldFont.fnt
 
 #begin NewTalkFontBold_0.png
 /importer:TextureImporter
@@ -102,10 +97,10 @@
 /processorParam:TextureFormat=Color
 /build:NewTalkFontBold_0.png
 
-#begin NewTalkFontItalic.fnt
+#begin NewTalkFontBold.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
-/build:NewTalkFontItalic.fnt
+/build:NewTalkFontBold.fnt
 
 #begin NewTalkFontItalic_0.png
 /importer:TextureImporter
@@ -119,10 +114,10 @@
 /processorParam:TextureFormat=Color
 /build:NewTalkFontItalic_0.png
 
-#begin NewTalkFontNormal.fnt
+#begin NewTalkFontItalic.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
-/build:NewTalkFontNormal.fnt
+/build:NewTalkFontItalic.fnt
 
 #begin NewTalkFontNormal_0.png
 /importer:TextureImporter
@@ -136,10 +131,10 @@
 /processorParam:TextureFormat=Color
 /build:NewTalkFontNormal_0.png
 
-#begin NewTinyFont.fnt
+#begin NewTalkFontNormal.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
-/build:NewTinyFont.fnt
+/build:NewTalkFontNormal.fnt
 
 #begin NewTinyFont_0.png
 /importer:TextureImporter
@@ -152,6 +147,11 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:NewTinyFont_0.png
+
+#begin NewTinyFont.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:NewTinyFont.fnt
 
 #begin SmallBoldFont.spritefont
 /importer:FontDescriptionImporter
