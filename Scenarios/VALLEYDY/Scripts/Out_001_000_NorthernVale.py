@@ -30,7 +30,7 @@ def NorthernVale_381_MapTrigger_2_38(p):
     WorldMap.AlterTerrain(Location(50,38), 1, None)
     WorldMap.DeactivateTrigger(Location(50,38))
     ChoiceBox("This foul, stagnant fen has attracted several horrid beasts, who have set up a cozy lair here. They regard you as a fortunate source of tasty meat and rush you, tendrils wiggling.", eDialogPic.CREATURE, 69, ["OK"])
-    WorldMap.SpawnNPCGroup("Group_1_0_4", p.Target)
+    WorldMap.SpawnEncounter("Group_1_0_4", p.Target)
 
 def NorthernVale_382_MapTrigger_20_21(p):
     if StuffDone["201_2"] == 250:
@@ -40,7 +40,7 @@ def NorthernVale_382_MapTrigger_20_21(p):
         StuffDone["201_2"] = 250
         WorldMap.AlterTerrain(Location(68,21), 1, None)
         WorldMap.DeactivateTrigger(Location(68,21))
-        WorldMap.SpawnNPCGroup("Group_1_0_5", p.Target)
+        WorldMap.SpawnEncounter("Group_1_0_5", p.Target)
         return
 
 def NorthernVale_383_MapTrigger_38_7(p):
@@ -63,7 +63,7 @@ def NorthernVale_384_MapTrigger_26_9(p):
     WorldMap.AlterTerrain(Location(74,9), 1, None)
     WorldMap.DeactivateTrigger(Location(74,9))
     MessageBox("As you enter this valley, several large lizards emerge from the rocks to trap you inside. You\'re in danger of becoming something\'s meal.")
-    WorldMap.SpawnNPCGroup("Group_1_0_6", p.Target)
+    WorldMap.SpawnEncounter("Group_1_0_6", p.Target)
 
 def NorthernVale_385_SpecialOnWin0(p):
     MessageBox("Searching their lair, you find that these creatures have had some success waylaying travelers. Most of the victim\'s goods have rotted or rusted away. However, one ring managed to survive.")

@@ -211,7 +211,7 @@ def Generate_Combat_Map(town, encounter, underterrain, overterrain):
 
     # Place NPCs
     for z in encounter.EachNPC():
-        town.NPCList.Add(NPCType.Instantiate(z.Item1, Location.Zero, z.Item2))
+        town.NPCList.Add(NPC.Instantiate(z.Item1, Location.Zero, z.Item2))
 
     #Now put them on the map.
     for npc in town.NPCList:

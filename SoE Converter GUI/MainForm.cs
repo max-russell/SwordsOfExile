@@ -23,8 +23,9 @@ namespace SoE_Converter_GUI
         {
             InitializeComponent();
 #if DEBUG
-            Directory.SetCurrentDirectory(@"..\..\..");
+            Directory.SetCurrentDirectory(@"..\..\..\..");
             var s = Directory.GetCurrentDirectory();
+            SoEPath = Path.Combine(s, SoEPath, @"bin\debug\net8.0\SoE Converter");
 #endif
             Text = "Swords of Exile Scenario Converter " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         }

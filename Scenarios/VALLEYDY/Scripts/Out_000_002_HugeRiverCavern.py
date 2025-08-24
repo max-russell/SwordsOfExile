@@ -44,7 +44,7 @@ def HugeRiverCavern_429_MapTrigger_36_15(p):
         StuffDone["206_4"] = 250
         WorldMap.DeactivateTrigger(Location(36,111))
         MessageBox("Fortunately, you manage to take them by something resembling surprise. As you rush into the circle, weapons in the air, the pale leader of the dance jumps up gleefully. You must be doing a lot to relieve the tedium.")
-        WorldMap.SpawnNPCGroup("Group_0_2_4", p.Target)
+        WorldMap.SpawnEncounter("Group_0_2_4", p.Target)
         return
 
 def HugeRiverCavern_430_MapTrigger_35_24(p):

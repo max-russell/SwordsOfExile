@@ -2,7 +2,7 @@
   "profiles": {
     "SoE Converter": {
       "commandName": "Project",
-      "commandLineArgs": "\"F:\\Games\\Blades of Exile\\scenarios\\busywork.exs\""
+      "commandLineArgs": "\"C:\\Projects\\Blades of Exile\\scenarios\\VALLEYDY.exs\" -l"
     }
   }
 }

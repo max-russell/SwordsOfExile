@@ -5,7 +5,7 @@ def BelowSchoolofMagery_435_MapTrigger_16_5(p):
     StuffDone["207_0"] = 250
     WorldMap.DeactivateTrigger(Location(64,101))
     ChoiceBox("You step out of the School of Magery into a long, subterranean, natural gallery. A wide stone path leads to the south, stretching far beyond sight.\n\nThe bits of bone, claw marks, and blood stains that dot the path at regular intervals clearly tell you that all is not calm and peaceful down here. The creatures that escaped the School had to go somewhere.\n\nAs you walk out, you see several of the creatures that made this area their home. They look similar to wolves, but have six legs, shaggy fur, and vicious, jagged teeth, and seem far, far fiercer.\n\nThe small pack that has sighted you leaps to its feet and charges toward you with long, even strides. Sadly, you have little doubt that these caves are inhabited by many more creatures just like these ...", eDialogPic.CREATURE, 126, ["OK"])
-    WorldMap.SpawnNPCGroup("Group_1_2_4", p.Target)
+    WorldMap.SpawnEncounter("Group_1_2_4", p.Target)
 
 def BelowSchoolofMagery_436_MapTrigger_19_17(p):
     if StuffDone["207_1"] == 250:
@@ -61,7 +61,7 @@ def BelowSchoolofMagery_443_MapTrigger_9_16(p):
     WorldMap.DeactivateTrigger(Location(57,112))
     WorldMap.DeactivateTrigger(Location(56,112))
     MessageBox("You stumble upon a pack of the strange beasts, drinking deep from this icy cavern pool. It doesn\'t take them long to decide that they\'d like some meat to go with their drink.")
-    WorldMap.SpawnNPCGroup("Group_1_2_4", p.Target)
+    WorldMap.SpawnEncounter("Group_1_2_4", p.Target)
 
 def BelowSchoolofMagery_445_SpecialOnWin0(p):
     MessageBox("The alien beasts are dead, but you\'re afraid there\'s plenty more waiting for you. You have a long, hard march ahead of you.")

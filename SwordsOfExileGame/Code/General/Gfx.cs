@@ -758,39 +758,35 @@ internal static class Gfx
                 texture = Texture2D.FromStream(_graphicsDevice, stream);
             }
 
-            if (preMultiplyAlpha)
-            {
-                // Setup a render target to hold our final texture which will have premulitplied alpha values
-                using (var renderTarget = new RenderTarget2D(_graphicsDevice, texture.Width, texture.Height))
-                {
-                    var viewportBackup = _graphicsDevice.Viewport;
-                    _graphicsDevice.SetRenderTarget(renderTarget);
-                    _graphicsDevice.Clear(Color.Black);
+            if (!preMultiplyAlpha) return texture;
+            
+            // Setup a render target to hold our final texture which will have pre-multiplied alpha values
+            using var renderTarget = new RenderTarget2D(_graphicsDevice, texture.Width, texture.Height);
+            var viewportBackup = _graphicsDevice.Viewport;
+            _graphicsDevice.SetRenderTarget(renderTarget);
+            _graphicsDevice.Clear(Color.Black);
 
-                    // Multiply each color by the source alpha, and write in just the color values into the final texture
-                    _spriteBatch.Begin(SpriteSortMode.Deferred, BlendColorBlendState);
-                    _spriteBatch.Draw(texture, texture.Bounds, Color.White);
-                    _spriteBatch.End();
+            // Multiply each color by the source alpha, and write in just the color values into the final texture
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendColorBlendState);
+            _spriteBatch.Draw(texture, texture.Bounds, Color.White);
+            _spriteBatch.End();
 
-                    // Now copy over the alpha values from the source texture to the final one, without multiplying them
-                    _spriteBatch.Begin(SpriteSortMode.Deferred, BlendAlphaBlendState);
-                    _spriteBatch.Draw(texture, texture.Bounds, Color.White);
-                    _spriteBatch.End();
+            // Now copy over the alpha values from the source texture to the final one, without multiplying them
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendAlphaBlendState);
+            _spriteBatch.Draw(texture, texture.Bounds, Color.White);
+            _spriteBatch.End();
 
-                    // Release the GPU back to drawing to the screen
-                    _graphicsDevice.SetRenderTarget(null);
-                    _graphicsDevice.Viewport = viewportBackup;
+            // Release the GPU back to drawing to the screen
+            _graphicsDevice.SetRenderTarget(null);
+            _graphicsDevice.Viewport = viewportBackup;
 
-                    // Store data from render target because the RenderTarget2D is volatile
-                    var data = new Color[texture.Width * texture.Height];
-                    renderTarget.GetData(data);
+            // Store data from render target because the RenderTarget2D is volatile
+            var data = new Color[texture.Width * texture.Height];
+            renderTarget.GetData(data);
 
-                    // Unset texture from graphic device and set modified data back to it
-                    _graphicsDevice.Textures[0] = null;
-                    texture.SetData(data);
-                }
-
-            }
+            // Unset texture from graphic device and set modified data back to it
+            _graphicsDevice.Textures[0] = null;
+            texture.SetData(data);
 
             return texture;
         }

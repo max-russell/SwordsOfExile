@@ -17,7 +17,7 @@ def ValleyEntry_447_MapTrigger_9_11(p):
     WorldMap.DeactivateTrigger(Location(105,107))
     WorldMap.DeactivateTrigger(Location(108,107))
     MessageBox("Traveling down this isolated valley may have been a mistake. You hear the harsh howls of wolves and the alien battle cries of goblins. A hunting pack has spotted you, and is closing in for the kill.")
-    WorldMap.SpawnNPCGroup("Group_2_2_4", p.Target)
+    WorldMap.SpawnEncounter("Group_2_2_4", p.Target)
 
 def ValleyEntry_449_MapTrigger_23_35(p):
     if StuffDone["208_2"] == 250:

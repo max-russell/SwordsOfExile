@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwordsOfExileGame", "Swords
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoE Converter", "SoE Converter\SoE Converter.csproj", "{A3008328-6599-42CB-A9C2-EA5591203CF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoE Converter GUI", "SoE Converter GUI\SoE Converter GUI.csproj", "{23CE846C-CAE2-4185-9039-E262E4D767E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoE Converter GUI", "SoE Converter GUI\SoE Converter GUI.csproj", "{60CB7D4C-03EF-4929-8F09-51EE01FC966A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,14 +33,14 @@ Global
 		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Release|x86.ActiveCfg = Release|Any CPU
 		{A3008328-6599-42CB-A9C2-EA5591203CF7}.Release|x86.Build.0 = Release|Any CPU
-		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Debug|x86.Build.0 = Debug|Any CPU
-		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Release|x86.ActiveCfg = Release|Any CPU
-		{23CE846C-CAE2-4185-9039-E262E4D767E9}.Release|x86.Build.0 = Release|Any CPU
+		{60CB7D4C-03EF-4929-8F09-51EE01FC966A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60CB7D4C-03EF-4929-8F09-51EE01FC966A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60CB7D4C-03EF-4929-8F09-51EE01FC966A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{60CB7D4C-03EF-4929-8F09-51EE01FC966A}.Debug|x86.Build.0 = Debug|Any CPU
+		{60CB7D4C-03EF-4929-8F09-51EE01FC966A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60CB7D4C-03EF-4929-8F09-51EE01FC966A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60CB7D4C-03EF-4929-8F09-51EE01FC966A}.Release|x86.ActiveCfg = Release|Any CPU
+		{60CB7D4C-03EF-4929-8F09-51EE01FC966A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
