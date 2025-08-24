@@ -158,13 +158,13 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
     };
 
     public int Status(eAffliction type) { return status[(int)type]; } //ICharacter
-    public void SetStatus(eAffliction type, int val, int min = Int32.MinValue, int max = Int32.MaxValue) { status[(int)type] = Maths.MinMax(min,max,val); }
-    public void IncStatus(eAffliction type, int val, int max = Int32.MaxValue)
+    public void SetStatus(eAffliction type, int val, int min = int.MinValue, int max = int.MaxValue) { status[(int)type] = Maths.MinMax(min,max,val); }
+    public void IncStatus(eAffliction type, int val, int max = int.MaxValue)
     {
         status[(int)type] += val;
         if (status[(int)type] > max) status[(int)type] = max;
     }
-    public void DecStatus(eAffliction type, int val, int min = Int32.MinValue)
+    public void DecStatus(eAffliction type, int val, int min = int.MinValue)
     {
         status[(int)type] -= val;
         if (status[(int)type] < min) status[(int)type] = min;
@@ -331,7 +331,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
             if (!identified && Party.IdentifyItemRoll()) item.Identified = true;
 
             AddItem(item, true);
-            Game.AddMessage(String.Format("  {0} gets {1}.", Name, item.KnownName));
+            Game.AddMessage(string.Format("  {0} gets {1}.", Name, item.KnownName));
         }
         else
         {
@@ -1007,7 +1007,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
     private int pc_carry_weight()
     {
         var storage = 0;
-        Boolean airy = false, heavy = false;
+        bool airy = false, heavy = false;
 
         foreach (var item in ItemList)
         {
@@ -1225,7 +1225,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                 {
                     if (pc.Status(eAffliction.WEBS) > 0)
                     {
-                        Game.AddMessage(String.Format("{0} cleans webs.", pc.Name));
+                        Game.AddMessage(string.Format("{0} cleans webs.", pc.Name));
                         pc.CounteractStatus(eAffliction.WEBS, 2);
                     }
                     if (map is TownMap) curTown.InflictFields(pc);
@@ -1569,7 +1569,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
 
     public void UseItem(Item item)
     {
-        Boolean take_charge = true,inept_ok = false;
+        bool take_charge = true,inept_ok = false;
         int item_use_code;
         var which_stat=eAffliction.BLESS_CURSE;
 
@@ -1642,7 +1642,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         if (take_charge == true) 
         {
 
-            Game.AddMessage(String.Format("Use: {0}", item.KnownName));
+            Game.AddMessage(string.Format("Use: {0}", item.KnownName));
 
             if (item.Variety == eVariety.Potion)
                 Sound.Play(56);
@@ -2476,7 +2476,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         if (Status(eAffliction.ASLEEP) > 0)
             DecStatus(eAffliction.ASLEEP, 1, 0);
 
-        Game.AddMessage(String.Format("  {0} takes {1}. ", Name, how_much));
+        Game.AddMessage(string.Format("  {0} takes {1}. ", Name, how_much));
 
         new Animation_Damage(Pos.ToVector2(), how_much, 0, dam_type, sound_type);
         Party.total_dam_taken += how_much;
@@ -2494,18 +2494,18 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         else // Check if PC can die
         if (how_much > 25)
         {
-            Game.AddMessage(String.Format("  {0} is obliterated.  ", Name));
+            Game.AddMessage(string.Format("  {0} is obliterated.  ", Name));
             Kill(attacker, eLifeStatus.DUST);
         }
         else
         {
-            Game.AddMessage(String.Format("  {0} is killed.  ", Name));
+            Game.AddMessage(string.Format("  {0} is killed.  ", Name));
             Kill(attacker, eLifeStatus.DEAD);
         }
         return true;
     }
 
-    public Boolean RunTrap(eTrapType trap_type, int trap_level, int diff)
+    public bool RunTrap(eTrapType trap_type, int trap_level, int diff)
     {
         short[] trap_odds = {5,30,35,42,48, 55,63,69,75,77,
             78,80,82,84,86, 88,90,92,94,96,98,99,99,99,99,99,99,99,99,99};
@@ -2729,7 +2729,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
             if (item != null && item.IsWeapon())
             {
                 var p_level = how_much;
-                Game.AddMessage(String.Format("  {0} poisons weapon.", Name));
+                Game.AddMessage(string.Format("  {0} poisons weapon.", Name));
                 var r1 = Maths.Rand(1, 0, 100);
                 // Nimble?
                 if (HasTrait(Trait.Nimble)) r1 -= 6;
@@ -2739,7 +2739,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                     p_level /= 2;
                     if (Maths.Rand(1, 0, 100) > p_chance[GetSkill(eSkill.POISON)] + 10)
                     {
-                        Game.AddMessage(String.Format("  {0} accidentally poisoned!", Name));
+                        Game.AddMessage(string.Format("  {0} accidentally poisoned!", Name));
                         IncStatus(eAffliction.POISON, p_level);
                     }
                 }
@@ -2787,12 +2787,12 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         {
             if (realamt > 0)
             {
-                Game.AddMessage(String.Format("  {0} healed {1}", Name, realamt));
+                Game.AddMessage(string.Format("  {0} healed {1}", Name, realamt));
                 new Animation_CharFlash(this, Color.FloralWhite, "052_magic2");
             }
             else if (realamt < 0)
             {
-                Game.AddMessage(String.Format("  {0} harmed {1}", Name, -realamt));
+                Game.AddMessage(string.Format("  {0} harmed {1}", Name, -realamt));
                 new Animation_CharFlash(this, Color.DarkRed, "052_magic2");
             }
         }
@@ -3066,7 +3066,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         while (experience >= (Level * GetExperienceModifier()))
         {   
             Level++;
-            Game.AddMessage(String.Format("  {0} is level {1}!  ", Name, Level));
+            Game.AddMessage(string.Format("  {0} is level {1}!  ", Name, Level));
             skill_pts += (Level < 20) ? 5 : 4;
             add_hp = (Level < 26) ? Maths.Rand(1, 2, 6) + skill_bonus[skills[0]]
                 : Math.Max((int)skill_bonus[skills[0]], 0);

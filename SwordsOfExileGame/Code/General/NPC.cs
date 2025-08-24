@@ -82,7 +82,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         set => pos = value;
     }
     public NPCRecord Record;
-    public Boolean Mobile;
+    public bool Mobile;
     public int Summoned;
     public NPCPreset Start;
     public Direction direction;
@@ -104,13 +104,13 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
     private int[] status = new int[15];
     public int Status(eAffliction type) { return status[(int)type]; } //ICharacter
-    public void SetStatus(eAffliction type, int val, int min = Int32.MinValue, int max = Int32.MaxValue) { status[(int)type] = Maths.MinMax(min, max, val); }
-    public void IncStatus(eAffliction type, int val, int max = Int32.MaxValue)
+    public void SetStatus(eAffliction type, int val, int min = int.MinValue, int max = int.MaxValue) { status[(int)type] = Maths.MinMax(min, max, val); }
+    public void IncStatus(eAffliction type, int val, int max = int.MaxValue)
     {
         status[(int)type] += val;
         if (status[(int)type] > max) status[(int)type] = max;
     }
-    public void DecStatus(eAffliction type, int val, int min = Int32.MinValue)
+    public void DecStatus(eAffliction type, int val, int min = int.MinValue)
     {
         status[(int)type] -= val;
         if (status[(int)type] < min) status[(int)type] = min;
@@ -286,7 +286,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
     }
 
-    public Boolean CanSee(Location l) {
+    public bool CanSee(Location l) {
         int i, j;
         Location destination;
 
@@ -521,7 +521,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                     case eRadiate.SUMMON:
                         if (curTown.SummonMonster(this, Record.NPCtoSummon, Pos, 130) == true)
                         {
-                            Game.AddMessage(String.Format("  {0} summons allies.", Name));
+                            Game.AddMessage(string.Format("  {0} summons allies.", Name));
                             Sound.Play("061_summoning");
                         }
                         break;
@@ -747,7 +747,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         return true;
     }
 
-    public Boolean WalkRandomly()
+    public bool WalkRandomly()
     {
         var acted_yet = false;
         int j;
@@ -811,7 +811,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         return;
     }
 
-    public Boolean WalkTowards(Location l2) {
+    public bool WalkTowards(Location l2) {
         var acted_yet = false;
 
         if (Pos.X > l2.X && Pos.Y > l2.Y)
@@ -837,7 +837,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         return acted_yet;
     }
 
-    public Boolean WalkAwayFrom(Location l2) {
+    public bool WalkAwayFrom(Location l2) {
         var acted_yet = false;
 
         if ((Pos.X > l2.X) & (Pos.Y > l2.Y))
@@ -864,7 +864,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         return acted_yet;
     }
 
-    public Boolean Walk(eDir dir) {
+    public bool Walk(eDir dir) {
 
         var d = new Direction(dir);
         var destination = pos + d;
@@ -944,7 +944,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         if (how_much <= 0)
         {
             if (Game.Mode == eMode.COMBAT)
-                Game.AddMessage(String.Format("  {0} undamaged.", Name));
+                Game.AddMessage(string.Format("  {0} undamaged.", Name));
             return false;
         }
 
@@ -965,10 +965,10 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         if (how_much_spec > 0)
             Game.AddMessage(
-                String.Format("  {0} takes {1}+{2}", Record.Name, how_much, how_much_spec));
+                string.Format("  {0} takes {1}+{2}", Record.Name, how_much, how_much_spec));
         else
             Game.AddMessage(
-                String.Format("  {0} takes {1}", Record.Name, how_much));
+                string.Format("  {0} takes {1}", Record.Name, how_much));
 
 
         Health = Health - how_much - how_much_spec;
@@ -990,7 +990,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         if (Health <= 0)
         {
-            Game.AddMessage(String.Format("  {0} dies.", Record.Name));
+            Game.AddMessage(string.Format("  {0} dies.", Record.Name));
             Kill(attacker, eLifeStatus.DEAD);
         }
         else
@@ -1173,7 +1173,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         var realamt = Health;
         Health += amt;
         realamt = Health - realamt;
-        if (!silent) Game.AddMessage(String.Format("  {0} healed {1}", Name, realamt));
+        if (!silent) Game.AddMessage(string.Format("  {0} healed {1}", Name, realamt));
         new Animation_CharFlash(this, Color.FloralWhite, "052_magic2");
     }
 
@@ -1182,19 +1182,19 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         if (Record.ImmuneTo(eImmunity.POISON_RESISTANCE)) how_much = how_much / 2;
         if (Record.ImmuneTo(eImmunity.POISON_IMMUNITY))
         {
-            if (!silent) Game.AddMessage(String.Format("  {0} resists.", Name));
+            if (!silent) Game.AddMessage(string.Format("  {0} resists.", Name));
             return;
         }
         status[(int)eAffliction.POISON] = Math.Min(8, status[(int)eAffliction.POISON] + how_much);
         if (how_much > 0) new Animation_CharFlash(this, Color.LimeGreen, "017_shortcough");
-        if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "resists poison." : " is poisoned."));//String.Format("  {0} resists.", Name)) : Game.AddMessage(String.Format("  {0} is poisoned.", Name));, this);
+        if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists poison." : " is poisoned."));//String.Format("  {0} resists.", Name)) : Game.AddMessage(String.Format("  {0} is poisoned.", Name));, this);
     }
 
     public void Acid(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.ACID] = Maths.MinMax(-8, 8, status[(int)eAffliction.ACID] + how_much);
-        if (!silent) Game.AddMessage(String.Format("  {0} is covered with acid.", Name));
+        if (!silent) Game.AddMessage(string.Format("  {0} is covered with acid.", Name));
         new Animation_CharFlash(this, Color.GreenYellow, "042_dang");
     }
 
@@ -1202,48 +1202,48 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.HASTE_SLOW] = Maths.MinMax(-8, 8, status[(int)eAffliction.HASTE_SLOW] - how_much);
-        if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "resists." : " is slowed."));
+        if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists." : " is slowed."));
         new Animation_CharFlash(this, Color.PaleTurquoise, "075_cold");
 
     }
     public void Haste(int how_much, bool silent = false)
     {
         status[(int)eAffliction.HASTE_SLOW] = Maths.MinMax(-8, 8, status[(int)eAffliction.HASTE_SLOW] + how_much);
-        if (!silent) Game.AddMessage(String.Format("  {0} is hastened.", Name));
+        if (!silent) Game.AddMessage(string.Format("  {0} is hastened.", Name));
         new Animation_CharFlash(this, Color.Orange, "075_cold");
     }
     public void Curse(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.BLESS_CURSE] = Maths.MinMax(-8, 8, status[(int)eAffliction.BLESS_CURSE] - how_much);
-        if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "resists curse." : " is cursed."));
+        if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists curse." : " is cursed."));
         new Animation_CharFlash(this, Color.Black, "043_stoning");
     }
     public void Bless(int how_much, bool silent = false)
     {
         status[(int)eAffliction.BLESS_CURSE] = Maths.MinMax(-8, 8, status[(int)eAffliction.BLESS_CURSE] + how_much);
-        if (!silent) Game.AddMessage(String.Format("  {0} is blessed.", Name));
+        if (!silent) Game.AddMessage(string.Format("  {0} is blessed.", Name));
         new Animation_CharFlash(this, Color.Gold, "004_bless");
     }
     public void Web(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.WEBS] = Maths.MinMax(-8, 8, status[(int)eAffliction.WEBS] + how_much);
-        if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "avoids webbing." : " is caught in webs."));
+        if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "avoids webbing." : " is caught in webs."));
         new Animation_CharFlash(this, Color.Gray, "017_shortcough");
     }
     public void Scare(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         Morale -= how_much;
-        if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "resists fear." : " is scared."));
+        if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists fear." : " is scared."));
         new Animation_CharFlash(this, Color.DarkKhaki, "054_scream");
     }
     public void Disease(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.DISEASE] = Maths.MinMax(-8, 8, status[(int)eAffliction.DISEASE] + how_much);
-        if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "resists disease." : " is diseased."));
+        if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists disease." : " is diseased."));
         new Animation_CharFlash(this, Color.DarkOrange, "066_disease");
     }
 
@@ -1251,7 +1251,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.DUMB] = Maths.MinMax(-8, 8, status[(int)eAffliction.DUMB] + how_much);
-        if (!silent) Game.AddMessage(String.Format("  {0} {1}", Name, how_much == 0 ? "resists dumbfounding." : " is dumbfounded."));
+        if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists dumbfounding." : " is dumbfounded."));
         new Animation_CharFlash(this, Color.DarkSlateBlue, "067_huh");
     }
 
@@ -1263,7 +1263,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         if (Record.Genus == eGenus.UNDEAD || Record.Genus == eGenus.SLIME || Record.Genus == eGenus.STONE || Record.SpecialSkill == eCSS.BREATHES_SLEEP_CLOUDS
             || Record.Radiate == eRadiate.SLEEP)
         {
-            Game.AddMessage(String.Format("  {0} immune to sleep.", Name));
+            Game.AddMessage(string.Format("  {0} immune to sleep.", Name));
             return;
         }
 
@@ -1275,13 +1275,13 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         if (r1 > charm_odds[Record.Level / 2])
         {
-            Game.AddMessage(String.Format("  {0} resists sleep.", Name));
+            Game.AddMessage(string.Format("  {0} resists sleep.", Name));
             return;
         }
  
         IncStatus(eAffliction.ASLEEP, amount, 0);
                 
-        Game.AddMessage(String.Format("  {0} falls asleep.", Name));
+        Game.AddMessage(string.Format("  {0} falls asleep.", Name));
         new Animation_CharFlash(this, Color.MidnightBlue, "096_sleep");    
     }
 
@@ -1297,11 +1297,11 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         if (r1 > charm_odds[Record.Level / 2])
         {
-            Game.AddMessage(String.Format("  {0} resists.", Name));
+            Game.AddMessage(string.Format("  {0} resists.", Name));
             return;
         }
         IncStatus(eAffliction.PARALYZED, amount, 5000);
-        Game.AddMessage(String.Format("  {0} is paralyzed.", Name));
+        Game.AddMessage(string.Format("  {0} is paralyzed.", Name));
         new Animation_CharFlash(this, Color.Olive, "090_paralyze");
     }
 
@@ -1316,12 +1316,12 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         if (r1 > charm_odds[Record.Level / 2])
         {
-            Game.AddMessage(String.Format("  {0} resists.", Name));
+            Game.AddMessage(string.Format("  {0} resists.", Name));
             return;
         }
   
         Attitude = eAttitude.FRIENDLY;
-        Game.AddMessage(String.Format("  {0} is charmed.", Name));
+        Game.AddMessage(string.Format("  {0} is charmed.", Name));
         new Animation_CharFlash(this, Color.PeachPuff, "007_cool");
     }
 
@@ -1404,7 +1404,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                 string[] m = { "Hits", "Claws", "Bites", "Slimes", "Punches", "Stings", "Clubs", "Burns", "Harms", "Stabs" };
                 var x = "Whacks";
                 if ((int)type < m.Length) x = m[(int)type];
-                Game.AddMessage(String.Format("{0} {1} {2}:", Record.Name, x, target.Name));
+                Game.AddMessage(string.Format("{0} {1} {2}:", Record.Name, x, target.Name));
 
                 if (target.Damage(this, r2, 0, dam_type) && store_hp - target.Health > 0 && target.IsAlive())
                 {
@@ -1523,7 +1523,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             }
             else
             {
-                Game.AddMessage(String.Format("{0} misses {1}:", Record.Name, target.Name));
+                Game.AddMessage(string.Format("{0} misses {1}:", Record.Name, target.Name));
                 new Animation_Attack(this, "002_swordswish");
             }
             LastAttacked = target; //Save who we just attacked for last time - used for working out who we might target in future
@@ -1569,49 +1569,49 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                 curTown.PlaceFieldPattern(Pattern.Radius2, Target.Pos, Field.SLEEP_CLOUD, this);
                 break;
             case eCSS.BREATHES_STINKING_CLOUDS:
-                Game.AddMessage(String.Format("  Breathes on {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Breathes on {0}.", Target.Name));
                 new Animation_Missile(Pos, Target.Pos, 12, false, "044_breathe");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Single, Target.Pos, Field.STINK_CLOUD, this);
                 break;
             case eCSS.SHOOTS_WEB:
-                Game.AddMessage(String.Format("  Throws web at {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Throws web at {0}.", Target.Name));
                 new Animation_Missile(Pos, Target.Pos, 8, false, "014_missile");
                 new Animation_Hold();
                 curTown.PlaceFieldPattern(Pattern.Single, Target.Pos, Field.WEB, this);
                 break;
             case eCSS.PARALYSIS_RAY:
                 Sound.Play(51);
-                Game.AddMessage(String.Format("  Fires ray at {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Fires ray at {0}.", Target.Name));
                 Target.Paralyze(100, 0);
                 break;
             case eCSS.PETRIFICATION_RAY:
                 new Animation_Missile(Pos, Target.Pos, 14, false, "043_stoning");
                 new Animation_Hold();
-                Game.AddMessage(String.Format("  Gazes at {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Gazes at {0}.", Target.Name));
                 r1 = Maths.Rand(1, 0, 20) + Target.Level / 4 + Target.Status(eAffliction.BLESS_CURSE);
                 if (r1 > 14)
-                    Game.AddMessage(String.Format("  {0} resists.", Target.Name));
+                    Game.AddMessage(string.Format("  {0} resists.", Target.Name));
                 else
                     Target.Kill(this, eLifeStatus.STONE);
                 break;
             case eCSS.SP_DRAIN_RAY:
                 new Animation_Missile(Pos, Target.Pos, 8, false, "043_stoning");
                 new Animation_Hold();
-                Game.AddMessage(String.Format("  Drains {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Drains {0}.", Target.Name));
                 Target.SP /= 2;
                 break;
             case eCSS.HEAT_RAY:
                 new Animation_Missile(Pos, Target.Pos, 13, false, "051_magic1");
                 new Animation_Hold();
                 r1 = Maths.Rand(7, 1, 6);
-                Game.AddMessage(String.Format("  Hits {0} with heat ray.", Target.Name));
+                Game.AddMessage(string.Format("  Hits {0} with heat ray.", Target.Name));
                 if (Target.Damage(this, r1, 0, eDamageType.FIRE)) new Animation_Hold();
                 break;
             case eCSS.ACID_SPIT:
                 new Animation_Missile(Pos, Target.Pos, 0, true, "064_spit");
                 new Animation_Hold();
-                Game.AddMessage(String.Format("  Spits acid on {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Spits acid on {0}.", Target.Name));
                 Target.Acid(6);
                 break;
             case eCSS.THROWS_DARTS:
@@ -1619,27 +1619,27 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             case eCSS.GOOD_ARCHER:
                 new Animation_Missile(Pos, Target.Pos, 3, true, "012_longbow");
                 new Animation_Hold();
-                Game.AddMessage(String.Format("  Shoots at {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Shoots at {0}.", Target.Name));
                 break;
             case eCSS.THROWS_SPEARS:
                 new Animation_Missile(Pos, Target.Pos, 5, true, "014_missile");
                 new Animation_Hold();
-                Game.AddMessage(String.Format("  Throws spear at {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Throws spear at {0}.", Target.Name));
                 break;
             case eCSS.THROWS_RAZORDISKS:
                 new Animation_Missile(Pos, Target.Pos, 7, true, "014_missile");
                 new Animation_Hold();
-                Game.AddMessage(String.Format("  Throws razordisk at {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Throws razordisk at {0}.", Target.Name));
                 break;
             case eCSS.SHOOTS_SPINES:
                 new Animation_Missile(Pos, Target.Pos, 5, true, "014_missile");
                 new Animation_Hold();
-                Game.AddMessage(String.Format("  Fires spines at {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Fires spines at {0}.", Target.Name));
                 break;
             default://rock throwing
                 new Animation_Missile(Pos, Target.Pos, 12, true, "014_missile");
                 new Animation_Hold();
-                Game.AddMessage(String.Format("  Throws rock at {0}.", Target.Name));
+                Game.AddMessage(string.Format("  Throws rock at {0}.", Target.Name));
                 break;
         }
 
@@ -1664,7 +1664,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
         else
         {
-            Game.AddMessage(String.Format("  Misses {0}.", Target.Name));
+            Game.AddMessage(string.Format("  Misses {0}.", Target.Name));
         }
     }
 
@@ -1967,7 +1967,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         var l = Pos;
         if (Dir.IsFacingRight && Record.Width > 1) l.X++;
 
-        Game.AddMessage(String.Format("{0} casts: {1}", Record.Name, spell.Name));
+        Game.AddMessage(string.Format("{0} casts: {1}", Record.Name, spell.Name));
 
         SP -= spell.Cost;
 
@@ -2165,7 +2165,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         var l = Pos;
         if (Dir.IsFacingRight && Record.Width > 1) l.X++;
 
-        Game.AddMessage(String.Format("{0} casts: {1}", Record.Name, spell.Name));
+        Game.AddMessage(string.Format("{0} casts: {1}", Record.Name, spell.Name));
 
         SP -= spell.Cost;
 
@@ -2274,7 +2274,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
         else if (spell == NPCPriestSpell.Avatar){
             Sound.Play(24);
-            Game.AddMessage(String.Format("  {0} is an avatar!", Name));
+            Game.AddMessage(string.Format("  {0} is an avatar!", Name));
             Health = Record.Health;
             SetStatus(eAffliction.BLESS_CURSE, 8);
             SetStatus(eAffliction.POISON, 0);
@@ -2306,7 +2306,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         new Animation_Attack(this);
         new Animation_Missile(l, target, missile_t[(byte)Record.BreathType], false, "044_breathe");
         new Animation_Hold();
-        Game.AddMessage(String.Format("  {0} breathes.", Record.Name));
+        Game.AddMessage(string.Format("  {0} breathes.", Record.Name));
         level = Maths.Rand(Record.Breath, 1, 8);
         if (Game.Mode != eMode.COMBAT) level = level / 3;
         curTown.HitArea(target, 1, level,0, type[(byte)Record.BreathType], Pattern.Single, false, this); new Animation_Hold();

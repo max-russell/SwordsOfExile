@@ -11,17 +11,17 @@ public partial class Scenario
     public static string Filename, Name, Description, Credits1, Credits2, ContactInfo;
     private static byte[] Version;
     private static int Rating, Difficulty;
-    static public int IntroPic, IntroMessPic;
-    static public string InitialiseFunc,   //Non-latent function that is triggered as soon as the Scenario begins
+    public static int IntroPic, IntroMessPic;
+    public static string InitialiseFunc,   //Non-latent function that is triggered as soon as the Scenario begins
         IntroFunc,        //Latent Function that is triggered at the start of the scenario after the fade-up
         TownPreEntryFunc; //Non-latent Function that is triggered just before any town is entered
     //and can be used to alter what town that is.
-    static public string DeathMessage;
+    public static string DeathMessage;
 
-    static public int OutWidth, OutHeight;
-    static public OutsideSector StartOutside;
-    static public TownMap StartTown;
-    static public Location TownStartPos, OutsideStartPos;
+    public static int OutWidth, OutHeight;
+    public static OutsideSector StartOutside;
+    public static TownMap StartTown;
+    public static Location TownStartPos, OutsideStartPos;
 
     public static bool Load() {
 
@@ -92,7 +92,7 @@ public partial class Scenario
         return true;
     }
 
-    static public void LoadAndDisregardEditorFolder(BinaryReader In)
+    public static void LoadAndDisregardEditorFolder(BinaryReader In)
     {
         //We don't need Editor folders in the Game, but we still need to read past them.
         In.ReadString();//ID
@@ -101,7 +101,7 @@ public partial class Scenario
         In.ReadString(); //Nested Folder
     }
 
-    static public int difficulty_adjust()
+    public static int difficulty_adjust()
     {
         var j = 0;
         var to_return = 1;
@@ -121,19 +121,19 @@ public partial class Scenario
     }
 
     private static List<Note> Notes = new();
-    static public void MakeNote(string title, string msg)
+    public static void MakeNote(string title, string msg)
     {
         Notes.Add(new Note { Title = title, Message = msg});
     }
-    static public IEnumerable<String> ListNotes()
+    public static IEnumerable<string> ListNotes()
     {
         foreach (var n in Notes)
             yield return n.Title;
     }
-    static public string GetNoteMessage(int n) { if (n >= 0 && n < Notes.Count) return Notes[n].Message; else return ""; }
-    static public void DeleteNote(int n) { if (n >= 0 && n < Notes.Count) Notes.RemoveAt(n); }
+    public static string GetNoteMessage(int n) { if (n >= 0 && n < Notes.Count) return Notes[n].Message; else return ""; }
+    public static void DeleteNote(int n) { if (n >= 0 && n < Notes.Count) Notes.RemoveAt(n); }
 
-    static public void End() //Only called from scripts.
+    public static void End() //Only called from scripts.
     {
         Game.GameOver = true;
         new MessageWindow(null, "Congratulations - you have just completed this scenario! If you want you can save your adventurers now before returning to the main menu.", eDialogPic.NONE, 0, "OK");

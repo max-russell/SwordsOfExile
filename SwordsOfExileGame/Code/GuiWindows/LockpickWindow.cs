@@ -83,10 +83,10 @@ internal class LockpickWindow : GuiWindow
         else 
             chance = pc.BashDoorChance(doorPos);
 
-        chanceLabel.Text = String.Format("Chance of success: {0}%", Math.Max(0, chance));
+        chanceLabel.Text = string.Format("Chance of success: {0}%", Math.Max(0, chance));
 
         if (chance == -1)
-            additionalLabel.Text = String.Format("({0} has no lockpicks equipped)", pc.Name);
+            additionalLabel.Text = string.Format("({0} has no lockpicks equipped)", pc.Name);
         else if (chance == -2)
             additionalLabel.Text = "(That is not a door!)";
         else if (chance == -3)

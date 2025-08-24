@@ -381,7 +381,7 @@ public struct Direction
         return eCursor.WAIT;
     }
 
-    static public Location operator +(Location l, Direction d)
+    public static Location operator +(Location l, Direction d)
     {
         return new Location(l.X + d.DirModX(), l.Y + d.DirModY());
     }

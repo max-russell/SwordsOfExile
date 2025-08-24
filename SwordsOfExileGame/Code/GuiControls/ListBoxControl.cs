@@ -181,14 +181,14 @@ internal class ListBox : Control, IScrollBarOwner
         vScroll.ChangeValues(scrollViewPos, scrollViewHeight, 0, scrollFullHeight, itemHeight);
     }
 
-    public void InsertItem(int pos, String txt, Color colour, object data, bool italic)
+    public void InsertItem(int pos, string txt, Color colour, object data, bool italic)
     {
         Items.Insert(pos, new ListBoxItem { Text = txt, Colour = colour, Tag = data, Italic = italic });
         scrollFullHeight += itemHeight;
         vScroll.ChangeValues(scrollViewPos, scrollViewHeight, 0, scrollFullHeight, itemHeight);
     }
 
-    public ListBoxItem AddItem(String txt, Color colour, object data, bool italic)
+    public ListBoxItem AddItem(string txt, Color colour, object data, bool italic)
     {
         var i = new ListBoxItem { Text = txt, Colour = colour, Tag = data, Italic = italic };
         Items.Add(i);

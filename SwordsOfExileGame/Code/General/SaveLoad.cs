@@ -146,12 +146,12 @@ public partial class Game : Microsoft.Xna.Framework.Game
 
     public static void AutoSave()
     {   
-        File.Delete(Path.Combine(SavesDirectory, String.Format("AutoSave{0:D2}.sav2", Constants.AUTOSAVE_LIMIT)));
+        File.Delete(Path.Combine(SavesDirectory, string.Format("AutoSave{0:D2}.sav2", Constants.AUTOSAVE_LIMIT)));
 
         for (var n = Constants.AUTOSAVE_LIMIT-1; n > 0 ; n--)
         {
-            var oldsav = Path.Combine(SavesDirectory, String.Format("AutoSave{0:D2}.sav2", n));
-            var newsav = Path.Combine(SavesDirectory, String.Format("AutoSave{0:D2}.sav2", n+1));
+            var oldsav = Path.Combine(SavesDirectory, string.Format("AutoSave{0:D2}.sav2", n));
+            var newsav = Path.Combine(SavesDirectory, string.Format("AutoSave{0:D2}.sav2", n+1));
 
             if (File.Exists(oldsav))
                 File.Move(oldsav, newsav);

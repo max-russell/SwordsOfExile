@@ -157,8 +157,8 @@ public interface ICharacter
     eAttitude MyAttitude();
     bool AlliedWith(ICharacter ch);
     int Status(eAffliction type);
-    void SetStatus(eAffliction type, int val, int min = Int32.MinValue, int max = Int32.MaxValue);
-    void IncStatus(eAffliction type, int val, int max = Int32.MaxValue);
+    void SetStatus(eAffliction type, int val, int min = int.MinValue, int max = int.MaxValue);
+    void IncStatus(eAffliction type, int val, int max = int.MaxValue);
     int TargetingNum { get; set; }
 }
 

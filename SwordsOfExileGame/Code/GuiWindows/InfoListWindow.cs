@@ -151,7 +151,7 @@ internal class InfoListWindow : GuiWindow
         messageExtend = InnerHeight - 2;
     }
 
-    public void AddMessage(String message)
+    public void AddMessage(string message)
     {
         var all_lines = message.Split(new char[]{'\n'}, StringSplitOptions.None).ToList<string>();
         var insertpos = 0;

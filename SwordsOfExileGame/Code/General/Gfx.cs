@@ -176,34 +176,34 @@ internal static class Gfx
 
         for (var n = 0; n < 32; n++)
         {
-            textureLoader.FromFile(String.Format("Terrains_{0:D2}.png", n), ref TerrainGfx[n]); //textureLoader.FromFile("Terrains.png", ref TerrainGfx);
+            textureLoader.FromFile(string.Format("Terrains_{0:D2}.png", n), ref TerrainGfx[n]); //textureLoader.FromFile("Terrains.png", ref TerrainGfx);
             if (TerrainGfx[n] != null) TerrainGfxSlotsAcross[n] = TerrainGfx[n].Width / SRCTILEWIDTH;
 
-            textureLoader.FromFile(String.Format("TerrainsAnim_{0:D2}.png", n), ref AnimTerrainGfx[n]);
+            textureLoader.FromFile(string.Format("TerrainsAnim_{0:D2}.png", n), ref AnimTerrainGfx[n]);
             if (AnimTerrainGfx[n] != null) AnimTerrainGfxSlotsAcross[n] = AnimTerrainGfx[n].Width / (SRCTILEWIDTH * 4);
 
-            textureLoader.FromFile(String.Format("Npcs1x1_{0:D2}.png", n), ref NPCGfx1x1[n]);
+            textureLoader.FromFile(string.Format("Npcs1x1_{0:D2}.png", n), ref NPCGfx1x1[n]);
             if (NPCGfx1x1[n] != null) NPCGfx1x1SlotsAcross[n] = NPCGfx1x1[n].Width / (CHARGFXWIDTH * 4);
 
-            textureLoader.FromFile(String.Format("Npcs1x2_{0:D2}.png", n), ref NPCGfx1x2[n]);
+            textureLoader.FromFile(string.Format("Npcs1x2_{0:D2}.png", n), ref NPCGfx1x2[n]);
             if (NPCGfx1x2[n] != null) NPCGfx1x2SlotsAcross[n] = NPCGfx1x2[n].Width / (CHARGFXWIDTH * 4);
 
-            textureLoader.FromFile(String.Format("Npcs2x1_{0:D2}.png", n), ref NPCGfx2x1[n]);
+            textureLoader.FromFile(string.Format("Npcs2x1_{0:D2}.png", n), ref NPCGfx2x1[n]);
             if (NPCGfx2x1[n] != null) NPCGfx2x1SlotsAcross[n] = NPCGfx2x1[n].Width / (CHARGFXWIDTH * 8);
 
-            textureLoader.FromFile(String.Format("Npcs2x2_{0:D2}.png", n), ref NPCGfx2x2[n]);
+            textureLoader.FromFile(string.Format("Npcs2x2_{0:D2}.png", n), ref NPCGfx2x2[n]);
             if (NPCGfx2x2[n] != null) NPCGfx2x2SlotsAcross[n] = NPCGfx2x2[n].Width / (CHARGFXWIDTH * 8);
 
-            textureLoader.FromFile(String.Format("Items_{0:D2}.png", n), ref ItemGfx[n]);
+            textureLoader.FromFile(string.Format("Items_{0:D2}.png", n), ref ItemGfx[n]);
             if (ItemGfx[n] != null) ItemGfxSlotsAcross[n] = ItemGfx[n].Width / ITEMGFXWIDTH;
 
-            textureLoader.FromFile(String.Format("TalkPortraits_{0:D2}.png", n), ref FacesGfx[n]);
+            textureLoader.FromFile(string.Format("TalkPortraits_{0:D2}.png", n), ref FacesGfx[n]);
             if (FacesGfx[n] != null) FacesGfxSlotsAcross[n] = FacesGfx[n].Width / Gfx.FACEGFXWIDTH;
 
-            textureLoader.FromFile(String.Format("Missiles_{0:D2}.png", n), ref MissilesGfx[n]);
+            textureLoader.FromFile(string.Format("Missiles_{0:D2}.png", n), ref MissilesGfx[n]);
             if (MissilesGfx[n] != null) MissilesGfxSlotsAcross[n] = MissilesGfx[n].Width / (Gfx.MISSILE_GFX_WIDTH * 8);
 
-            textureLoader.FromFile(String.Format("DialogPics_{0:D2}.png", n), ref DialogGfx[n]);
+            textureLoader.FromFile(string.Format("DialogPics_{0:D2}.png", n), ref DialogGfx[n]);
             if (DialogGfx[n] != null) DialogGfxSlotsAcross[n] = DialogGfx[n].Width / Gfx.MISCGFXWIDTH;
         }
 
@@ -581,7 +581,7 @@ internal static class Gfx
         return false;
     }
 
-    static public void MakePCGraphics(int n, int p, out Texture2D pctex, out Texture2D portraittex)
+    public static void MakePCGraphics(int n, int p, out Texture2D pctex, out Texture2D portraittex)
     {
         var coldata = new Color[CHARGFXWIDTH * CHARGFXHEIGHT * 4];
         var srcrct = new XnaRect(0, n * CHARGFXHEIGHT, CHARGFXWIDTH * 4, CHARGFXHEIGHT);
@@ -595,7 +595,7 @@ internal static class Gfx
         portraittex = new Texture2D(Device, PCPORTRAITWIDTH, PCPORTRAITHEIGHT);
         portraittex.SetData<Color>(coldata);
     }
-    static public void SavePCGraphics(BinaryWriter file, Texture2D pcg, Texture2D pcp)
+    public static void SavePCGraphics(BinaryWriter file, Texture2D pcg, Texture2D pcp)
     {
         //Save graphics
         var coldata = new Color[CHARGFXWIDTH * CHARGFXHEIGHT * 4];
@@ -607,7 +607,7 @@ internal static class Gfx
         foreach (var c in coldata) file.Write(c.PackedValue);
     }
 
-    static public void LoadPCGraphics(BinaryReader file, out Texture2D pcg, out Texture2D pcp)
+    public static void LoadPCGraphics(BinaryReader file, out Texture2D pcg, out Texture2D pcp)
     {
         var coldata = new Color[CHARGFXWIDTH * CHARGFXHEIGHT * 4];
         for (var a = 0; a < coldata.Length; a++)
@@ -622,7 +622,7 @@ internal static class Gfx
         pcp.SetData<Color>(coldata);
     }
 
-    static public void MakeCharacterHighlight(PCType pc)
+    public static void MakeCharacterHighlight(PCType pc)
     {
         Texture2D srctx;
         var srcrct = new XnaRect();

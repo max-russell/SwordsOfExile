@@ -78,7 +78,7 @@ internal class AlchemyWindow : GuiWindow
             var has = 0;
             foreach (var i in Alchemist.EachItemHeld())
                 if (i.AlchemyID == t.Item1) has += i.Charges;
-            ingredients += String.Format("  @i{0} ({1}{2}{3}/{4})@e@n", 
+            ingredients += string.Format("  @i{0} ({1}{2}{3}/{4})@e@n", 
                 Recipe.GetIngredientName(t.Item1), 
                 has >= t.Item2 ? "@b" : "", 
                 has, 
@@ -102,7 +102,7 @@ internal class AlchemyWindow : GuiWindow
         else
             makeButton.Enabled = true;
 
-        selRecipeDesc.FormatText(String.Format("@bSKILL REQUIRED: {0}@e@n@bINGREDIENTS: @e@n{1}{2}@n@n@i{3}",
+        selRecipeDesc.FormatText(string.Format("@bSKILL REQUIRED: {0}@e@n@bINGREDIENTS: @e@n{1}{2}@n@n@i{3}",
             selectedRecipe.Skill,
             ingredients,
             selectedRecipe.Description,
@@ -170,9 +170,9 @@ internal class AlchemyWindow : GuiWindow
             if (ms == null) continue;
 
             if (Alchemist.CanConcoct(ms) > 0)
-                recipeListBox.AddItem(String.Format("{0} ({1})", ms.Name, ms.Skill), Color.Gold, ms, false);
+                recipeListBox.AddItem(string.Format("{0} ({1})", ms.Name, ms.Skill), Color.Gold, ms, false);
             else
-                recipeListBox.AddItem(String.Format("{0} ({1})", ms.Name, ms.Skill), Color.DarkGray, ms, true);
+                recipeListBox.AddItem(string.Format("{0} ({1})", ms.Name, ms.Skill), Color.DarkGray, ms, true);
 
             if (ms == old)
                 recipeListBox.SelectedItem = recipeListBox.Items[recipeListBox.Items.Count - 1];

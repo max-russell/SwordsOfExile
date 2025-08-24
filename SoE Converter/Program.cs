@@ -39,7 +39,7 @@ namespace SoE_Converter
         private static bool MacFormat = false;
         private static bool HasTownPreEntryFunc = false;
 
-        private static List<ushort[]> NewTownTerrain = new List<ushort[]>();
+        private static List<ushort[]> NewTownTerrain = new();
         private static ushort[,][] NewOutsideTerrain;
 
         private static StreamWriter ScriptFile;
@@ -47,19 +47,19 @@ namespace SoE_Converter
         private static int CurrentlyLoadedTown = -1;
         private static int CurrentlyLoadedOutX = -1, CurrentlyLoadedOutY = -1;
 
-        private static List<string> Town_IDs = new List<string>();
-        private static List<int> Personality_IDs = new List<int>();
+        private static List<string> Town_IDs = new();
+        private static List<int> Personality_IDs = new();
 
         //Custom graphics lists - used for slicing up the BoE custom graphics into new graphics sheets for SoE
-        private static List<int> CustomTerrainList = new List<int>();
-        private static List<int> CustomAnimTerrainList = new List<int>();
-        private static List<int> CustomNPC1x1List = new List<int>();
-        private static List<int> CustomNPC2x1List = new List<int>();
-        private static List<int> CustomNPC1x2List = new List<int>();
-        private static List<int> CustomNPC2x2List = new List<int>();
-        private static List<int> CustomItemList = new List<int>();
-        private static List<int> CustomDialogPicList = new List<int>();
-        private static List<int> CustomFacePicList = new List<int>();
+        private static List<int> CustomTerrainList = new();
+        private static List<int> CustomAnimTerrainList = new();
+        private static List<int> CustomNPC1x1List = new();
+        private static List<int> CustomNPC2x1List = new();
+        private static List<int> CustomNPC1x2List = new();
+        private static List<int> CustomNPC2x2List = new();
+        private static List<int> CustomItemList = new();
+        private static List<int> CustomDialogPicList = new();
+        private static List<int> CustomFacePicList = new();
 
         private static int Main(string[] args)
         {
@@ -414,7 +414,7 @@ namespace SoE_Converter
 
             Out.Write((byte)1); //Write 1 to indicate a group follows
 
-            Out.Write(String.Format("Group_{0}_{1}_{2}", x, y, num)); //Write ID for this group
+            Out.Write(string.Format("Group_{0}_{1}_{2}", x, y, num)); //Write ID for this group
             Out.Write("\t" + foldernum); //Folder ID
 
             for (var n = 0; n < 7; n++)
@@ -438,7 +438,7 @@ namespace SoE_Converter
             Out.Write(false); //Write false to indicate that's it for the NPC components in the group
             Out.Write(o.cant_flee % 10 == 1 ? true : false); //Can't flee
             Out.Write(o.cant_flee > 10 ? true : false);  //Forced
-            Out.Write(String.Format("{0}_{1}", o.end_spec1, o.end_spec2)); //Variable to eliminate encounter
+            Out.Write(string.Format("{0}_{1}", o.end_spec1, o.end_spec2)); //Variable to eliminate encounter
             Out.Write(GetNodeToFuncName(o.spec_on_meet, 2, x, y)); 
             Out.Write(GetNodeToFuncName(o.spec_on_flee, 2, x, y)); 
             Out.Write(GetNodeToFuncName(o.spec_on_win, 2, x, y));  
@@ -917,7 +917,7 @@ namespace SoE_Converter
 
         }
 
-        private static List<ItemShop> ItemShops = new List<ItemShop>();
+        private static List<ItemShop> ItemShops = new();
 
         private class ItemShop
         {
@@ -929,7 +929,7 @@ namespace SoE_Converter
             public int NodeNo; //Talking node if a town, outdoor sector special node if outdoors.
 
             public uint BuysOffPlayer=0; //What the player can sell to the shop
-            public List<int> OtherBuyOffNodes = new List<int>();
+            public List<int> OtherBuyOffNodes = new();
             public bool SellsStuff;
 
             public int CostLevel;

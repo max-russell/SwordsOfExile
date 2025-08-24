@@ -127,7 +127,7 @@ internal class InventoryBox : Control, IScrollBarOwner
         }
     }
 
-    private void changeFilter(Object o, Object o2, int option)
+    private void changeFilter(object o, object o2, int option)
     {
         Filter = (eItemFilter)option;
         scrollViewPos = 0;

@@ -562,7 +562,7 @@ public partial class WorldMapType : IMap
         if (dist <= 1)
         {
             var ter = TerrainAt(loc);
-            options.Add(new PopUpMenuData(String.Format("Inspect {0}", ter.Name), loc, null, PopUpMenuData.SEARCH));
+            options.Add(new PopUpMenuData(string.Format("Inspect {0}", ter.Name), loc, null, PopUpMenuData.SEARCH));
         }
 
         if (options.Count > 0) return options;

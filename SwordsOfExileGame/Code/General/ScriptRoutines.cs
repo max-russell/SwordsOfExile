@@ -66,9 +66,9 @@ internal class Script
     private static List<Script> ScriptQueue;
     public static GlobalVariables StuffDone;
 
-    static public bool CancelOutdoorEncounter;
-    static public string TalkingText;
-    static public bool NeedAutoSave = false;
+    public static bool CancelOutdoorEncounter;
+    public static string TalkingText;
+    public static bool NeedAutoSave = false;
 
     private Func<ScriptParameters, object> Func;
     private ScriptParameters Params;
@@ -246,7 +246,6 @@ internal class Script
         scriptsfinished = true;
         latentScriptRunning = false;
         _sem.Release();
-
     }
 
     public bool Run()
@@ -365,9 +364,10 @@ internal class Script
 
         //Make lists of every python script file in 'Base/Scripts' and '<scenario>/Scripts'
         var basescriptfiles = Directory.EnumerateFiles(Path.Combine(Game.BaseDirectory, "Scripts"), "*.py", SearchOption.TopDirectoryOnly).ToList();
+        
         var scenscriptfiles = Directory.Exists(Path.Combine(Game.ScenarioDirectory, "Scripts")) 
             ? Directory.EnumerateFiles(Path.Combine(Game.ScenarioDirectory, "Scripts"), "*.py", SearchOption.TopDirectoryOnly).ToList()
-            : new List<String>();
+            : new List<string>();
 
         //Make all filenames uppercase
         for (var n = 0; n < basescriptfiles.Count; n++)

@@ -14,7 +14,7 @@ namespace SoE_Converter
 
             //Save the currently loaded outdoor section
 
-            Out.Write(String.Format("Out_{0:000}_{1:000}_{2}.py", ox, oy, GetFriendlyIDString(DataStore4.outdoor_text[0]))); //Default file to write script function to to in the editor
+            Out.Write(string.Format("Out_{0:000}_{1:000}_{2}.py", ox, oy, GetFriendlyIDString(DataStore4.outdoor_text[0]))); //Default file to write script function to to in the editor
             Out.Write((byte)0); //Level
 
             //Write terrain
@@ -135,7 +135,7 @@ namespace SoE_Converter
                 for (y = 0; y < 7; y++)
                     if (Outdoors.wandering[x].monst[y] != 0) { emptygroup = false; break; }
                 if (emptygroup) continue;
-                Out.Write(String.Format("Group_{0}_{1}_{2}", ox, oy, x));
+                Out.Write(string.Format("Group_{0}_{1}_{2}", ox, oy, x));
             }
             Out.Write(""); //Indicate end of list.
 

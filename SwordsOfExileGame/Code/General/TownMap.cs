@@ -1059,7 +1059,7 @@ public partial class TownMap : IListEntity, IMap
                 cur_monst.Dying = true;
                 new Animation_Death(cur_monst);
                 cur_monst.AP = 0;
-                Game.AddMessage(String.Format("  {0} disappears.", cur_monst.Name));
+                Game.AddMessage(string.Format("  {0} disappears.", cur_monst.Name));
             }
             Maths.MoveToZero(ref cur_monst.Summoned);
 
@@ -1778,7 +1778,7 @@ public partial class TownMap : IListEntity, IMap
                     var npc = (NPC)ch;
                     if (npc.Active != eActive.COMBATIVE && !npc.IsABaddie) //Can only talk if friendly
                     {
-                        options.Add(new PopUpMenuData(String.Format("Talk to {0}", npc.Record.Name), npc, null, PopUpMenuData.TALK_TO));
+                        options.Add(new PopUpMenuData(string.Format("Talk to {0}", npc.Record.Name), npc, null, PopUpMenuData.TALK_TO));
                     }
                 }
             }
@@ -1789,11 +1789,11 @@ public partial class TownMap : IListEntity, IMap
         {
 
             if (fieldsThere(loc, Field.CRATE.Bit | Field.BARREL.Bit))
-                options.Add(new PopUpMenuData(String.Format("Inspect the {0}", fieldsThere(loc, Field.CRATE.Bit) ? "crate" : "barrel"), loc, null, PopUpMenuData.SEARCH));
+                options.Add(new PopUpMenuData(string.Format("Inspect the {0}", fieldsThere(loc, Field.CRATE.Bit) ? "crate" : "barrel"), loc, null, PopUpMenuData.SEARCH));
             else
             {
                 var ter = TerrainAt(loc);
-                options.Add(new PopUpMenuData(String.Format("Inspect {0}", ter.Name), loc, null, PopUpMenuData.SEARCH));
+                options.Add(new PopUpMenuData(string.Format("Inspect {0}", ter.Name), loc, null, PopUpMenuData.SEARCH));
             }
         }
 
@@ -1804,7 +1804,7 @@ public partial class TownMap : IListEntity, IMap
             foreach (var item in EachItemThere(loc))
             {
                 if (count == Constants.POPUP_ITEMLIST_LIMIT) break; //No more than 10 listed here.
-                options.Add(new PopUpMenuData(String.Format("Take {0}", item.KnownName), item, null, PopUpMenuData.TAKE));
+                options.Add(new PopUpMenuData(string.Format("Take {0}", item.KnownName), item, null, PopUpMenuData.TAKE));
                 count++;
             }
         }
@@ -2013,7 +2013,7 @@ public partial class TownMap : IListEntity, IMap
         }
     }
 
-    public Boolean NPCHateSpot(NPC ch, Location pos){
+    public bool NPCHateSpot(NPC ch, Location pos){
         var record = ((NPC)ch).Record;
 
         for(var x = pos.X; x < pos.X + ch.Width; x++)
@@ -2222,7 +2222,7 @@ public partial class TownMap : IListEntity, IMap
             new(0,2),new(-2,1),new(-1,2),new(-2,2),new(-3,2),
             new(-2,3),new(-3,3),new(-4,3),new(-3,4)};
 
-        Boolean[] spot_ok = {true,true,true,true,true,true,true,
+        bool[] spot_ok = {true,true,true,true,true,true,true,
             true,true,true,true,true,true,true};
         var pos_locs = new Location[14]; //[14];
         Location check_loc;
@@ -2442,7 +2442,7 @@ public partial class TownMap : IListEntity, IMap
     }
 
     // returns true if placement was successful
-    public Boolean SummonMonster(ICharacter summoner, NPCRecord which, Location where, int duration)
+    public bool SummonMonster(ICharacter summoner, NPCRecord which, Location where, int duration)
     {
         if (which == null) return false;
         //For an NPC type, 'where' is the summoner's location, and the summoned monster is put in a nearby spot.
@@ -2467,7 +2467,7 @@ public partial class TownMap : IListEntity, IMap
 
         NPCList.Add(spot);
         new Animation_Summon(spot);
-        Game.AddMessage(String.Format("  {0} summoned.", spot.Name));
+        Game.AddMessage(string.Format("  {0} summoned.", spot.Name));
         return true;
     }
 
@@ -2490,7 +2490,7 @@ public partial class TownMap : IListEntity, IMap
         var newone = NPC.SplitOffCopy(from_who, where_put);
         NPCList.Add(newone);
 
-        Game.AddMessage(String.Format("  {0} splits!.", from_who.Name));
+        Game.AddMessage(string.Format("  {0} splits!.", from_who.Name));
     }
 
     public bool HitArea(Location centre_pos, int damage_multiplier, int damage_low, int damage_high, eDamageType dam_type, Pattern pattern, bool makes_crater, IExpRecipient hitter)
@@ -2773,7 +2773,7 @@ public partial class TownMap : IListEntity, IMap
         if (Maths.Rand(1, 1, 7) + mode < 5) removeField(l, Field.BLADE_WALL.Bit);;
     }
 
-    private Boolean is_container(Location loc)
+    private bool is_container(Location loc)
     {
         if (fieldsThere(loc, Field.CRATE.Bit | Field.BARREL.Bit)) return true;
         return terrainAt(loc.X, loc.Y).Special == eTerSpec.IS_A_CONTAINER;

@@ -108,6 +108,6 @@ internal class StartMenuWindow : GuiWindow
     public override void Draw(SpriteBatch sb, int partial = 0)
     {
         base.Draw(sb, partial);
-        sb.DrawString(Gfx.TinyFont, String.Format("v{0}",System.Reflection.Assembly.GetExecutingAssembly().GetName().Version), new Vector2(X + 15,InnerHeight + Y - 1), Color.White);
+        sb.DrawString(Gfx.TinyFont, string.Format("v{0}",System.Reflection.Assembly.GetExecutingAssembly().GetName().Version), new Vector2(X + 15,InnerHeight + Y - 1), Color.White);
     }
 }

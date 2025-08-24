@@ -172,6 +172,6 @@ internal class ScenSelectWindow : GuiWindow
             scenPic.SetPicture(Gfx.ScenarioGfx, sr);
 
         scenTitle.Text = si.Name;
-        scenInfoBox.FormatText(String.Format("{0}@n@n@b{1}@e@n@n{2}@n@n@iVersion: {3}.{4}.{5}@nRating: {6}@nDifficulty: {7}", si.Description, si.Credits1, si.Credits2, si.Version[0], si.Version[1], si.Version[2], rating[Maths.MinMax(0, 3, si.Rating)], diff[Maths.MinMax(0, 3, si.Difficulty)]));
+        scenInfoBox.FormatText(string.Format("{0}@n@n@b{1}@e@n@n{2}@n@n@iVersion: {3}.{4}.{5}@nRating: {6}@nDifficulty: {7}", si.Description, si.Credits1, si.Credits2, si.Version[0], si.Version[1], si.Version[2], rating[Maths.MinMax(0, 3, si.Rating)], diff[Maths.MinMax(0, 3, si.Difficulty)]));
     }
 }

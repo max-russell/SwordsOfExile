@@ -99,14 +99,14 @@ public static class Maths
     }
     public static void Write(this BinaryWriter file, ICharacter ch, TownMap town)
     {
-        if (ch == null) file.Write(Int32.MaxValue);
+        if (ch == null) file.Write(int.MaxValue);
         else if (ch is PCType) file.Write(-1 - ((PCType)ch).Slot);
         else file.Write(town.NPCList.IndexOf((NPC)ch));
     }
     public static ICharacter ReadCharacter(this BinaryReader file, TownMap town)
     {
         var n = file.ReadInt32();
-        if (n == Int32.MaxValue) return null;
+        if (n == int.MaxValue) return null;
         if (n < 0) return Game.CurrentParty.PCList[-(n + 1)];
         return town.NPCList[n];
     }
@@ -114,30 +114,30 @@ public static class Maths
     {
         foreach (var o in obs)
         {
-            if (o is Int32)
-                file.Write((Int32)o);
-            else if (o is Int16)
-                file.Write((Int16)o);
-            else if (o is Byte)
-                file.Write((Byte)o);
-            else if (o is UInt32)
-                file.Write((UInt32)o);
-            else if (o is UInt16)
-                file.Write((UInt16)o);
-            else if (o is SByte)
-                file.Write((SByte)o);
-            else if (o is Int64)
-                file.Write((Int64)o);
-            else if (o is UInt64)
-                file.Write((UInt64)o);
-            else if (o is String)
-                file.Write((String)o);
+            if (o is int)
+                file.Write((int)o);
+            else if (o is short)
+                file.Write((short)o);
+            else if (o is byte)
+                file.Write((byte)o);
+            else if (o is uint)
+                file.Write((uint)o);
+            else if (o is ushort)
+                file.Write((ushort)o);
+            else if (o is sbyte)
+                file.Write((sbyte)o);
+            else if (o is long)
+                file.Write((long)o);
+            else if (o is ulong)
+                file.Write((ulong)o);
+            else if (o is string)
+                file.Write((string)o);
             else if (o is Location)
                 file.Write((Location)o);
             else if (o is Direction)
                 file.Write((Direction)o);
-            else if (o is Boolean)
-                file.Write((Boolean)o);
+            else if (o is bool)
+                file.Write((bool)o);
             else
                 throw new Exception("WriteStuff can't write this type.");
         }

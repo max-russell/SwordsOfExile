@@ -11,7 +11,7 @@ namespace SoE_Converter
             short count;
             int x, y;
 
-            Out.Write(String.Format("Town_{0:000}_{1}.py", townnum, GetFriendlyIDString(DataStore1.town_strs[0]))); //Default file to write script function to to in the editor
+            Out.Write(string.Format("Town_{0:000}_{1}.py", townnum, GetFriendlyIDString(DataStore1.town_strs[0]))); //Default file to write script function to to in the editor
 
             if (Town.town_chop_time == -1)
                 Out.Write((short)-1);
@@ -19,7 +19,7 @@ namespace SoE_Converter
                 Out.Write((short)(Town.town_chop_time + (LEGACY_DAY_DELAY ? 20 : 0)));
 
             if (Town.town_chop_key > 0)
-                Out.Write(String.Format("Event_{0}", Town.town_chop_key));
+                Out.Write(string.Format("Event_{0}", Town.town_chop_key));
             else Out.Write("");
 
             Out.Write(Town.lighting); //Lighting level
@@ -251,11 +251,11 @@ namespace SoE_Converter
                     Out.Write(TownTerrain.creatures[x].mobile != 0);
                     Out.Write(TownTerrain.creatures[x].time_flag);
                     if (ValidStuffDone(TownTerrain.creatures[x].spec1, TownTerrain.creatures[x].spec2))
-                        Out.Write(String.Format("{0}_{1}", TownTerrain.creatures[x].spec1, TownTerrain.creatures[x].spec2));
+                        Out.Write(string.Format("{0}_{1}", TownTerrain.creatures[x].spec1, TownTerrain.creatures[x].spec2));
                     else
                         Out.Write("");
                     Out.Write(TownTerrain.creatures[x].spec_enc_code);
-                    if (TownTerrain.creatures[x].time_code > 0) Out.Write(String.Format("Event_{0}", TownTerrain.creatures[x].time_code)); else Out.Write("");
+                    if (TownTerrain.creatures[x].time_code > 0) Out.Write(string.Format("Event_{0}", TownTerrain.creatures[x].time_code)); else Out.Write("");
                     Out.Write((short)(TownTerrain.creatures[x].monster_time + (LEGACY_DAY_DELAY ? 20 : 0)));
 
                     if (TownTerrain.creatures[x].personality == -1)

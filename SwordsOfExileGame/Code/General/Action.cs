@@ -26,7 +26,7 @@ public class Action
     }
     public Action(eAction what)
     {
-        if (current != null && current.Requested > eAction.BLOCKABLE_ACTIONS)
+        if (current is { Requested: > eAction.BLOCKABLE_ACTIONS })
             return;
 
         Requested = what;
@@ -110,7 +110,7 @@ public class Action
 
             case eAction.GatherLoot:
                 var loot = LootSpot.Generate(CurrentParty.Pos, (TownMap)CurrentMap, true);
-                if (loot != null) new LootWindow(loot); else Game.AddMessage(String.Format("Nothing nearby to gather"));
+                if (loot != null) new LootWindow(loot); else Game.AddMessage(string.Format("Nothing nearby to gather"));
                 break;
 
             case eAction.EscapeMenu:
@@ -263,7 +263,7 @@ public class Action
                     PC.RemoveItem(Item);
 
                 CurrentMap.PlaceItem(Item, Loc);
-                Game.AddMessage(String.Format("{0} drops the {1}", PC.Name, Item.KnownName));
+                Game.AddMessage(string.Format("{0} drops the {1}", PC.Name, Item.KnownName));
                 Sound.ItemSound();
                 if (Mode == eMode.COMBAT) PC.AP -= 2;
                 break;
@@ -465,8 +465,8 @@ public class Action
                 TargetSelectList = new List<Location>();
                 TargetNPCsOnly = false;
                 TargetPattern = null;
-                Game.AddMessage(String.Format("Select an adjacent space to drop the {0} ('m' to Cancel)", Item.KnownName));
-                new NewsLine(String.Format("Select an adjacent space to drop the {0}", Item.KnownName), true);
+                Game.AddMessage(string.Format("Select an adjacent space to drop the {0} ('m' to Cancel)", Item.KnownName));
+                new NewsLine(string.Format("Select an adjacent space to drop the {0}", Item.KnownName), true);
                 new NewsLine("('m' to Cancel)", false);
                 break;
 
@@ -489,7 +489,7 @@ public class Action
                 TargetPattern = null;
                 TargetSelectList = new List<Location>();
                 CurrentTown.WorkOutNPCTargetShortcuts(TargetPC.Pos, TargetRange);
-                new NewsLine(String.Format("Select where to fire"), true);
+                new NewsLine(string.Format("Select where to fire"), true);
                 new NewsLine("('m' to Cancel)", false);
                 break;
 

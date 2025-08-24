@@ -711,7 +711,7 @@ public partial class PartyType : IExpRecipient
 
     // Find next active PC in combat mode, return TRUE if monsters need running, and run monsters is slow spells
     // active
-    public Boolean PickNextPC() {
+    public bool PickNextPC() {
 
         if (activePC == null)
             activePC = LeaderPC;
@@ -929,7 +929,7 @@ public partial class PartyType : IExpRecipient
         return Timer.Update(Age - old_age);
     }
 
-    public Boolean DayReached(int which_day, string which_event)
+    public bool DayReached(int which_day, string which_event)
         // which_day is day event should happen
         // which_event is the party.key_times value to cross reference with. 
         // if the key_time is reached before which_day, event won't happen

@@ -188,7 +188,7 @@ internal class GuiWindow
         return i;
     }
 
-    protected EquipmentSlot AddEquipmentSlot(int x, int y, PCType pc, String txt, eEquipSlot kind, int tabno = -1)
+    protected EquipmentSlot AddEquipmentSlot(int x, int y, PCType pc, string txt, eEquipSlot kind, int tabno = -1)
     {
         var e = new EquipmentSlot(this, x, y, pc, txt, kind);
         controls.Add(e);

@@ -84,7 +84,7 @@ internal class MagicShopWindow : GuiWindow
         else
             buyButton.Enabled = true;
 
-        selSpellDesc.FormatText(String.Format("@bLEVEL {0} {1} SPELL@e@n@bCOST: {2} SP@n{5}WHERE: {6}@e@n@bPRICE: {7} gold@e@n@n{3}@n@n@i{4}",
+        selSpellDesc.FormatText(string.Format("@bLEVEL {0} {1} SPELL@e@n@bCOST: {2} SP@n{5}WHERE: {6}@e@n@bPRICE: {7} gold@e@n@n{3}@n@n@i{4}",
             selectedSpell.Level,
             selectedSpell.Mage ? "MAGE" : "PRIEST",
             selectedSpell.Cost,
@@ -121,9 +121,9 @@ internal class MagicShopWindow : GuiWindow
             if (Party.CurrentPC.KnownSpells.ContainsValue(ms))
                 spellListBox.AddItem(ms.Name, Color.DarkGray, ms, true);
             else if (Party.Gold < _Shop.BuyCost(ms.Cost))
-                spellListBox.AddItem(String.Format("{0} ({1})", ms.Name, _Shop.BuyCost(ms.Cost)), Color.LightGray, ms, true);
+                spellListBox.AddItem(string.Format("{0} ({1})", ms.Name, _Shop.BuyCost(ms.Cost)), Color.LightGray, ms, true);
             else
-                spellListBox.AddItem(String.Format("{0} ({1})", ms.Name, _Shop.BuyCost(ms.Cost)), ms.Mage ? Color.Fuchsia : Color.LightSkyBlue, ms, false);
+                spellListBox.AddItem(string.Format("{0} ({1})", ms.Name, _Shop.BuyCost(ms.Cost)), ms.Mage ? Color.Fuchsia : Color.LightSkyBlue, ms, false);
         }
 
         spellListBox.SelectedItem = spellListBox.Items.Count > 0 ? spellListBox.Items[0] : null;

@@ -115,7 +115,7 @@ namespace SoE_Converter_GUI
 
         public static Process Run(Action<string, bool> output, TextReader input, string exe, string args)
         {
-            if (String.IsNullOrEmpty(exe))
+            if (string.IsNullOrEmpty(exe))
                 throw new FileNotFoundException();
             if (output == null)
                 throw new ArgumentNullException("output");
@@ -243,7 +243,7 @@ namespace SoE_Converter_GUI
 
             if (col < 2)
             {
-                comp = String.Compare(((ListViewItem)x).SubItems[col].Text, ((ListViewItem)y).SubItems[col].Text);
+                comp = string.Compare(((ListViewItem)x).SubItems[col].Text, ((ListViewItem)y).SubItems[col].Text);
             }
             else
             {

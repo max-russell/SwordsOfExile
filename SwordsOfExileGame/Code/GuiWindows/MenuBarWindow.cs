@@ -124,7 +124,7 @@ internal class MenuBarWindow : GuiWindow
         {
             //Players or monster's turn?
             if (Party.ActivePC != null)
-                txt = String.Format("{0} (ap:{1})", Party.ActivePC.Name, Party.ActivePC.AP);
+                txt = string.Format("{0} (ap:{1})", Party.ActivePC.Name, Party.ActivePC.AP);
         }
         else
         {

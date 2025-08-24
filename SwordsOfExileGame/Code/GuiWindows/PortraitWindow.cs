@@ -106,7 +106,7 @@ internal class PortraitWindow : GuiWindow
             {
                 afflictBoxes[cbox].Visible = true;
 
-                var tooltip = String.Format("@b{0}@e@n@i{1}", PCType.StatusMsg(PC, (eAffliction)a), PC.AfflictionHlp[a]);
+                var tooltip = string.Format("@b{0}@e@n@i{1}", PCType.StatusMsg(PC, (eAffliction)a), PC.AfflictionHlp[a]);
 
                 afflictBoxes[cbox].SetStandardToolTip(tooltip, 150);
                 if ((eAffliction)a == eAffliction.POISON && s >= 4)
@@ -123,7 +123,7 @@ internal class PortraitWindow : GuiWindow
             else if (((eAffliction)a == eAffliction.HASTE_SLOW || (eAffliction)a == eAffliction.BLESS_CURSE) && s < 0)
             {
                 afflictBoxes[cbox].Visible = true;
-                var tooltip = String.Format("@b{0}@e@n@i{1}", PCType.StatusMsg(PC, (eAffliction)a), PC.AfflictionHlp[a]);
+                var tooltip = string.Format("@b{0}@e@n@i{1}", PCType.StatusMsg(PC, (eAffliction)a), PC.AfflictionHlp[a]);
                 afflictBoxes[cbox].SetStandardToolTip(tooltip, 150);
 
                 if ((eAffliction)a == eAffliction.HASTE_SLOW)

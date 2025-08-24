@@ -12,11 +12,11 @@ internal class EquipmentSlot : Control
     private bool pressed = false, pressedLMB = false;
     private eEquipSlot SlotType;
     private PCType Owner;
-    private String Text;
+    private string Text;
 
     private Item getEquippedItem() { return Owner.GetEquipped(SlotType); }
 
-    public EquipmentSlot(GuiWindow p, int x, int y, PCType owner, String txt, eEquipSlot kind, int tabno = -1)
+    public EquipmentSlot(GuiWindow p, int x, int y, PCType owner, string txt, eEquipSlot kind, int tabno = -1)
         : base(p, x, y, Gfx.ITEMGFXWIDTH, Gfx.ITEMGFXHEIGHT, tabno)
     {
         Owner = owner;

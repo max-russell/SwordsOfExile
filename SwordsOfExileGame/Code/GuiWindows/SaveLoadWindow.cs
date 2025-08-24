@@ -303,7 +303,7 @@ internal class LoadGameWindow : GuiWindow
             {
                 var sr = new XnaRect((i.IntroPic % (Gfx.ScenarioGfx.Width / Gfx.SCENGFXWIDTH)) * Gfx.SCENGFXWIDTH, (i.IntroPic / (Gfx.ScenarioGfx.Width / Gfx.SCENGFXHEIGHT)) * Gfx.SCENGFXHEIGHT, Gfx.SCENGFXWIDTH, Gfx.SCENGFXHEIGHT);
                 infotext.Append(
-                    String.Format("@b{0}@e are currently adventuring in @b{1}@e, where it is day @b{2}@e. Their current location is @b{3}@e. @n@nThis game was saved on {4}.",
+                    string.Format("@b{0}@e are currently adventuring in @b{1}@e, where it is day @b{2}@e. Their current location is @b{3}@e. @n@nThis game was saved on {4}.",
                         i.PartyName, i.ScenName, i.Age / Constants.DAY_LENGTH + 1, i.CurrentMapName, i.LastSavedDate.ToString()));
             }
             infotext.Append(string.Format("@n@n@iTotal Damage Dealt: {0}@nTotal Monsters Killed: {1}@nTotal XP gained: {2}@nTotal Damage Taken: {3}", 

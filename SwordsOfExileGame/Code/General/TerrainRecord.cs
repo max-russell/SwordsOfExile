@@ -118,12 +118,12 @@ public class TerrainRecord : IListEntity
         if (Special is eTerSpec.CHANGE_WHEN_STEP_ON or eTerSpec.CRUMBLING_TERRAIN or eTerSpec.LOCKABLE_TERRAIN or eTerSpec.UNLOCKABLE_TERRAIN or eTerSpec.UNLOCKABLE_BASHABLE or eTerSpec.CHANGE_WHEN_USED)
             Flag1 = In.ReadString(); //For now, but after all terrains have loaded, convert to a TerrainRecord
         else
-            Flag1 = (Int32)In.ReadInt16(); //It's a number
+            Flag1 = (int)In.ReadInt16(); //It's a number
 
         if (Special == eTerSpec.CHANGE_WHEN_STEP_ON)
             Flag2 = In.ReadString(); //Sound Effect ID, leave as string
         else
-            Flag2 = (Int32)In.ReadInt16();
+            Flag2 = (int)In.ReadInt16();
 
         if (In.ReadBoolean()) //Does this terrain have a script trigger?
         {

@@ -15,10 +15,10 @@ namespace SoE_Converter
             public int Price;
             public string Creates = "";
             public int Amount;
-            public List<Tuple<string, int>> Ingredients = new List<Tuple<string, int>>();
+            public List<Tuple<string, int>> Ingredients = new();
 
             private static List<Recipe> List;
-            private static Dictionary<string, string> IngredientKeys = new Dictionary<string, string>();
+            private static Dictionary<string, string> IngredientKeys = new();
 
             private void Write(BinaryWriter Out)
             {

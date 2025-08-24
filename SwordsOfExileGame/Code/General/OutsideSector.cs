@@ -143,7 +143,7 @@ public class OutsideSector: IListEntity
         return null;
     }
 
-    public Boolean CharacterCanBeThere(Location loc, ICharacter m_num, bool allow_leave_map = false)
+    public bool CharacterCanBeThere(Location loc, ICharacter m_num, bool allow_leave_map = false)
     {
         return true;
     }

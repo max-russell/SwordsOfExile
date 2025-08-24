@@ -16,7 +16,7 @@ public class Vehicle : IListEntity, IAnimatable
     public Location Pos { get; set; }
 
     public IMap Map;
-    public Boolean PartyOwns;
+    public bool PartyOwns;
     public Direction Dir;
 
     public bool NotDrawn { get; set; } = false; //Temporarily don't draw (used in teleporting animations)

@@ -26,7 +26,7 @@ internal class OptionsWindow : GuiWindow
         ListBoxItem current = null;
         foreach(var mode in Gfx.EachAvailableResolution())
         {
-            var i = resolutionsList.AddItem(String.Format("{0} x {1}", mode.Width, mode.Height), Color.White, mode, false);
+            var i = resolutionsList.AddItem(string.Format("{0} x {1}", mode.Width, mode.Height), Color.White, mode, false);
             if (mode.Width == Gfx.WinW && mode.Height == Gfx.WinH)
                 current = i;
         }

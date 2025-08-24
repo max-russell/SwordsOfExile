@@ -81,7 +81,7 @@ internal class AlchemyShopWindow : GuiWindow
                     if (i.AlchemyID == t.Item1) has += i.Charges;
             }
 
-            ingredients += String.Format("  @i{0} ({1}{2}{3}/{4})@e@n",
+            ingredients += string.Format("  @i{0} ({1}{2}{3}/{4})@e@n",
                 Recipe.GetIngredientName(t.Item1),
                 has >= t.Item2 ? "@b" : "",
                 has,
@@ -100,7 +100,7 @@ internal class AlchemyShopWindow : GuiWindow
             buyButton.Enabled = true;
 
 
-        selSpellDesc.FormatText(String.Format("@bPRICE: {0}@e@n@bSKILL REQUIRED: {1}@e@n@bINGREDIENTS: @e@n{2}@n{3}@n@n@i{4}",
+        selSpellDesc.FormatText(string.Format("@bPRICE: {0}@e@n@bSKILL REQUIRED: {1}@e@n@bINGREDIENTS: @e@n{2}@n{3}@n@n@i{4}",
             _Shop.BuyCost(selectedSpell.Price),
             selectedSpell.Skill,
             ingredients,
@@ -135,9 +135,9 @@ internal class AlchemyShopWindow : GuiWindow
             if (Party.KnownRecipes.ContainsValue(ms))
                 spellListBox.AddItem(ms.Name, Color.DarkGray, ms, true);
             else if (Party.Gold < _Shop.BuyCost(ms.Price))
-                spellListBox.AddItem(String.Format("{0} ({1})", ms.Name, _Shop.BuyCost(ms.Price)), Color.LightGray, ms, true);
+                spellListBox.AddItem(string.Format("{0} ({1})", ms.Name, _Shop.BuyCost(ms.Price)), Color.LightGray, ms, true);
             else
-                spellListBox.AddItem(String.Format("{0} ({1})", ms.Name, _Shop.BuyCost(ms.Price)), Color.Gold, ms, false);
+                spellListBox.AddItem(string.Format("{0} ({1})", ms.Name, _Shop.BuyCost(ms.Price)), Color.Gold, ms, false);
         }
 
         spellListBox.SelectedItem = spellListBox.Items.Count > 0 ? spellListBox.Items[0] : null;

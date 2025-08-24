@@ -437,7 +437,7 @@ public class Animation_MoveFail : Animation, IAnimCharacter
         }
     }
 
-    override protected bool AdvanceAnim(int ms_passed)
+    protected override bool AdvanceAnim(int ms_passed)
     {
         Character.AnimAction = this;
         if (base.AdvanceAnim(ms_passed))

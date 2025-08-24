@@ -16,12 +16,7 @@ public class GlobalVariables
 
     public static bool Contains(string s, Type t)
     {
-        Object o;
-        if (s != null && s != "" && globalVariables.TryGetValue(s, out o))
-        {
-            if (o.GetType() == t) return true;
-        }
-        return false;
+        return !string.IsNullOrEmpty(s) && globalVariables.TryGetValue(s, out var o) && o.GetType() == t;
     }
 
     public static void LoadGame(BinaryReader file)
@@ -49,25 +44,25 @@ public class GlobalVariables
         foreach (var g in globalVariables)
         {
             file.Write(g.Key);
-            if (g.Value is Int32)
+            if (g.Value is int)
             {
                 file.Write((byte)0);
                 file.Write((int)g.Value);
             }
-            else if (g.Value is String)
+            else if (g.Value is string)
             {
                 file.Write((byte)1);
                 file.Write((string)g.Value);
             }
-            else if (g.Value is Single or Double)
+            else if (g.Value is float or double)
             {
                 file.Write((byte)2);
-                file.Write((Single)g.Value);
+                file.Write((float)g.Value);
             }
         }
     }
 
-    static public void Load(BinaryReader In)
+    public static void Load(BinaryReader In)
     {
         var name = In.ReadString();
         object value = null;

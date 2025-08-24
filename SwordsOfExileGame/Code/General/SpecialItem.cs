@@ -5,7 +5,6 @@ namespace SwordsOfExileGame;
 
 public class SpecialItem : IListEntity
 {
-
     public static ExileList<SpecialItem> List = new();//All special items in the scenario
     public static ExileList<SpecialItem> Collected = new(); //All special items the party has collected 
 
@@ -49,7 +48,7 @@ public class SpecialItem : IListEntity
         List.Add(this);
     }
 
-    static public bool PartyHas(string key)
+    public static bool PartyHas(string key)
     {
         return Collected.Contains(key);
     }
@@ -65,7 +64,7 @@ public class SpecialItem : IListEntity
     }
 
 
-    static public bool Give(string key)
+    public static bool Give(string key)
     {
         if (List.Contains(key))
         {
@@ -81,7 +80,7 @@ public class SpecialItem : IListEntity
         return false;
     }
 
-    static public bool Take(string key)
+    public static bool Take(string key)
     {
         if (Collected.Contains(key))
         {

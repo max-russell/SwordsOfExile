@@ -65,7 +65,7 @@ internal class MagicWindow : GuiWindow
 
         for (var n = 1; n <= Constants.MAX_SPELL_LEVEL; n++)
         {
-            spellLevelButtons.Add(AddOptionButton(pressButton, String.Format("{0}", n), 0, 0, 27));
+            spellLevelButtons.Add(AddOptionButton(pressButton, string.Format("{0}", n), 0, 0, 27));
             spellLevelButtons[n - 1].Resize(spellLevelButtons[n - 1].Width, 22);
         }
         spellLevelButtons[0].Pressed = true;
@@ -193,7 +193,7 @@ internal class MagicWindow : GuiWindow
         Keys k;
         if (!Party.SpellKeyShortcuts.TryGetValue(selectedSpell.ID, out k)) {k = Keys.None;}
 
-        selSpellDesc.FormatText(String.Format("@bLEVEL {0} {1} SPELL@e@n@bCOST: {2} SP@n@bKEY SHORTCUT: @e@[Click to change shortcut key@]{7}@n@b{5}WHERE: {6}@e@n@n{3}@n@n@i{4}",
+        selSpellDesc.FormatText(string.Format("@bLEVEL {0} {1} SPELL@e@n@bCOST: {2} SP@n@bKEY SHORTCUT: @e@[Click to change shortcut key@]{7}@n@b{5}WHERE: {6}@e@n@n{3}@n@n@i{4}",
             selectedSpell.Level,
             selectedSpell.Mage ? "MAGE" : "PRIEST",
             selectedSpell.Cost,
@@ -336,9 +336,9 @@ internal class MagicWindow : GuiWindow
             if (ms.Level == currentSpellLevel && ms.Mage == currentIsMage)
             {
                 if (Caster.CanCast(ms) > 0)
-                    spellListBox.AddItem(String.Format("{0} ({1})", ms.Name, ms.Cost), ms.Mage ? Color.Fuchsia : Color.LightSkyBlue, ms, false);
+                    spellListBox.AddItem(string.Format("{0} ({1})", ms.Name, ms.Cost), ms.Mage ? Color.Fuchsia : Color.LightSkyBlue, ms, false);
                 else
-                    spellListBox.AddItem(String.Format("{0} ({1})", ms.Name, ms.Cost), Color.DarkGray, ms, true);
+                    spellListBox.AddItem(string.Format("{0} ({1})", ms.Name, ms.Cost), Color.DarkGray, ms, true);
             }
         }
 

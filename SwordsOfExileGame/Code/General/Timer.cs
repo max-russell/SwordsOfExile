@@ -5,7 +5,7 @@ namespace SwordsOfExileGame;
 
 public class Timer : IListEntity
 {
-    static public ExileList<Timer> List = new();
+    public static ExileList<Timer> List = new();
 
     public string ID { get; set; }
 
@@ -22,7 +22,7 @@ public class Timer : IListEntity
     //Timers from converted BoE scenarios are all CONTINUE, except party town timers (created by node type 195) which is DELETE
     private eTimerType Behaviour; //A byte
 
-    static public void LoadGame(BinaryReader file)
+    public static void LoadGame(BinaryReader file)
     {
         List.Clear();
         var count = file.ReadInt32();
@@ -53,7 +53,7 @@ public class Timer : IListEntity
         }
     }
 
-    static public void SaveGame(BinaryWriter file)
+    public static void SaveGame(BinaryWriter file)
     {
         file.Write(List.Count);
         foreach (var t in List)
@@ -73,7 +73,7 @@ public class Timer : IListEntity
         }
     }
 
-    static public void ResetLocalTimers(IMap domain)
+    public static void ResetLocalTimers(IMap domain)
     {
         var to_delete = new List<Timer>();
 
@@ -131,7 +131,7 @@ public class Timer : IListEntity
         List.Add(this);
     }
 
-    static public bool Update(int age_increase)
+    public static bool Update(int age_increase)
     {
         var to_delete = new List<Timer>();
         var triggered = false;
