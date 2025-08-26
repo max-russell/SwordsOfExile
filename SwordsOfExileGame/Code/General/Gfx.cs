@@ -72,11 +72,11 @@ internal static class Gfx
     private static TextureLoader textureLoader;
 
     public static int WinW=-1, WinH=-1;
-    public static bool FullScreen = false;
+    public static bool FullScreen;
     private static SurfaceFormat defaultDisplayFormat;
     private static float defaultAspect;
 
-    public const float CHARWIDTH = (float)CHARGFXWIDTH / (float)CHARGFXHEIGHT; //Character's width in proportion to full width of square
+    public const float CHARWIDTH = CHARGFXWIDTH / (float)CHARGFXHEIGHT; //Character's width in proportion to full width of square
     public const int DEFAULTZOOM = 36;
 
     public static int ZoomSizeW = 36, ZoomSizeH = 36; //Current size in pixels of map square.
@@ -93,13 +93,15 @@ internal static class Gfx
     public static Vector2 Scroll; //Square that is currently centred in the viewport.
     public static Vector2 ScrollDest, ScrollStart;
     public static int ScrollTime, ScrollDuration;
-    public static bool ScrollingMap = false;
+    public static bool ScrollingMap;
 
     public static int FadeMode; //0: No fade, 1: Fading to black, 2: Black 3: Fading from black
     public static Color FadeColor = Color.Black;
 
     //Graphics Options
     public static bool DrawHealthBars = true;
+
+    private static bool _manuallyChangingScreenSettings;
 
     private class CursorGraphic
     {
@@ -108,7 +110,7 @@ internal static class Gfx
     }
     //SWORD, NW, N, NE, TALK, USE, W, WAIT, E, BOOT, TARGET, SW, S, SE
 
-    private static CursorGraphic[] Cursors = new CursorGraphic[] { 
+    private static CursorGraphic[] Cursors = { 
         new() { XCorner = 32, YCorner = 0, XHotspot = 0x7, YHotspot = 0x9 },
         new() { XCorner = 64, YCorner = 0, XHotspot = 0xF, YHotspot = 0xF },
         new() { XCorner = 96, YCorner = 0, XHotspot = 0x11, YHotspot = 0xF },
@@ -157,6 +159,40 @@ internal static class Gfx
             z *= 0.75f;
         }
         DefaultZoomStage = ZoomStage;
+
+        g.Window.AllowUserResizing = true;
+        g.Window.ClientSizeChanged += WindowOnClientSizeChanged;
+    }
+
+    public static void ChangeScreenSize(int x, int y, bool fullScreen)
+    {
+        WinW = x;
+        WinH = y;
+        FullScreen = fullScreen;
+        _manuallyChangingScreenSettings = true;
+        InitGraphicsMode(x, y, fullScreen);
+        Gui.PositionForWindowResize();
+    }
+
+    private static void WindowOnClientSizeChanged(object sender, EventArgs e)
+    {
+        if (!Game.Instance.IsActive) return;
+        if (_manuallyChangingScreenSettings)
+        {
+            _manuallyChangingScreenSettings = false;
+            return;
+        }
+        
+        var newBounds = Game.Instance.Window.ClientBounds;
+        WinW = newBounds.Width;
+        WinH = newBounds.Height;
+        InitGraphicsMode(newBounds.Width, newBounds.Height, false);
+        Gui.PositionForWindowResize();
+    }
+
+    public static bool PositionIsInWindowResizeArea(int x, int y)
+    {
+        return !FullScreen && (x < 5 || y < 5 || x >= WinW - 5 || y >= WinH);
     }
 
     public static void Load(GraphicsDevice gd, bool just_base)//GraphicsDevice gd, ContentManager cm)
@@ -548,15 +584,17 @@ internal static class Gfx
         // be set to anything equal to or smaller than the actual screen size.
         if (bFullScreen == false)
         {
-            if ((iWidth <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width)
-                && (iHeight <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height))
-            {
-                DeviceManager.PreferredBackBufferWidth = iWidth;
-                DeviceManager.PreferredBackBufferHeight = iHeight;
-                DeviceManager.IsFullScreen = bFullScreen;
-                DeviceManager.ApplyChanges();
-                return true;
-            }
+            //if ((iWidth <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width)
+            //    && (iHeight <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height))
+            //{
+            DeviceManager.PreferredBackBufferWidth = iWidth;
+            DeviceManager.PreferredBackBufferHeight = iHeight;
+            Game.Instance.Window.BeginScreenDeviceChange(false);
+            DeviceManager.IsFullScreen = false;
+            DeviceManager.ApplyChanges();
+            Game.Instance.Window.EndScreenDeviceChange(Game.Instance.Window.ScreenDeviceName);
+            return true;
+            //}
         }
         else
         {
@@ -572,8 +610,10 @@ internal static class Gfx
                     // The mode is supported, so set the buffer formats, apply changes and return
                     DeviceManager.PreferredBackBufferWidth = iWidth;
                     DeviceManager.PreferredBackBufferHeight = iHeight;
-                    DeviceManager.IsFullScreen = bFullScreen;
+                    Game.Instance.Window.BeginScreenDeviceChange(true);
+                    DeviceManager.IsFullScreen = true;
                     DeviceManager.ApplyChanges();
+                    Game.Instance.Window.EndScreenDeviceChange(Game.Instance.Window.ScreenDeviceName);
                     return true;
                 }
             }

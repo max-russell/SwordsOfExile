@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework;
@@ -139,14 +140,16 @@ public partial class Game
             _nextTick = 0;
             AnimTicks = ++AnimTicks % 4;
         }
+
         Sound.Refresh();
 
         KeyHandler.GetKeysHit(gameTime.ElapsedGameTime.Milliseconds);
-            
+
         Gui.Handle();
         Gui.HandleToolTip();
 
-        if (ErrorFlagged) { 
+        if (ErrorFlagged)
+        {
             Gui.ErrorReport(errorType, errorMessage);
             return;
         }
@@ -154,7 +157,7 @@ public partial class Game
         //If the game is loading (in a separately running thread) don't do anything else until it finishes.
         if (Loading)
         {
-            if (loadingComplete/* && !DrawCalled*/) BeginGame();
+            if (loadingComplete /* && !DrawCalled*/) BeginGame();
             else if (InMainMenu) StartupMap.Update(gameTime);
             return;
         }
@@ -169,7 +172,7 @@ public partial class Game
         {
             return;
         }
-            
+
         Gfx.DoMapScroll(gameTime.ElapsedGameTime.Milliseconds);
         Gfx.DoMapZoom(gameTime.ElapsedGameTime.Milliseconds);
         KeyHandler.GetActionKeys();
@@ -178,312 +181,364 @@ public partial class Game
         if (!Animation.NoAnimationsRunning())
         {
             Animation.AdvanceAll(gameTime.ElapsedGameTime.Milliseconds);
+            return;
         }
+        
         //2nd priority: If there are any scripts in the queue, run them now.
-        else if (Script.IsRunning && _gameState != eState.GAME_OVER)
+        if (Script.IsRunning && _gameState != eState.GAME_OVER)
         {
             Script.RunNext();
+            return;
         }
-        else
+
+        //Now the main state machine
+        bool immediateStateSwitch;
+
+        do
         {
-            //Now the main state machine
-            bool immediateStateSwitch;
-
-            do
-            {
-                //This is set to true in each state to allow switching to the next state without updating animations/scripts/user input
-                immediateStateSwitch = false;
-
-                //Now handle the main game state
-                switch (_gameState)
-                {
-                    //Set the PCs action points for the turn
-                    case eState.BEGIN_PC_TURN:
-                        CurrentParty.StartNewTurn();
-                        _gameState = eState.PICK_NEXT_PC;
-                        immediateStateSwitch = true;
-                        break;
-
-                    //Choose the PC to control based on who has action points left.
-                    case eState.PICK_NEXT_PC:
-                        if (CurrentParty.PickNextPC())
-                        {
-                            //No PC has action points left, so make it the NPCs go. (This is only reached in combat mode - in town mode the state switches to NPCs after every player action)
-                            _gameState = eState.BEGIN_NPC_TURN;
-                        }
-                        else
-                        {
-                            Gfx.CentreView(CurrentParty.ActivePC.Pos, false); 
-                            _gameState = eState.PC_TURN_PROCESS_ACTION;
-                            if (!Script.IsRunning && Animation.NoAnimationsRunning()) immediateStateSwitch = true; 
-                        }
-                        break;
-
-                    //The main state for handling the player's actions
-                    case eState.PC_TURN_PROCESS_ACTION:
-
-                        if (GameOver) { _gameState = eState.END_TURN; immediateStateSwitch = true; break; }
-
-                        _gameState = Action.Handle();//eState.BEGIN_NPC_TURN;
-
-                        if (PartyDead) { _gameState = eState.PARTY_DEAD; immediateStateSwitch = true; break; }
-
-                        if (_gameState is eState.BEGIN_NPC_TURN or eState.PICK_NEXT_PC &&
-                            !Script.IsRunning && (
-                                (Game.Mode != eMode.COMBAT && Animation.OnlyMovingAnimationsRunning()) ||
-                                Game.Mode == eMode.COMBAT && Animation.NoAnimationsRunning()))
-                            immediateStateSwitch = true;
-
-                        break;
-
-                    //Handle player's actions in Target Mode (when needing to choose a target npc/tile on the map)
-                    case eState.TARGET_MODE:
-
-                        if (Action.HandleTargeting())
-                        {
-                            _gameState = eState.PC_TURN_PROCESS_ACTION;
-                            immediateStateSwitch = true;
-                        }
-                        break;
-
-                    //Assign action points to NPCs for the turn, activate new NPCs
-                    case eState.BEGIN_NPC_TURN:
-
-                        CurrentMap.StartNPCTurn();
-                        _gameState = eState.NPC_TURN;
-                        if (!Script.IsRunning && Animation.NoAnimationsRunning()) immediateStateSwitch = true; 
-                        break;
-
-                    //Move each NPC.
-                    case eState.NPC_TURN:
-                        if (CurrentMap.DoNPCTurn()) //Returns true when the last NPC has acted.
-                        {
-                            _gameState = eState.END_TURN;
-                            if (!Script.IsRunning && Animation.NoAnimationsRunning()) immediateStateSwitch = true; 
-                        }
-                        break;
-
-                    //Handle various checks and stuff at the end of each turn.
-                    case eState.END_TURN:
-
-                        //The PCs are dead. End the game
-                        if (PartyDead)
-                        {
-                            immediateStateSwitch = true; 
-                            _gameState = eState.PARTY_DEAD;
-                        }
-                        else if (GameOver)
-                        {
-                            new Animation_FadeDown(1000);
-                            _gameState = eState.GAME_OVER;                                    
-                        }
-                        //Check: PCs leave town.
-                        else if (Mode == eMode.TOWN && !CurrentTown.InActArea(CurrentParty.Pos))
-                        {
-                            //Set up any scripts to run on leaving the town
-                            CurrentTown.SetUpExitFunc();
-                            _gameState = eState.BEGIN_LEAVE_MAP;
-                        }
-                        //Check: PCs step on town in world map.
-                        else if (Mode == eMode.OUTSIDE && WorldMap.TownEntranceHere(CurrentParty.Pos) != null)
-                        {
-                            var t = WorldMap.TownEntranceHere(CurrentParty.Pos).DestTown;
-                            if (t.LightType > 0) Sound.Play("095_enterdungeon");
-                            else Sound.Play("016_townentry");
-                            new Animation_FadeDown(300);
-                            _gameState = eState.BEGIN_ENTER_TOWN;
-                        }
-                        //Check: Outside NPCs want to attack
-                        else if (Mode == eMode.OUTSIDE && WorldMap.PCAttacker != null) //A wandering NPC group is next to the party and wants to attack!
-                        {
-                            _gameState = eState.BEGIN_NPC_GROUP_ATTACK;
-                        }
-                        //Check: All PCs flee combat map
-                        else if (Mode == eMode.COMBAT && CurrentTown is CombatMap && CurrentParty.PartyFled())
-                        {
-                            //The entire party has run away from combat. Put back on world map.
-                            new Animation_FadeDown(300);
-                            Script.New_NPCGroup(((CombatMap)CurrentMap).NPCGroup.FuncOnFlee, eCallOrigin.FLEE_ENCOUNTER, ((CombatMap)CurrentMap).NPCGroup);
-                            _gameState = eState.BEGIN_PARTY_FLEE;
-                        }
-                        else
-                        {
-                            //Handle status effects, Timer events, light levels, fields.
-                            CurrentParty.IncreaseAge();
-                            if (PartyDead) { _gameState = eState.PARTY_DEAD; immediateStateSwitch = true; break; }
-
-                            //Handle map squares with 'stood on' triggers
-                            CurrentMap.DoStoodOnTriggers();
-                            if (PartyDead) { _gameState = eState.PARTY_DEAD; immediateStateSwitch = true; break; }
-
-                            _gameState = eState.BEGIN_PC_TURN;
-                            if (!Script.IsRunning && Animation.NoAnimationsRunning()) immediateStateSwitch = true;
-                        }
-                        break;
-
-                    case eState.BEGIN_LEAVE_MAP:
-                        new Animation_FadeDown(300);
-                        _gameState = eState.LEAVE_MAP;
-                        break;
-
-                    case eState.LEAVE_MAP:
-                        CurrentParty.OutsidePos += CurrentTown.GetDepartDirection(CurrentParty.Pos);
-                        CurrentParty.Pos = CurrentParty.OutsidePos;
-                        CurrentParty.MoveToMap(WorldMap);
-                        _gameState = eState.BEGIN_PC_TURN;
-                        break;
-
-                    case eState.BEGIN_ENTER_TOWN:
-
-                        var town = WorldMap.TownEntranceHere(CurrentParty.Pos).DestTown;
-                        CurrentParty.OutsidePos = CurrentParty.Pos;
-                        Mode = eMode.TOWN;
-                        switch (CurrentParty.Direction.Dir)
-                        {
-                            case eDir.S: CurrentParty.Pos = town.EnterPos[0]; break;
-                            case eDir.SE:
-                            case eDir.E:
-                            case eDir.NE: CurrentParty.Pos = town.EnterPos[3]; break;
-                            case eDir.N: CurrentParty.Pos = town.EnterPos[2]; break;
-                            case eDir.NW:
-                            case eDir.W:
-                            case eDir.SW: CurrentParty.Pos = town.EnterPos[1]; break;
-                        }
-                        CurrentParty.MoveToMap(town);
-                        _gameState = eState.BEGIN_PC_TURN;
-                        break;
-
-                    case eState.BEGIN_PARTY_FLEE:
-
-                        foreach (var pc in CurrentParty.PCList)
-                        {
-                            if (pc.LifeStatus == eLifeStatus.FLED) pc.LifeStatus = eLifeStatus.ALIVE;
-                        }
-                        CurrentParty.Pos = CurrentParty.OutsidePos;
-                        CurrentParty.MoveToMap(WorldMap);
-                        //Reset things
-                        Mode = eMode.OUTSIDE;
-                        _turnBegin = true;
-                        Gfx.CentreView(CurrentParty.Pos, true);
-                        _gameState = eState.BEGIN_PC_TURN;
-                        break;
-
-                    case eState.BEGIN_NPC_GROUP_ATTACK:
-                        if (!WorldMap.NPCGroupList.Contains(WorldMap.PCAttacker))
-                        {
-                            WorldMap.PCAttacker = null; //Attacker chose to flee!
-                            _gameState = eState.END_TURN;
-                        }
-                        else
-                        {
-                            bool cancelled;
-                            if (!WorldMap.PCAttacker.DoMeetingScript(out cancelled))
-                            {
-                                new Animation_FadeDown(300);
-                                _gameState = eState.NPC_GROUP_ATTACK;
-                                break;
-                            }
-                            if (cancelled)
-                            {
-                                WorldMap.NPCGroupList.Remove(WorldMap.PCAttacker);
-                                WorldMap.PCAttacker = null;
-                                _gameState = eState.END_TURN;
-                            }
-                        }
-                        break;
-
-                    case eState.NPC_GROUP_ATTACK:
-
-                        //Change to combat map!
-                        InitiateOutdoorCombat(WorldMap.PCAttacker.Record);
-                        new Animation_FadeUp(300);
-
-                        //Also, delete this outdoor wandering group now.
-                        WorldMap.NPCGroupList.Remove(WorldMap.PCAttacker);
-                        _gameState = eState.BEGIN_PC_TURN;
-
-                        break;
-
-                    case eState.COMBAT_END:
-                        if (CurrentTown is CombatMap) //We've finished fighting on a combat map, back to world map.
-                        {
-                            foreach (var pc in CurrentParty.PCList)
-                                if (pc.LifeStatus == eLifeStatus.FLED) pc.LifeStatus = eLifeStatus.ALIVE;
-                            _gameState = eState.BEGIN_PC_TURN;
-                            CurrentParty.Pos = CurrentParty.OutsidePos;
-                            CurrentParty.MoveToMap(WorldMap);
-                            Mode = eMode.OUTSIDE;
-
-                        }
-                        else
-                        {
-                            _gameState = eState.BEGIN_NPC_TURN;
-                            Mode = eMode.TOWN;
-                        }
-                        break;
-
-                    case eState.DO_CAMPING:
-                        CurrentParty.DoRest();
-                        new Animation_FadeUp(300);
-                        _gameState = eState.BEGIN_PC_TURN;
-                        break;
-
-                    case eState.PARTY_DEAD:
-                        if (CurrentParty.IsSplit) //Unless just the solo PC in split mode is.
-                        {
-                            //If the solo PC in a split party dies, the game is not over, the rest of the PCs take over.
-                            PartyDead = false;
-                            CurrentParty.Reunite();
-                            if (Game.Mode == eMode.COMBAT) { Game.EndCombat(true); _gameState = eState.COMBAT_END; }
-                            else
-                            {
-                                CurrentParty.IncreaseAge();
-                                _gameState = eState.BEGIN_PC_TURN;
-                            }
-                        }
-                        else
-                        {
-                            Sound.Play("013_partydeath");
-                            new Animation_FadeDown(1000);
-                            _gameState = eState.GAME_OVER;
-                        }
-                        break;
-
-                    case eState.GAME_OVER:
-                        if (PartyDead)
-                        {
-                            Gui.GuiWindows.Clear();
-                            new GameOverWindow();
-                        }
-                        else
-                        {
-                            GameOver = false;
-                            foreach (var pc2 in CurrentParty.PCList)
-                            {
-                                if (pc2.LifeStatus == eLifeStatus.ABSENT) pc2.LifeStatus = eLifeStatus.ALIVE;
-                            }
-                            CurrentParty.IsSplit = false;
-                            CurrentParty.Restore();
-                            CurrentParty.StripItems(); //Remove items that can't be taken from the scenario.
-                            new LoadGameWindow(false, true, true, DoAfterWin);
-                        }
-                        break;
-                    case eState.BEGIN_COMBAT_END:
-                    case eState.ENTER_TOWN:
-                    case eState.BEGIN_PARTY_DEATH:
-                    case eState.PARTY_FLEE:
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                //If we don't want to give a chance to animations or scripts to run before changing state, this should be set.
-            } while (immediateStateSwitch);
-        }
+            //This is set to true in each state to allow switching to the next state without updating animations/scripts/user input
+            immediateStateSwitch = ProcessGameState();
+            
+            //If we don't want to give a chance to animations or scripts to run before changing state, this should be set.
+        } while (immediateStateSwitch);
     }
     
     protected override void Draw(GameTime gameTime)
     {
         Gfx.Draw();
+    }
+
+    private bool ProcessGameState()
+    { 
+        //Now handle the main game state
+        switch (_gameState)
+        {
+            //Set the PCs action points for the turn
+            case eState.BEGIN_PC_TURN:
+                CurrentParty.StartNewTurn();
+                _gameState = eState.PICK_NEXT_PC;
+                return true;
+                break;
+
+            //Choose the PC to control based on who has action points left.
+            case eState.PICK_NEXT_PC:
+                if (CurrentParty.PickNextPC())
+                {
+                    //No PC has action points left, so make it the NPCs go. (This is only reached in combat mode - in town mode the state switches to NPCs after every player action)
+                    _gameState = eState.BEGIN_NPC_TURN;
+                }
+                else
+                {
+                    Gfx.CentreView(CurrentParty.ActivePC.Pos, false);
+                    _gameState = eState.PC_TURN_PROCESS_ACTION;
+                    if (!Script.IsRunning && Animation.NoAnimationsRunning()) return true;
+                }
+
+                break;
+
+            //The main state for handling the player's actions
+            case eState.PC_TURN_PROCESS_ACTION:
+
+                if (GameOver)
+                {
+                    _gameState = eState.END_TURN;
+                    return true;
+                }
+
+                _gameState = Action.Handle(); //eState.BEGIN_NPC_TURN;
+
+                if (PartyDead)
+                {
+                    _gameState = eState.PARTY_DEAD;
+                    return true;
+                }
+
+                if (_gameState is eState.BEGIN_NPC_TURN or eState.PICK_NEXT_PC &&
+                    !Script.IsRunning && (
+                        (Game.Mode != eMode.COMBAT && Animation.OnlyMovingAnimationsRunning()) ||
+                        Game.Mode == eMode.COMBAT && Animation.NoAnimationsRunning()))
+                    return true;
+
+                break;
+
+            //Handle player's actions in Target Mode (when needing to choose a target npc/tile on the map)
+            case eState.TARGET_MODE:
+
+                if (Action.HandleTargeting())
+                {
+                    _gameState = eState.PC_TURN_PROCESS_ACTION;
+                    return true;
+                }
+
+                break;
+
+            //Assign action points to NPCs for the turn, activate new NPCs
+            case eState.BEGIN_NPC_TURN:
+
+                CurrentMap.StartNPCTurn();
+                _gameState = eState.NPC_TURN;
+                if (!Script.IsRunning && Animation.NoAnimationsRunning()) return true;
+                break;
+
+            //Move each NPC.
+            case eState.NPC_TURN:
+                if (CurrentMap.DoNPCTurn()) //Returns true when the last NPC has acted.
+                {
+                    _gameState = eState.END_TURN;
+                    if (!Script.IsRunning && Animation.NoAnimationsRunning()) return true;
+                }
+
+                break;
+
+            //Handle various checks and stuff at the end of each turn.
+            case eState.END_TURN:
+
+                //The PCs are dead. End the game
+                if (PartyDead)
+                {
+                    _gameState = eState.PARTY_DEAD;
+                    return true;
+                }
+                else if (GameOver)
+                {
+                    new Animation_FadeDown(1000);
+                    _gameState = eState.GAME_OVER;
+                }
+                //Check: PCs leave town.
+                else if (Mode == eMode.TOWN && !CurrentTown.InActArea(CurrentParty.Pos))
+                {
+                    //Set up any scripts to run on leaving the town
+                    CurrentTown.SetUpExitFunc();
+                    _gameState = eState.BEGIN_LEAVE_MAP;
+                }
+                //Check: PCs step on town in world map.
+                else if (Mode == eMode.OUTSIDE && WorldMap.TownEntranceHere(CurrentParty.Pos) != null)
+                {
+                    var t = WorldMap.TownEntranceHere(CurrentParty.Pos).DestTown;
+                    Sound.Play(t.LightType > 0 ? "095_enterdungeon" : "016_townentry");
+                    new Animation_FadeDown(300);
+                    _gameState = eState.BEGIN_ENTER_TOWN;
+                }
+                //Check: Outside NPCs want to attack
+                else if (Mode == eMode.OUTSIDE &&
+                         WorldMap.PCAttacker !=
+                         null) //A wandering NPC group is next to the party and wants to attack!
+                {
+                    _gameState = eState.BEGIN_NPC_GROUP_ATTACK;
+                }
+                //Check: All PCs flee combat map
+                else if (Mode == eMode.COMBAT && CurrentTown is CombatMap && CurrentParty.PartyFled())
+                {
+                    //The entire party has run away from combat. Put back on world map.
+                    new Animation_FadeDown(300);
+                    Script.New_NPCGroup(((CombatMap)CurrentMap).NPCGroup.FuncOnFlee,
+                        eCallOrigin.FLEE_ENCOUNTER,
+                        ((CombatMap)CurrentMap).NPCGroup);
+                    _gameState = eState.BEGIN_PARTY_FLEE;
+                }
+                else
+                {
+                    //Handle status effects, Timer events, light levels, fields.
+                    CurrentParty.IncreaseAge();
+                    if (PartyDead)
+                    {
+                        _gameState = eState.PARTY_DEAD;
+                        return true;
+                    }
+
+                    //Handle map squares with 'stood on' triggers
+                    CurrentMap.DoStoodOnTriggers();
+                    if (PartyDead)
+                    {
+                        _gameState = eState.PARTY_DEAD;
+                        return true;
+                    }
+
+                    _gameState = eState.BEGIN_PC_TURN;
+                    if (!Script.IsRunning && Animation.NoAnimationsRunning()) return true;
+                }
+
+                break;
+
+            case eState.BEGIN_LEAVE_MAP:
+                new Animation_FadeDown(300);
+                _gameState = eState.LEAVE_MAP;
+                break;
+
+            case eState.LEAVE_MAP:
+                CurrentParty.OutsidePos += CurrentTown.GetDepartDirection(CurrentParty.Pos);
+                CurrentParty.Pos = CurrentParty.OutsidePos;
+                CurrentParty.MoveToMap(WorldMap);
+                _gameState = eState.BEGIN_PC_TURN;
+                break;
+
+            case eState.BEGIN_ENTER_TOWN:
+
+                var town = WorldMap.TownEntranceHere(CurrentParty.Pos).DestTown;
+                CurrentParty.OutsidePos = CurrentParty.Pos;
+                Mode = eMode.TOWN;
+                switch (CurrentParty.Direction.Dir)
+                {
+                    case eDir.S:
+                        CurrentParty.Pos = town.EnterPos[0];
+                        break;
+                    case eDir.SE:
+                    case eDir.E:
+                    case eDir.NE:
+                        CurrentParty.Pos = town.EnterPos[3];
+                        break;
+                    case eDir.N:
+                        CurrentParty.Pos = town.EnterPos[2];
+                        break;
+                    case eDir.NW:
+                    case eDir.W:
+                    case eDir.SW:
+                        CurrentParty.Pos = town.EnterPos[1];
+                        break;
+                }
+
+                CurrentParty.MoveToMap(town);
+                _gameState = eState.BEGIN_PC_TURN;
+                break;
+
+            case eState.BEGIN_PARTY_FLEE:
+
+                foreach (var pc in CurrentParty.PCList.Where(pc => pc.LifeStatus == eLifeStatus.FLED))
+                {
+                    pc.LifeStatus = eLifeStatus.ALIVE;
+                }
+
+                CurrentParty.Pos = CurrentParty.OutsidePos;
+                CurrentParty.MoveToMap(WorldMap);
+                //Reset things
+                Mode = eMode.OUTSIDE;
+                _turnBegin = true;
+                Gfx.CentreView(CurrentParty.Pos, true);
+                _gameState = eState.BEGIN_PC_TURN;
+                break;
+
+            case eState.BEGIN_NPC_GROUP_ATTACK:
+                if (!WorldMap.NPCGroupList.Contains(WorldMap.PCAttacker))
+                {
+                    WorldMap.PCAttacker = null; //Attacker chose to flee!
+                    _gameState = eState.END_TURN;
+                }
+                else
+                {
+                    bool cancelled;
+                    if (!WorldMap.PCAttacker.DoMeetingScript(out cancelled))
+                    {
+                        new Animation_FadeDown(300);
+                        _gameState = eState.NPC_GROUP_ATTACK;
+                        break;
+                    }
+
+                    if (cancelled)
+                    {
+                        WorldMap.NPCGroupList.Remove(WorldMap.PCAttacker);
+                        WorldMap.PCAttacker = null;
+                        _gameState = eState.END_TURN;
+                    }
+                }
+
+                break;
+
+            case eState.NPC_GROUP_ATTACK:
+
+                //Change to combat map!
+                InitiateOutdoorCombat(WorldMap.PCAttacker.Record);
+                new Animation_FadeUp(300);
+
+                //Also, delete this outdoor wandering group now.
+                WorldMap.NPCGroupList.Remove(WorldMap.PCAttacker);
+                _gameState = eState.BEGIN_PC_TURN;
+
+                break;
+
+            case eState.COMBAT_END:
+                if (CurrentTown is CombatMap) //We've finished fighting on a combat map, back to world map.
+                {
+                    foreach (var pc in CurrentParty.PCList.Where(pc => pc.LifeStatus == eLifeStatus.FLED))
+                    {
+                        pc.LifeStatus = eLifeStatus.ALIVE;
+                    }
+
+                    _gameState = eState.BEGIN_PC_TURN;
+                    CurrentParty.Pos = CurrentParty.OutsidePos;
+                    CurrentParty.MoveToMap(WorldMap);
+                    Mode = eMode.OUTSIDE;
+
+                }
+                else
+                {
+                    _gameState = eState.BEGIN_NPC_TURN;
+                    Mode = eMode.TOWN;
+                }
+
+                break;
+
+            case eState.DO_CAMPING:
+                CurrentParty.DoRest();
+                new Animation_FadeUp(300);
+                _gameState = eState.BEGIN_PC_TURN;
+                break;
+
+            case eState.PARTY_DEAD:
+                if (CurrentParty.IsSplit) //Unless just the solo PC in split mode is.
+                {
+                    //If the solo PC in a split party dies, the game is not over, the rest of the PCs take over.
+                    PartyDead = false;
+                    CurrentParty.Reunite();
+                    if (Game.Mode == eMode.COMBAT)
+                    {
+                        Game.EndCombat(true);
+                        _gameState = eState.COMBAT_END;
+                    }
+                    else
+                    {
+                        CurrentParty.IncreaseAge();
+                        _gameState = eState.BEGIN_PC_TURN;
+                    }
+                }
+                else
+                {
+                    Sound.Play("013_partydeath");
+                    new Animation_FadeDown(1000);
+                    _gameState = eState.GAME_OVER;
+                }
+
+                break;
+
+            case eState.GAME_OVER:
+                if (PartyDead)
+                {
+                    Gui.GuiWindows.Clear();
+                    new GameOverWindow();
+                }
+                else
+                {
+                    GameOver = false;
+                    foreach (var pc2 in CurrentParty.PCList.Where(pc2 => pc2.LifeStatus == eLifeStatus.ABSENT))
+                    {
+                        pc2.LifeStatus = eLifeStatus.ALIVE;
+                    }
+
+                    CurrentParty.IsSplit = false;
+                    CurrentParty.Restore();
+                    CurrentParty.StripItems(); //Remove items that can't be taken from the scenario.
+                    new LoadGameWindow(false, true, true, DoAfterWin);
+                }
+
+                break;
+            case eState.BEGIN_COMBAT_END:
+            case eState.ENTER_TOWN:
+            case eState.BEGIN_PARTY_DEATH:
+            case eState.PARTY_FLEE:
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        return false;
     }
 
     public static void DoLoadSave(int option, string filename)

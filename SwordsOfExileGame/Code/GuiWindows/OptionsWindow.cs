@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
@@ -65,7 +64,9 @@ internal class OptionsWindow : GuiWindow
             Game.SaveSettings(mode.Width, mode.Height, bFullScreen.Pressed ? 1 : 0);
 
             if (mode.Width != Gfx.WinW || mode.Height != Gfx.WinH || bFullScreen.Pressed != Gfx.FullScreen)
-                new MessageWindow(null, "Resolution and Full Screen settings will be applied the next time the game is restarted.", eDialogPic.NONE, -1, "OK");
+            {
+                Gfx.ChangeScreenSize(mode.Width, mode.Height, bFullScreen.Pressed);
+            }
 
             KillMe = true;
         }

@@ -92,7 +92,9 @@ internal class GuiWindow
         }
     }
 
-    public int Opacity { set => backCol = new Color(255, 255, 255, value);
+    public int Opacity 
+    { 
+        set => backCol = new Color(255, 255, 255, value);
         get => backCol.A;
     }
 

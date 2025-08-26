@@ -365,4 +365,5 @@ FodyWeavers.xsd
 .idea/
 
 SoE Converter GUI/Converter Gui Settings.xml
+Settings.xml
 Saves/*

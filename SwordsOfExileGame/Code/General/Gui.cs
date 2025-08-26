@@ -130,7 +130,6 @@ internal static class Gui
             bringFrontWin = null;
         }
 
-        var interacted = false;
         var mouseoverwindow = false;
 
         if (doMoveWindow()) return;
@@ -140,17 +139,14 @@ internal static class Gui
         foreach (var win in GuiWindows.Reverse<GuiWindow>()) 
         {
             mouseoverwindow |= win.Visible && win.MouseIsInside();
-            interacted = win.Handle();
+            var interacted = win.Handle();
             if (win.KillMe)
             {
                 win.Close();
 
                 //See if there are any modal windows still visible. If not, we can unpause the world. 
-                if (win.Modal)
-                {
-                    if (!GuiWindows.Any(n => (n.Modal && n.Visible)))
-                        WorldModalPaused = false;
-                }
+                if (win.Modal && !GuiWindows.Any(n => (n.Modal && n.Visible)))
+                    WorldModalPaused = false;
             }
             else
             {
@@ -167,89 +163,103 @@ internal static class Gui
 
         if (mouseoverwindow) Gfx.SetCursor(eCursor.SWORD);
 
-        if (!mouseoverwindow && Game.CurrentMap != null && Gfx.FadeMode == 0) //!interacted
+        if (mouseoverwindow || Game.CurrentMap == null || Gfx.FadeMode != 0) return; //!interacted
+        
+        //User hasn't gone near a window, so check the map
+        if (!WorldModalPaused && MMBHit) {
+
+            if (!mouseScrolling) {
+                mouseScrolling = true;
+                mouseScrollX = Ms.X;
+                mouseScrollY = Ms.Y;
+            }
+
+        }
+
+        var mloc = Gfx.GetTileAtMouse(Ms);
+
+        var map = Game.CurrentMap;
+
+        var tt = map.GetToolTipMessage(mloc);
+
+        if (!string.IsNullOrEmpty(tt) && ActiveToolTip == null)
         {
-            //User hasn't gone near a window, so check the map
-            if (!WorldModalPaused && MMBHit) {
+            new ToolTipV2(true, Gfx.GetMapMouseRect(), tt, -1);
+        }
 
-                if (!mouseScrolling) {
-                    mouseScrolling = true;
-                    mouseScrollX = Ms.X;
-                    mouseScrollY = Ms.Y;
-                }
-
-            }
-
-            var mloc = Gfx.GetTileAtMouse(Ms);
-
-            var map = Game.CurrentMap;
-
-            var tt = map.GetToolTipMessage(mloc);
-
-            if (tt != null && tt != "" && ActiveToolTip == null)//GetWindowOfType(typeof(PopUpMenu)) == null)
+        if (Game.PlayerTargeting)
+        {
+            switch (Action.TargetWhat)
             {
-                new ToolTipV2(true, Gfx.GetMapMouseRect(), tt, -1);
+                case eAction.TargetSearch:
+                    Gfx.SetCursor(eCursor.LOOK); break;
+                case eAction.TargetTalk:
+                    Gfx.SetCursor(eCursor.TALK); break;
+                case eAction.TargetUse:
+                    Gfx.SetCursor(eCursor.USE); break;
+                default:
+                    Gfx.SetCursor(eCursor.TARGET); break;
             }
+        }
+        else if (Game.Turn == eTurn.PLAYER && Party.ActivePC != null)
+        {
+            var dir = new Direction(Party.ActivePC.Pos, mloc);
+            Gfx.SetCursor(dir.ToCursor());
+        }   
+        else
+            Gfx.SetCursor(eCursor.SWORD);
+        
+        if (WorldModalPaused) return;
 
+        if (Gfx.PositionIsInWindowResizeArea(Ms.X, Ms.Y))
+            return;
+            
+        if (LMBHitUp)
+        {
             if (Game.PlayerTargeting)
             {
-                switch (Action.TargetWhat)
-                {
-                    case eAction.TargetSearch:
-                        Gfx.SetCursor(eCursor.LOOK); break;
-                    case eAction.TargetTalk:
-                        Gfx.SetCursor(eCursor.TALK); break;
-                    case eAction.TargetUse:
-                        Gfx.SetCursor(eCursor.USE); break;
-                    default:
-                        Gfx.SetCursor(eCursor.TARGET); break;
-                }
+                new Action(eAction.MapClick) { Loc = mloc };
             }
-            else if (Game.Turn == eTurn.PLAYER && Party.ActivePC != null)
+            else if (Party.ActivePC != null)
             {
+                //Clicked on map to move current PC/Party. Need to know which direction to move
                 var dir = new Direction(Party.ActivePC.Pos, mloc);
-                Gfx.SetCursor(dir.ToCursor());
-            }   
-            else
-                Gfx.SetCursor(eCursor.SWORD);
-
-
-            if (!WorldModalPaused)
+                new Action(dir.ToAction());
+            }
+        }
+        else if (RMBHitUp)
+        {
+            if (!Game.PlayerTargeting)
             {
-                if (LMBHitUp)
-                {
-                    if (Game.PlayerTargeting)
-                    {
-                        new Action(eAction.MapClick) { Loc = mloc };
-                    }
-                    else
-                    {
-                        //Clicked on map to move current PC/Party. Need to know which direction to move
-
-                        if (Party.ActivePC != null)
-                        {
-                            var dir = new Direction(Party.ActivePC.Pos, mloc);
-                            new Action(dir.ToAction());
-                        }
-
-                    }
-                }
-                else if (RMBHitUp)
-                {
-                    if (!Game.PlayerTargeting)
-                    {
-                        var options = Game.CurrentMap.GetPopUpMenuOptions(mloc, Party.Pos);
-                        if (options != null)
-                            new PopUpMenu(Game.CurrentMap.HandleMapPopUp, options);
-                    }
-                    else
-                    {
-                        new Action(eAction.Cancel);
-                    }
-                }
+                var options = Game.CurrentMap.GetPopUpMenuOptions(mloc, Party.Pos);
+                if (options != null)
+                    new PopUpMenu(Game.CurrentMap.HandleMapPopUp, options);
+            }
+            else
+            {
+                new Action(eAction.Cancel);
             }
         }
 
+    }
+
+    public static void PositionForWindowResize()
+    {
+        if (!Game.Instance.IsActive) return;
+
+        foreach (var guiWindow in GuiWindows)
+        {
+            if (guiWindow.Modal)
+            {
+                guiWindow.Position(-2,-2);
+            } else if (guiWindow is InfoListWindow)
+            {
+                guiWindow.Position(0, -1);
+            } else if (guiWindow is MenuBarWindow)
+            {
+                guiWindow.Position(-2, -1);
+            }
+        }
     }
 
     private static bool doMoveWindow()
