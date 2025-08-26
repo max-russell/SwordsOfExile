@@ -797,10 +797,10 @@ public partial class Game
         CurrentParty = null;
         Scenario.Filename = "";
         CurrentMap = null;
-        TownMap.List = null;
+        TownMap.List.Clear();
         WorldMap = null;
         RecentTownList = null;
-        _portraitWindows = null;// = new List<PortraitWindow>();
+        _portraitWindows.Clear();
         InventoryWindow.Close();
         _inventoryWindow = null;
         StatsWindow.Close();
