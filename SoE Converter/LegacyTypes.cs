@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace SoE_Converter
 {
@@ -25,8 +21,10 @@ namespace SoE_Converter
         public sbyte x, y;
     };
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct shortloc { short x, y; };
-    struct sd { public int X, Y; };
+    internal struct shortloc {
+        private short x, y; };
+
+    internal struct sd { public int X, Y; };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct special_node_type //22
@@ -35,7 +33,7 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct talking_node_type
+    internal struct talking_node_type
     {
         public short personality, type;                               //4
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -47,7 +45,7 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct talking_record_type
+    internal struct talking_record_type
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 200)]
         public byte[] strlens;// = new byte[200];
@@ -66,14 +64,14 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct wandering_type
+    internal struct wandering_type
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public byte[] monst;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct out_wandering_type //SIZE: 22
+    internal struct out_wandering_type //SIZE: 22
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
         public byte[] monst;
@@ -84,7 +82,7 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct outdoor_record_type
+    internal struct outdoor_record_type
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48*48)]
         public byte[] terrain;// = new byte[48, 48]; 
@@ -115,7 +113,7 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct creature_start_type
+    internal struct creature_start_type
     {
         public byte number;
         public byte start_attitude;
@@ -156,7 +154,7 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct preset_item_type
+    internal struct preset_item_type
     {
         public location item_loc;    //2
         public short item_code, ability;   //4
@@ -164,14 +162,14 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct preset_field_type
+    internal struct preset_field_type
     {
         public location field_loc;
         public short field_type;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct town_record_type
+    internal struct town_record_type
     {
         public short town_chop_time, town_chop_key;                                //4
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -213,7 +211,7 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct big_tr_type
+    internal struct big_tr_type
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64*64)]
         public byte[] terrain;// = new byte[64, 64];
@@ -228,7 +226,7 @@ namespace SoE_Converter
     } 
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct ave_tr_type
+    internal struct ave_tr_type
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48*48)]
         public byte[] terrain;// = new byte[48, 48];
@@ -244,7 +242,7 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct tiny_tr_type
+    internal struct tiny_tr_type
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32*32)]
         public byte[] terrain;// = new byte[32, 32];
@@ -259,7 +257,7 @@ namespace SoE_Converter
     } 
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct scen_item_data_type
+    internal struct scen_item_data_type
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 400)]
         public item_record_type[] scen_items;// = new item_record_type[400];        //400 * 66 = 26400
@@ -274,12 +272,13 @@ namespace SoE_Converter
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct item_storage_shortcut_type //SIZE 44
     {
-        short ter_type;
+        private short ter_type;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        short[] item_num;// = new short[10];
+        private short[] item_num;// = new short[10];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        short[] item_odds;// = new short[10];
-        short property;
+        private short[] item_odds;// = new short[10];
+
+        private short property;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -304,17 +303,17 @@ namespace SoE_Converter
 
     /* CREATURE_DATA_TYPE */
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct creature_data_type
+    internal struct creature_data_type
     {
         /* variables */
         //public:
-        short active, attitude;
-        byte number;
-        location m_loc;
-        monster_record_type m_d;
-        byte mobile; //boolean
-        short summoned;
-        creature_start_type monst_start;
+        private short active, attitude;
+        private byte number;
+        private location m_loc;
+        private monster_record_type m_d;
+        private byte mobile; //boolean
+        private short summoned;
+        private creature_start_type monst_start;
 
         /* functions */
         //private:
@@ -341,16 +340,18 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct scen_header_type //SIZE:17
+    internal struct scen_header_type //SIZE:17
     {
         public byte flag1, flag2, flag3, flag4;   //4
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        byte[] ver;// = new byte[3];   //3
-        byte min_run_ver;              //1     
+        private byte[] ver;// = new byte[3];   //3
+
+        private byte min_run_ver;              //1     
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        byte[] prog_make_ver;// = new byte[3];   //3
-        byte num_towns;                          //1
-        byte out_width, out_height, difficulty, intro_pic, default_ground;   //5
+        private byte[] prog_make_ver;// = new byte[3];   //3
+
+        private byte num_towns;                          //1
+        private byte out_width, out_height, difficulty, intro_pic, default_ground;   //5
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -434,33 +435,35 @@ namespace SoE_Converter
 
     // for game
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct talk_save_type
+    internal struct talk_save_type
     {
-        short personality;
-        short town_num;
-        short str1, str2;
+        private short personality;
+        private short town_num;
+        private short str1, str2;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct creature_list_type
+    internal struct creature_list_type
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
-        creature_data_type[] dudes;// = new creature_data_type[60];
-        short which_town;
-        short friendly;
+        private creature_data_type[] dudes;// = new creature_data_type[60];
+
+        private short which_town;
+        private short friendly;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct current_town_type
+    internal struct current_town_type
     {
-        short town_num, difficulty;
-        town_record_type town;
+        private short town_num, difficulty;
+        private town_record_type town;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64*64)]
-        sbyte[,] explored;// = new sbyte[64, 64];
-        byte hostile; //Boolean
-        creature_list_type monst;
-        byte in_boat; //Boolean
-        location p_loc;
+        private sbyte[,] explored;// = new sbyte[64, 64];
+
+        private byte hostile; //Boolean
+        private creature_list_type monst;
+        private byte in_boat; //Boolean
+        private location p_loc;
 
         /* functions */
         //short placeMonster(byte which, location where);
@@ -469,136 +472,146 @@ namespace SoE_Converter
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct outdoor_creature_type
+    internal struct outdoor_creature_type
     {
-        byte exists; //Boolean
-        short direction;
-        out_wandering_type what_monst;
-        location which_sector, m_loc;
+        private byte exists; //Boolean
+        private short direction;
+        private out_wandering_type what_monst;
+        private location which_sector, m_loc;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct party_record_type
+    internal struct party_record_type
     {
-        int age;
-        short gold, food;
+        private int age;
+        private short gold, food;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 310*10)]
-        byte[,] stuff_done;// = new byte[310, 10];
+        private byte[,] stuff_done;// = new byte[310, 10];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 200*8)]
-        byte[,] item_taken;// = new byte[200, 8];
-        short light_level;
-        location outdoor_corner, i_w_c, p_loc, loc_in_sec;
+        private byte[,] item_taken;// = new byte[200, 8];
+
+        private short light_level;
+        private location outdoor_corner, i_w_c, p_loc, loc_in_sec;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-        boat_record_type[] boats;// = new boat_record_type[30];
+        private boat_record_type[] boats;// = new boat_record_type[30];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-        boat_record_type[] horses;// = new horse_record_type[30];
+        private boat_record_type[] horses;// = new horse_record_type[30];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        creature_list_type[] creature_save;// = new creature_list_type[4];
-        short in_boat, in_horse;
+        private creature_list_type[] creature_save;// = new creature_list_type[4];
+
+        private short in_boat, in_horse;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        outdoor_creature_type[] out_c;// = new outdoor_creature_type[10];
+        private outdoor_creature_type[] out_c;// = new outdoor_creature_type[10];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5*10)]
-        item_record_type[,] magic_store_items;// = new item_record_type[5, 10];
+        private item_record_type[,] magic_store_items;// = new item_record_type[5, 10];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        short[] imprisoned_monst;// = new short[4];
+        private short[] imprisoned_monst;// = new short[4];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        sbyte[] m_seen;// = new sbyte[256];
+        private sbyte[] m_seen;// = new sbyte[256];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
-        byte[] journal_str;// = new char[50];
+        private byte[] journal_str;// = new char[50];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
-        short[] journal_day;// = new short[50];
+        private short[] journal_day;// = new short[50];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 140*2)]
-        short[,] special_notes_str;// = new short[140, 2];
+        private short[,] special_notes_str;// = new short[140, 2];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 120)]
-        talk_save_type[] talk_save;// = new talk_save_type[120];
-        short direction, at_which_save_slot;
+        private talk_save_type[] talk_save;// = new talk_save_type[120];
+
+        private short direction, at_which_save_slot;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        sbyte[] alchemy;// = new char[20];
+        private sbyte[] alchemy;// = new char[20];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 200)]
-        byte[] can_find_town;// = new Boolean[200];
+        private byte[] can_find_town;// = new Boolean[200];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
-        short[] key_times;// = new short[100];
+        private short[] key_times;// = new short[100];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-        short[] party_event_timers;// = new short[30];
+        private short[] party_event_timers;// = new short[30];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-        short[] global_or_town;// = new short[30];
+        private short[] global_or_town;// = new short[30];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-        short[] node_to_call;// = new short[30];
+        private short[] node_to_call;// = new short[30];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
-        sbyte[] spec_items;// = new char[50];
+        private sbyte[] spec_items;// = new char[50];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 120)]
-        sbyte[] help_received;// = new char[120];
+        private sbyte[] help_received;// = new char[120];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 200)]
-        short[] m_killed;// = new short[200];
-        int total_m_killed, total_dam_done, total_xp_gained, total_dam_taken;
+        private short[] m_killed;// = new short[200];
+
+        private int total_m_killed, total_dam_done, total_xp_gained, total_dam_taken;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        byte[] scen_name;// = new char[256];
+        private byte[] scen_name;// = new char[256];
 
         /* functions */
         //bool isFlying() { return stuff_done[305, 1] != 0; }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct stored_town_maps_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100*8*64)]byte[, ,] town_maps;}// = new char[100, 8, 64]; }
+    internal struct stored_town_maps_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100*8*64)]
+        private byte[, ,] town_maps;}// = new char[100, 8, 64]; }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct piles_of_stuff_dumping_type { public string[] town_strs;}//[MarshalAs(UnmanagedType.ByValArray, SizeConst = 180 * 256)] byte[,] town_strs;}// = new char[180, 256]; }
+    internal struct piles_of_stuff_dumping_type { public string[] town_strs;}//[MarshalAs(UnmanagedType.ByValArray, SizeConst = 180 * 256)] byte[,] town_strs;}// = new char[180, 256]; }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct piles_of_stuff_dumping_type2
+    internal struct piles_of_stuff_dumping_type2
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 25*3*80)]
-        byte[, ,] scen_header_strs;// = new char[25, 3, 80];
+        private byte[, ,] scen_header_strs;// = new char[25, 3, 80];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 25*256)]
-        byte[,] scen_names;// = new char[25, 256];
-        scen_item_data_type scen_item_list;
+        private byte[,] scen_names;// = new char[25, 256];
+
+        private scen_item_data_type scen_item_list;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct piles_of_stuff_dumping_type3 { public string[] talk_strs;}// [MarshalAs(UnmanagedType.ByValArray, SizeConst = 170 * 256)] byte[,] talk_strs;}// = new char[170, 256]; }
+    internal struct piles_of_stuff_dumping_type3 { public string[] talk_strs;}// [MarshalAs(UnmanagedType.ByValArray, SizeConst = 170 * 256)] byte[,] talk_strs;}// = new char[170, 256]; }
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct outdoor_strs_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9*256)]byte[,] out_strs;}// = new char[9, 256]; }
+    internal struct outdoor_strs_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9*256)]
+        private byte[,] out_strs;}// = new char[9, 256]; }
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct piles_of_stuff_dumping_type4 { public string[] outdoor_text;}//[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2*2)]outdoor_strs_type[,] outdoor_text;}// = new outdoor_strs_type[2, 2]; }
+    internal struct piles_of_stuff_dumping_type4 { public string[] outdoor_text;}//[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2*2)]outdoor_strs_type[,] outdoor_text;}// = new outdoor_strs_type[2, 2]; }
     //[StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct piles_of_stuff_dumping_type5 { public string[] scen_strs;}//[MarshalAs(UnmanagedType.ByValArray, SizeConst = 160*256)]byte[,] scen_strs;}// = new char[160, 256]; }
+    internal struct piles_of_stuff_dumping_type5 { public string[] scen_strs;}//[MarshalAs(UnmanagedType.ByValArray, SizeConst = 160*256)]byte[,] scen_strs;}// = new char[160, 256]; }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct pc_record_type
+    internal struct pc_record_type
     {
-        short main_status;
+        private short main_status;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        byte[] name;// = new char[20];
+        private byte[] name;// = new char[20];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-        short[] skills;// = new short[30];
-        short max_health, cur_health, max_sp, cur_sp, experience, skill_pts, level;
+        private short[] skills;// = new short[30];
+
+        private short max_health, cur_health, max_sp, cur_sp, experience, skill_pts, level;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-        short[] status;// = new short[15];
+        private short[] status;// = new short[15];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-        item_record_type[] items;// = new item_record_type[24];
+        private item_record_type[] items;// = new item_record_type[24];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-        byte[] equip;// = new Boolean[24];
+        private byte[] equip;// = new Boolean[24];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 62)]
-        byte[] priest_spells;// = new Boolean[62];
+        private byte[] priest_spells;// = new Boolean[62];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 62)]
-        byte[] mage_spells;// = new Boolean[62];
-        short which_graphic, weap_poisoned;
+        private byte[] mage_spells;// = new Boolean[62];
+
+        private short which_graphic, weap_poisoned;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-        byte[] advan;// = new Boolean[15];
+        private byte[] advan;// = new Boolean[15];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-        byte[] traits;// = new Boolean[15];
-        short race, exp_adj, direction;
+        private byte[] traits;// = new Boolean[15];
+
+        private short race, exp_adj, direction;
 
         /* functions */
         //bool isAlive() { return (main_status == CN.MAIN_STATUS_ALIVE); }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    class pc_array
+    internal class pc_array
     {
         //private:
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        pc_record_type[] pc;// = new pc_record_type[6];
+        private pc_record_type[] pc;// = new pc_record_type[6];
 
         //public:
         //    pc_record_type & operator[](int num) { return pc[num]; }
@@ -618,18 +631,23 @@ namespace SoE_Converter
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct setup_save_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4*64*64)]byte[, ,] setup;}// = new byte[4, 64, 64]; }
+    internal struct setup_save_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4*64*64)]
+        private byte[, ,] setup;}// = new byte[4, 64, 64]; }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct town_item_list { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 115)]item_record_type[] items;}// = new item_record_type[CN.NUM_TOWN_ITEMS]; }
+    internal struct town_item_list { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 115)]
+        private item_record_type[] items;}// = new item_record_type[CN.NUM_TOWN_ITEMS]; }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct flag_type { short i; }
+    internal struct flag_type {
+        private short i; }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct effect_pat_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 115)]item_record_type[] items;}// = new item_record_type[CN.NUM_TOWN_ITEMS]; } //stored_items_list_type;
+    internal struct effect_pat_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 115)]
+        private item_record_type[] items;}// = new item_record_type[CN.NUM_TOWN_ITEMS]; } //stored_items_list_type;
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct stored_outdoor_maps_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100*6*48)]byte[, ,] outdoor_maps;}// = new char[100, 6, 48]; }  
+    internal struct stored_outdoor_maps_type { [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100*6*48)]
+        private byte[, ,] outdoor_maps;}// = new char[100, 6, 48]; }  
 
 }

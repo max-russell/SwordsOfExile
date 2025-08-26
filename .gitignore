@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+.idea/
+
+SoE Converter GUI/Converter Gui Settings.xml
+Settings.xml
+Saves/*

@@ -19,7 +19,7 @@ def SouthernVale_410_MapTrigger_45_40(p):
         if result == 1:
             MessageBox("You decide that it\'s best to play it safe and charge to attack. The drake was peaceful at first, but there\'s no way it\'s going to ignore this affront.")
             StuffDone["204_0"] = 1
-            WorldMap.SpawnNPCGroup("Group_1_1_4", p.Target)
+            WorldMap.SpawnEncounter("Group_1_1_4", p.Target)
             return
             return
         elif result == 2:
@@ -39,7 +39,7 @@ def SouthernVale_410_MapTrigger_45_40(p):
     if result == 1:
         MessageBox("You decide that it\'s best to play it safe and charge to attack. The drake was peaceful at first, but there\'s no way it\'s going to ignore this affront.")
         StuffDone["204_0"] = 1
-        WorldMap.SpawnNPCGroup("Group_1_1_4", p.Target)
+        WorldMap.SpawnEncounter("Group_1_1_4", p.Target)
         return
         return
     elif result == 2:

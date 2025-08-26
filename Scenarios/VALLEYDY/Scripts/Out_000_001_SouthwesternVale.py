@@ -10,7 +10,7 @@ def SouthwesternVale_400_MapTrigger_42_41(p):
     WorldMap.DeactivateTrigger(Location(42,88))
     WorldMap.DeactivateTrigger(Location(42,87))
     MessageBox("Oh dear. Now that the curse has decimated the Vale\'s animal population, the creatures higher up on the food chain seem to have decided to hunt other prey.\n\nYou encounter a group of bears. Hunger has made them desperate, and desperation has made them hunt something they normally wouldn\'t: you.")
-    WorldMap.SpawnNPCGroup("Group_0_1_4", p.Target)
+    WorldMap.SpawnEncounter("Group_0_1_4", p.Target)
 
 def SouthwesternVale_403_MapTrigger_29_36(p):
     if StuffDone["203_1"] == 250:
@@ -43,7 +43,7 @@ def SouthwesternVale_407_MapTrigger_6_7(p):
     StuffDone["203_4"] = 250
     WorldMap.DeactivateTrigger(Location(6,55))
     MessageBox("You were trying to advance up the valley carefully, in order to not give advance warning to any evil creatures residing here. It didn\'t work. Your scent was detected by hosts of reptilian heads.\n\nYou run, but not fast enough. The hydras are almost immediately upon you.")
-    WorldMap.SpawnNPCGroup("Group_0_1_5", p.Target)
+    WorldMap.SpawnEncounter("Group_0_1_5", p.Target)
 
 def SouthwesternVale_408_SpecialOnWin0(p):
     ChoiceBox("The monsters are dead. And, of course, where there are monsters, there is loot as well. It doesn\'t take long to find the bear\'s lair. You search inside.\n\nIt\'s pretty disturbing ... there\'s no shortage of dead travelers and broken weapons. The only thing you find worth saving is an old, rusty breastplate. You take it with you - it might be worth something.", eDialogPic.CREATURE2x1, 0, ["OK"])

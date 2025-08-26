@@ -31,7 +31,7 @@ def NortheasternVale_391_MapTrigger_29_4(p):
         WorldMap.AlterTerrain(Location(125,4), 1, None)
         WorldMap.DeactivateTrigger(Location(125,4))
         MessageBox("You pull the crypt open and hear a thin, hideous moaning coming from inside. You try to push the stone back into place, but you aren\'t fast enough. Undead creatures come shambling out ...")
-        WorldMap.SpawnNPCGroup("Group_2_0_4", p.Target)
+        WorldMap.SpawnEncounter("Group_2_0_4", p.Target)
         return
 
 def NortheasternVale_392_MapTrigger_25_7(p):
@@ -45,7 +45,7 @@ def NortheasternVale_392_MapTrigger_25_7(p):
         WorldMap.AlterTerrain(Location(121,7), 1, None)
         WorldMap.DeactivateTrigger(Location(121,7))
         MessageBox("You pull the crypt open and hear a thin, hideous moaning coming from inside. You try to push the stone back into place, but you aren\'t fast enough. Undead creatures come shambling out ...")
-        WorldMap.SpawnNPCGroup("Group_2_0_4", p.Target)
+        WorldMap.SpawnEncounter("Group_2_0_4", p.Target)
         return
 
 def NortheasternVale_393_MapTrigger_29_10(p):
@@ -59,7 +59,7 @@ def NortheasternVale_393_MapTrigger_29_10(p):
         WorldMap.AlterTerrain(Location(125,10), 1, None)
         WorldMap.DeactivateTrigger(Location(125,10))
         MessageBox("You pull the crypt open and hear a thin, hideous moaning coming from inside. You try to push the stone back into place, but you aren\'t fast enough. Undead creatures come shambling out ...")
-        WorldMap.SpawnNPCGroup("Group_2_0_4", p.Target)
+        WorldMap.SpawnEncounter("Group_2_0_4", p.Target)
         return
 
 def NortheasternVale_394_MapTrigger_40_37(p):

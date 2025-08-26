@@ -2,22 +2,20 @@
 using Microsoft.Xna.Framework.Graphics;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
 
-namespace SwordsOfExileGame
+namespace SwordsOfExileGame;
+
+internal class FrameBox : Control
 {
-    class FrameBox : Control
+    private Color colour;
+
+    public FrameBox(GuiWindow p, XnaRect r, Color fill, int tno)
+        : base(p, r.X, r.Y, r.Width, r.Height, tno)
     {
-        Color colour;
-
-        public FrameBox(GuiWindow p, XnaRect r, Color fill, int tno)
-            : base(p, r.X, r.Y, r.Width, r.Height, tno)
-        {
-            colour = fill;
-        }
-        public override void Draw(SpriteBatch sb, int xOffset, int yOffset)
-        {
-            if (!Visible) return;
-            Gfx.DrawFrame(X + xOffset, Y + yOffset, Width, Height, colour);
-        }
+        colour = fill;
     }
-
+    public override void Draw(SpriteBatch sb, int xOffset, int yOffset)
+    {
+        if (!Visible) return;
+        Gfx.DrawFrame(X + xOffset, Y + yOffset, Width, Height, colour);
+    }
 }

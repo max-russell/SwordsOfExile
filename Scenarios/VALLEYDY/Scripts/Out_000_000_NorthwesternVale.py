@@ -25,7 +25,7 @@ def NorthwesternVale_373_MapTrigger_7_4(p):
             WorldMap.DeactivateTrigger(Location(7,4))
             Party.GiveNewItem("RubyCharm_321")
             MessageBox("When you pick up the gold necklace, you hear a loud, shrill keening. At first, you think that some sort of foul demon has been summoned. No such luck.\n\nIt was a crude alarm system. You run to the entrance to the temple and see a bunch of shrieking, evil monsters running up to punish you for your theft.")
-            WorldMap.SpawnNPCGroup("Group_0_0_5", p.Target)
+            WorldMap.SpawnEncounter("Group_0_0_5", p.Target)
             return
         return
         return
@@ -44,7 +44,7 @@ def NorthwesternVale_375_MapTrigger_20_15(p):
     StuffDone["200_2"] = 250
     WorldMap.DeactivateTrigger(Location(20,15))
     MessageBox("You reach the entrance to a smaller, more remote valley. You detect the smells of cooking fires and hear rhythmic grunting echoing in the distance. Goblins. It can only be goblins.\n\nAs if to punctuate this realization, a band of goblins comes up from behind you, on the way back from an unsuccessful hunting trip. Unsuccessful, until now ...")
-    WorldMap.SpawnNPCGroup("Group_0_0_4", p.Target)
+    WorldMap.SpawnEncounter("Group_0_0_4", p.Target)
 
 def NorthwesternVale_376_MapTrigger_7_44(p):
     MessageBox("The valley ends at a small, highly active hot spring.")

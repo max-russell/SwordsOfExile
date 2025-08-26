@@ -41,7 +41,7 @@ def NearSweetgrove_418_MapTrigger_45_33(p):
     result = ChoiceBox("You see cooking fires at the head of the valley, and approach cautiously. A quick scout ahead confirms your suspicions. A band of bandits are camped up here, counting up loot stolen from the beleaguered people of Skylark Vale.\n\nOf course, you could always attack and teach them a good lesson. They look tough, but you would have the advantage of surprise. And, of course, you would be on the side of goodness, which always helps.", eDialogPic.CREATURE, 18, ["Leave", "Attack"])
     if result == 1:
         MessageBox("You\'re in luck! You charge the bandits, and they draw their weapons and attack you! You will be able to fight a glorious battle for the forces of goodness after all.")
-        WorldMap.SpawnNPCGroup("Group_2_1_4", p.Target)
+        WorldMap.SpawnEncounter("Group_2_1_4", p.Target)
         StuffDone["205_2"] = 250
         WorldMap.AlterTerrain(Location(141,81), 1, None)
         WorldMap.DeactivateTrigger(Location(141,81))

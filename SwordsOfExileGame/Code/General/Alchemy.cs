@@ -2,61 +2,55 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace SwordsOfExileGame
+namespace SwordsOfExileGame;
+
+public class Recipe : IListEntity
 {
-    public class Recipe : IListEntity
+    public static readonly ExileList<Recipe> List = new();
+
+    private static readonly Dictionary<string, string> IngredientKeys = new();
+
+    public static string GetIngredientName(string key)
     {
-        public static ExileList<Recipe> List = new ExileList<Recipe>();
+        return IngredientKeys.TryGetValue(key, out var name) ? name : "Unknown";
+    }
 
-        public static Dictionary<string, string> IngredientKeys = new Dictionary<string, string>();
+    public string ID { get; set; } = string.Empty;
 
-        public static string GetIngredientName(string key)
+    public string Name, Description;
+    public int Skill;
+    public int Price;
+    public Item Creates;
+    public int Amount;
+    public readonly List<Tuple<string, int>> Ingredients = new();
+
+    public static void LoadIngredients(BinaryReader @in)
+    {
+        IngredientKeys.Clear();
+        int num = @in.ReadInt16();
+
+        for (var n = 0; n < num; n++)
+            IngredientKeys.Add(@in.ReadString(), @in.ReadString());
+    }
+    
+    public void Load(BinaryReader @in)
+    {
+        ID = @in.ReadString();
+        @in.ReadString(); //Folder: disregard
+        Name = @in.ReadString();
+        Description = @in.ReadString();
+        Skill = @in.ReadInt32();
+        Price = @in.ReadInt32();
+        var s = @in.ReadString();
+        if (Item.List.Contains(s)) Creates = Item.List[s];
+        Amount = @in.ReadInt32();
+
+        int num = @in.ReadInt16();
+        for (var n = 0; n < num; n++)
         {
-            string name;
-            if (IngredientKeys.TryGetValue(key, out name))
-                return name;
-            else
-                return "Unknown";
+            s = @in.ReadString();
+            Ingredients.Add(new Tuple<string, int>(s, @in.ReadInt32()));
         }
-
-        public string ID { get { return id; } set { id = value; } }
-        string id = "";
-        public string Name, Description;
-        public int Skill;
-        public int Price;
-        public Item Creates;
-        public int Amount;
-        public List<Tuple<string, int>> Ingredients = new List<Tuple<string, int>>();
-
-        public static void LoadIngredients(BinaryReader In)
-        {
-            IngredientKeys.Clear();
-            int num = In.ReadInt16();
-
-            for (int n = 0; n < num; n++)
-                IngredientKeys.Add(In.ReadString(), In.ReadString());
-        }
-
-        public Recipe() { }
-        public void Load(BinaryReader In)
-        {
-            id = In.ReadString();
-            In.ReadString(); //Folder: disregard
-            Name = In.ReadString();
-            Description = In.ReadString();
-            Skill = In.ReadInt32();
-            Price = In.ReadInt32();
-            string s = In.ReadString();
-            if (Item.List.Contains(s)) Creates = Item.List[s];
-            Amount = In.ReadInt32();
-
-            int num = In.ReadInt16();
-            for (int n = 0; n < num; n++)
-            {
-                s = In.ReadString();
-                Ingredients.Add(new Tuple<string, int>(s, In.ReadInt32()));
-            }
-            List.Add(this);
-        }
+        List.Add(this);
     }
 }
