@@ -13,22 +13,23 @@ namespace SwordsOfExileGame;
 public partial class Game 
 {
     public static Game Instance;
+    
     public static void FlagError(string type, string msg, string location=null)
     {
-        if (!ErrorFlagged)
-        {
-            ErrorFlagged = true;
-            errorType = type;
-            errorMessage = msg + (location == null ? "" : ("\n@bLocation:@e " + location));
-        }
+        if (ErrorFlagged) return;
+        
+        ErrorFlagged = true;
+        errorType = type;
+        errorMessage = msg + (location == null ? "" : ("\n@bLocation:@e " + location));
     }
-    public static bool ErrorFlagged = false;
+    
+    public static bool ErrorFlagged;
     private static string errorType, errorMessage;
     public static bool Quit = false;
 
     //Loading status flags.
-    private static bool loadingComplete = false, loadingStartNew = false;
-    public static bool Loading = false;
+    private static bool loadingComplete, loadingStartNew;
+    public static bool Loading;
 
     public static string RootDirectory; //The root directory for the game
     public static string BaseDirectory, ScenarioDirectory, SavesDirectory; //The directory for the 'Base' data.
@@ -36,7 +37,7 @@ public partial class Game
     public static bool InMainMenu = true;
         
     //Should be set to the designated placeholder entries in the enum. Eg, Set to INVENTORY_LOCKED_ACTIONS, when a Loot Window or Shop window is open, to stop any actions except inventory ones
-    public static bool PartyDead = false, GameOver = false;
+    public static bool PartyDead, GameOver;
 
     public static PartyType CurrentParty;
     public static IMap CurrentMap;
@@ -77,7 +78,7 @@ public partial class Game
     public static int AnimTicks = 0;
     private const int TICK_SPEED = 250;
     private static int _nextTick = 0;
-    public static eTurn Turn { get { if (_gameState is eState.BEGIN_PC_TURN or eState.PICK_NEXT_PC or eState.PC_TURN_PROCESS_ACTION or eState.TARGET_MODE) return eTurn.PLAYER; else return eTurn.NPCS; } }//= eTurn.PLAYER;
+    public static eTurn Turn => _gameState is eState.BEGIN_PC_TURN or eState.PICK_NEXT_PC or eState.PC_TURN_PROCESS_ACTION or eState.TARGET_MODE ? eTurn.PLAYER : eTurn.NPCS; 
     private static bool _turnBegin;
 
     public static bool PlayerTargeting => _gameState == eState.TARGET_MODE;
@@ -106,8 +107,9 @@ public partial class Game
 
     protected override void Initialize()
     {
-        for (var n = 0; n < 30; n++)
+        for (var n = 0; n < KeyHandler.KeyMap.Length; n++)
             KeyHandler.KeyMap[n] = KeyHandler.Default1KeyMap[n];
+        
         LoadSettings();
         base.Initialize();
     }
@@ -157,7 +159,7 @@ public partial class Game
         //If the game is loading (in a separately running thread) don't do anything else until it finishes.
         if (Loading)
         {
-            if (loadingComplete /* && !DrawCalled*/) BeginGame();
+            if (loadingComplete) BeginGame();
             else if (InMainMenu) StartupMap.Update(gameTime);
             return;
         }
@@ -301,7 +303,7 @@ public partial class Game
                 }
                 else if (GameOver)
                 {
-                    new Animation_FadeDown(1000);
+                    Animation.Create(new Animation_FadeDown(1000));
                     _gameState = eState.GAME_OVER;
                 }
                 //Check: PCs leave town.
@@ -316,7 +318,7 @@ public partial class Game
                 {
                     var t = WorldMap.TownEntranceHere(CurrentParty.Pos).DestTown;
                     Sound.Play(t.LightType > 0 ? "095_enterdungeon" : "016_townentry");
-                    new Animation_FadeDown(300);
+                    Animation.Create(new Animation_FadeDown(300));
                     _gameState = eState.BEGIN_ENTER_TOWN;
                 }
                 //Check: Outside NPCs want to attack
@@ -330,7 +332,7 @@ public partial class Game
                 else if (Mode == eMode.COMBAT && CurrentTown is CombatMap && CurrentParty.PartyFled())
                 {
                     //The entire party has run away from combat. Put back on world map.
-                    new Animation_FadeDown(300);
+                    Animation.Create(new Animation_FadeDown(300));
                     Script.New_NPCGroup(((CombatMap)CurrentMap).NPCGroup.FuncOnFlee,
                         eCallOrigin.FLEE_ENCOUNTER,
                         ((CombatMap)CurrentMap).NPCGroup);
@@ -361,7 +363,7 @@ public partial class Game
                 break;
 
             case eState.BEGIN_LEAVE_MAP:
-                new Animation_FadeDown(300);
+                Animation.Create(new Animation_FadeDown(300));
                 _gameState = eState.LEAVE_MAP;
                 break;
 
@@ -428,7 +430,7 @@ public partial class Game
                     bool cancelled;
                     if (!WorldMap.PCAttacker.DoMeetingScript(out cancelled))
                     {
-                        new Animation_FadeDown(300);
+                        Animation.Create(new Animation_FadeDown(300));
                         _gameState = eState.NPC_GROUP_ATTACK;
                         break;
                     }
@@ -447,7 +449,7 @@ public partial class Game
 
                 //Change to combat map!
                 InitiateOutdoorCombat(WorldMap.PCAttacker.Record);
-                new Animation_FadeUp(300);
+                Animation.Create(new Animation_FadeUp(300));
 
                 //Also, delete this outdoor wandering group now.
                 WorldMap.NPCGroupList.Remove(WorldMap.PCAttacker);
@@ -479,7 +481,7 @@ public partial class Game
 
             case eState.DO_CAMPING:
                 CurrentParty.DoRest();
-                new Animation_FadeUp(300);
+                Animation.Create(new Animation_FadeUp(300));
                 _gameState = eState.BEGIN_PC_TURN;
                 break;
 
@@ -503,7 +505,7 @@ public partial class Game
                 else
                 {
                     Sound.Play("013_partydeath");
-                    new Animation_FadeDown(1000);
+                    Animation.Create(new Animation_FadeDown(1000));
                     _gameState = eState.GAME_OVER;
                 }
 
@@ -646,7 +648,7 @@ public partial class Game
         _turnBegin = true;
         _gameState = eState.BEGIN_PC_TURN;
         Animation.CancelAll();
-        new Animation_FadeUp(1000);
+        Animation.Create(new Animation_FadeUp(1000));
     }
 
     private static void SetUpGameWindows()
@@ -712,7 +714,7 @@ public partial class Game
             }
 
             Script.New_NPCGroup(((CombatMap)CurrentTown).NPCGroup.FuncOnWin, eCallOrigin.WIN_ENCOUNTER, ((CombatMap)CurrentTown).NPCGroup);
-            new Animation_FadeDown(300);
+            Animation.Create(new Animation_FadeDown(300));
         }
         CurrentParty.EndCombat();
         //Don't just change the mode here, we need to delay until after the end combat animation has finished, or all the

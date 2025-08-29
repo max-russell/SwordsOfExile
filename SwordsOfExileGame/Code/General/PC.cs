@@ -1125,8 +1125,8 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
             return;
         }
 
-        new Animation_MoveFail(this, Pos, loc);
-        new Animation_Hold();
+        Animation.Create(new Animation_MoveFail(this, Pos, loc));
+        Animation.Create(new Animation_Hold());
 
         if (Maths.Rand(1, 0, 99) < chance)
         {
@@ -1138,7 +1138,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         else
         {
             Game.AddMessage("  Didn't work.                ");
-            if (Damage(null, Maths.Rand(1, 1, 4), 0, eDamageType.UNBLOCKABLE)) new Animation_Hold();
+            if (Damage(null, Maths.Rand(1, 1, 4), 0, eDamageType.UNBLOCKABLE)) Animation.Create(new Animation_Hold());
             return;
         }
     }
@@ -1393,8 +1393,8 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
     public bool ForceMove(Location newpos, Direction newdir)
     {
         var map = Game.CurrentMap;
-        if (Party.Vehicle != null) new Animation_VehicleMove(Party.Vehicle, pos, newpos, false);
-        else new Animation_Move(this, pos, newpos, false, false);
+        if (Party.Vehicle != null) Animation.Create(new Animation_VehicleMove(Party.Vehicle, pos, newpos, false));
+        else Animation.Create(new Animation_Move(this, pos, newpos, false, false));
         pos = newpos;
         direction.Dir = newdir.Dir;
         Gfx.CentreView(Pos, false);
@@ -1431,7 +1431,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
             if (map.TerrainAt(newpos).BoatOver || (Game.Mode == eMode.OUTSIDE && Game.WorldMap.TownEntranceHere(newpos)!=null))
             {
                 //Boat move here.
-                new Animation_VehicleMove(Party.Vehicle, pos, newpos, true);
+                Animation.Create(new Animation_VehicleMove(Party.Vehicle, pos, newpos, true));
                 pos = newpos;
                 direction.Dir = newdir.Dir;
                 AP -= 1;
@@ -1503,7 +1503,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                         AP = 0;
                         LifeStatus = eLifeStatus.FLED;
                         Game.AddMessage("Fled combat!");
-                        new Animation_Move(this, pos, newpos, true); //Moves and fades away as it goes.
+                        Animation.Create(new Animation_Move(this, pos, newpos, true)); //Moves and fades away as it goes.
                         pos = newpos;
                         direction.Dir = newdir.Dir;
                     }
@@ -1511,22 +1511,22 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                     {
                         AP -= 1;
                         Game.AddMessage("Couldn't flee!");
-                        new Animation_MoveFail(this, pos, newpos);
+                        Animation.Create(new Animation_MoveFail(this, pos, newpos));
                     }
                     return true;
                 }
 
                 if (switchPC != null)
                 {
-                    new Animation_Move(switchPC, switchPC.Pos, pos, false );
+                    Animation.Create(new Animation_Move(switchPC, switchPC.Pos, pos, false ));
                     switchPC.Pos = pos;
                     switchPC.AP -= 1;
                 }
 
                 if (!boardsvehicle && Party.Vehicle != null)
-                    new Animation_VehicleMove(Party.Vehicle, pos, newpos, false);
+                    Animation.Create(new Animation_VehicleMove(Party.Vehicle, pos, newpos, false));
                 else
-                    new Animation_Move(this, pos, newpos, true, boardsvehicle);
+                    Animation.Create(new Animation_Move(this, pos, newpos, true, boardsvehicle));
 
                 pos = newpos;
                 direction.Dir = newdir.Dir;
@@ -1817,7 +1817,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                 case eItemAbil.AFFECT_HEALTH:
                     switch (type) {
                         case 0: Game.AddMessage("  You feel better."); Heal(str * 20); break;
-                        case 1: Game.AddMessage("  You feel sick."); if (Damage(null, 20 * str,0, eDamageType.UNBLOCKABLE)) new Animation_Hold(); break;
+                        case 1: Game.AddMessage("  You feel sick."); if (Damage(null, 20 * str,0, eDamageType.UNBLOCKABLE)) Animation.Create(new Animation_Hold()); break;
                         case 2: Game.AddMessage("  You all feel better."); Party.HealAll(str * 20,false); break;
                         case 3: Game.AddMessage("  You all feel sick."); Party.Damage(20 * str,eDamageType.UNBLOCKABLE); break;
                     }
@@ -2107,12 +2107,13 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                 if (r1 <= hitChance[GetSkill(what_skill)])
                 {
                     var aa = new Animation_Attack(this);
+                    Animation.Create(aa);
                     if (!which_m.Damage(this, r2, 0, eDamageType.WEAPON, eDamageType.WEAPON, "072_club"))
                         aa.SetSound("002_swordswish");
                 }
                 else
                 {
-                    new Animation_Attack(this, "002_swordswish");
+                    Animation.Create(new Animation_Attack(this, "002_swordswish"));
                     Game.AddMessage(Name + " misses. ");
                 }
             }
@@ -2134,6 +2135,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                 if (r1 <= hitChance[GetSkill(what_skill)])
                 {
                     var aa = new Animation_Attack(this);
+                    Animation.Create(aa);
                     var does_damage = false;
 
                     eDamageType spec_dam_type;
@@ -2167,7 +2169,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                     }
 
                     if (!does_damage) aa.SetSound(what_skill == eSkill.POLE_WEAPONS ? "019_swordswish" : "002_swordswish");
-                    new Animation_Hold();
+                    Animation.Create(new Animation_Hold());
 
                     if (!which_m.Dying) //Don't do extra attack effects if enemy has been killed.
                     {
@@ -2200,7 +2202,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                 else
                 {
                     Game.AddMessage("  " + Name + " misses.              ");
-                    new Animation_Attack(this, what_skill == eSkill.POLE_WEAPONS ? "019_swordswish" : "002_swordswish");
+                    Animation.Create(new Animation_Attack(this, what_skill == eSkill.POLE_WEAPONS ? "019_swordswish" : "002_swordswish"));
                 }
             }
             second_attack = true;
@@ -2215,7 +2217,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
             if (Damage(which_m, store_hp - which_m.Health, 0, eDamageType.MAGIC))
             {
                 Game.AddMessage("  Shares damage!   ");
-                new Animation_Hold();
+                Animation.Create(new Animation_Hold());
             }
         }
         return true;
@@ -2303,14 +2305,14 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                     m_type = (hitting_item.Magic) ? 4 : 3; //Magic or not arrow
             }
 
-            new Animation_Attack(this);
-            new Animation_Missile(pos, target, m_type, false, "012_longbow");
-            new Animation_Hold();
+            Animation.Create(new Animation_Attack(this));
+            Animation.Create(new Animation_Missile(pos, target, m_type, false, "012_longbow"));
+            Animation.Create(new Animation_Hold());
 
             if (exploding)
             {
                 Game.AddMessage("  The " + hitting_item.ShortName + " explodes!");
-                curTown.HitArea(target, hitting_item.AbilityStrength * 2, 1, 6, eDamageType.FIRE, Pattern.Radius2, true, this); new Animation_Hold();
+                curTown.HitArea(target, hitting_item.AbilityStrength * 2, 1, 6, eDamageType.FIRE, Pattern.Radius2, true, this); Animation.Create(new Animation_Hold());
             }
             else
             {
@@ -2329,7 +2331,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                         cur_monst.Health += r2;
                     }
                     else
-                    if (cur_monst.Damage(this, r2, spec_dam, eDamageType.WEAPON, spec_dam_type, "098_missilehit")) new Animation_Hold();
+                    if (cur_monst.Damage(this, r2, spec_dam, eDamageType.WEAPON, spec_dam_type, "098_missilehit")) Animation.Create(new Animation_Hold());
 
                     // poison
                     if ((Status(eAffliction.POISONED_WEAPON) > 0) && (PoisonedWeapon == hitting_item))
@@ -2478,7 +2480,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
 
         Game.AddMessage(string.Format("  {0} takes {1}. ", Name, how_much));
 
-        new Animation_Damage(Pos.ToVector2(), how_much, 0, dam_type, sound_type);
+        Animation.Create(new Animation_Damage(Pos.ToVector2(), how_much, 0, dam_type, sound_type));
         Party.total_dam_taken += how_much;
 
         if (cur_health >= how_much)
@@ -2488,7 +2490,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         else if (cur_health > 0)
         {
             cur_health = 0;
-            new Animation_Hold();
+            Animation.Create(new Animation_Hold());
             new Animation("003_cough");
         }
         else // Check if PC can die
@@ -2543,7 +2545,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
                     r1 = Maths.Rand(2 + curTown.Difficulty / 14, 1, 10);
                     Damage(null, r1, 0, eDamageType.WEAPON);
                 }
-                new Animation_Hold();
+                Animation.Create(new Animation_Hold());
                 break;
 
             case eTrapType.DART:
@@ -2683,8 +2685,8 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
             }
             if (type is eLifeStatus.DEAD or eLifeStatus.DUST)
             {
-                new Animation_Hold();
-                new Animation_Death(this);
+                Animation.Create(new Animation_Hold());
+                Animation.Create(new Animation_Death(this));
                 Dying = true;
             }
             for (var a = 0; a < status.Length; a++) status[a] = 0;
@@ -2773,7 +2775,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
             {
                 status[2] = Math.Min(status[2] + how_much, 8);
                 if (!silent) Game.AddMessage("  " + Name + " poisoned.");
-                new Animation_CharFlash(this, Color.LimeGreen, "017_shortcough");
+                Animation.Create(new Animation_CharFlash(this, Color.LimeGreen, "017_shortcough"));
             }
         }
     }
@@ -2788,12 +2790,12 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
             if (realamt > 0)
             {
                 Game.AddMessage(string.Format("  {0} healed {1}", Name, realamt));
-                new Animation_CharFlash(this, Color.FloralWhite, "052_magic2");
+                Animation.Create(new Animation_CharFlash(this, Color.FloralWhite, "052_magic2"));
             }
             else if (realamt < 0)
             {
                 Game.AddMessage(string.Format("  {0} harmed {1}", Name, -realamt));
-                new Animation_CharFlash(this, Color.DarkRed, "052_magic2");
+                Animation.Create(new Animation_CharFlash(this, Color.DarkRed, "052_magic2"));
             }
         }
     }
@@ -2804,7 +2806,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         if (status[2] <= amt)
             status[2] = 0;
         else status[2] -= amt;
-        new Animation_CharFlash(this, Color.LemonChiffon, "051_magic1");
+        Animation.Create(new Animation_CharFlash(this, Color.LemonChiffon, "051_magic1"));
     }
 
     public void Curse(int how_much, bool silent = false)
@@ -2813,7 +2815,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         status[1] = Math.Max(status[1] - how_much, -8);
         if (!silent)
             Game.AddMessage("  " + Name + " cursed.");
-        new Animation_CharFlash(this, Color.Black, "043_stoning");
+        Animation.Create(new Animation_CharFlash(this, Color.Black, "043_stoning"));
     }
     public void Bless(int how_much, bool silent = false)
     {
@@ -2823,7 +2825,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         if (!silent)
             Game.AddMessage("  " + Name + " blessed.");
 
-        new Animation_CharFlash(this, Color.Gold, "004_bless");
+        Animation.Create(new Animation_CharFlash(this, Color.Gold, "004_bless"));
     }
 
     public void Dumbfound(int how_much, bool silent = false)
@@ -2846,7 +2848,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         }
         status[9] = Math.Min(status[9] + how_much, 8);
         if (!silent) Game.AddMessage("  " + Name + " dumbfounded.");
-        new Animation_CharFlash(this, Color.DarkSlateBlue, "067_huh");
+        Animation.Create(new Animation_CharFlash(this, Color.DarkSlateBlue, "067_huh"));
         Game.give_help(28, 0);
     }
     public void Disease(int how_much, bool silent = false)
@@ -2871,7 +2873,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         SetStatus(eAffliction.DISEASE, Math.Min(Status(eAffliction.DISEASE) + how_much, 8));
         if (!silent) Game.AddMessage("  " + Name + " diseased.");
 
-        new Animation_CharFlash(this, Color.DarkOrange, "066_disease");
+        Animation.Create(new Animation_CharFlash(this, Color.DarkOrange, "066_disease"));
 
         Game.give_help(29, 0);
     }
@@ -2902,7 +2904,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
 
         IncStatus(eAffliction.ASLEEP, how_much, 8);
         Game.AddMessage("  " + Name + " falls asleep.");
-        new Animation_CharFlash(this, Color.MidnightBlue, "096_sleep");
+        Animation.Create(new Animation_CharFlash(this, Color.MidnightBlue, "096_sleep"));
        
         AP = 0;
         Game.give_help(30, 0);
@@ -2930,7 +2932,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         }
         IncStatus(eAffliction.PARALYZED, how_much, 5000);
         Game.AddMessage("  " + Name + " paralyzed.");
-        new Animation_CharFlash(this, Color.Olive, "090_paralyze");
+        Animation.Create(new Animation_CharFlash(this, Color.Olive, "090_paralyze"));
 
         AP = 0;
 
@@ -2946,12 +2948,12 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         if (how_much < 0)
         {
             if (!silent) Game.AddMessage("  " + Name + " hasted.");
-            new Animation_CharFlash(this, Color.Orange, "075_cold");
+            Animation.Create(new Animation_CharFlash(this, Color.Orange, "075_cold"));
         }
         else
         {
             if (!silent) Game.AddMessage("  " + Name + " slowed.");
-            new Animation_CharFlash(this, Color.PaleTurquoise, "075_cold");
+            Animation.Create(new Animation_CharFlash(this, Color.PaleTurquoise, "075_cold"));
         }
             
         if (how_much < 0)
@@ -2966,7 +2968,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         if (how_much > 0)
         {
             if (!silent) Game.AddMessage("  " + Name + " hasted.");
-            new Animation_CharFlash(this, Color.Orange, "075_cold");
+            Animation.Create(new Animation_CharFlash(this, Color.Orange, "075_cold"));
         }
 
     }
@@ -2975,7 +2977,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
     {
         experience = Maths.Max(experience - how_much, 0);
         if (!silent) Game.AddMessage("  " + Name + " drained.");
-        new Animation_CharFlash(this, Color.SlateGray, "065_draining");
+        Animation.Create(new Animation_CharFlash(this, Color.SlateGray, "065_draining"));
     }
 
     public void Web(int how_much, bool silent = false)
@@ -2984,7 +2986,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
 
         status[6] = Math.Min(status[6] + how_much, 8);
         if (!silent) Game.AddMessage("  " + Name + " webbed.");
-        new Animation_CharFlash(this, Color.Gray, "017_shortcough");
+        Animation.Create(new Animation_CharFlash(this, Color.Gray, "017_shortcough"));
         Game.give_help(31, 0);
     }
 
@@ -2998,7 +3000,7 @@ public partial class PCType : IInventory, ICharacter, IExpRecipient, IAnimatable
         }
         SetStatus(eAffliction.ACID, Maths.Min(8,Status(eAffliction.ACID) + how_much));// += how_much;
         if (!silent) Game.AddMessage("  " + Name + " covered with acid!");
-        new Animation_CharFlash(this, Color.GreenYellow, "042_dang");
+        Animation.Create(new Animation_CharFlash(this, Color.GreenYellow, "042_dang"));
     }
 
     public void Scare(int how_much, bool silent = false)

@@ -207,25 +207,25 @@ public class MagicSpell : IListEntity
             Game.AddMessage(caster.Name + " uses " + item_used.KnownName + ".");
         }
 
-        new Animation_Attack(caster, Missile == -1 ? (Mage ? "025_magespell" : "024_priestspell") : null);
+        Animation.Create(new Animation_Attack(caster, Missile == -1 ? (Mage ? "025_magespell" : "024_priestspell") : null));
         if (Missile != -1)
         {
             if (targetlist != null)
                 foreach (var l in targetlist)
                 {
-                    new Animation_Missile(caster.Pos, l, Missile, true, "011_3booms");
-                    new Animation_Pause();
+                    Animation.Create(new Animation_Missile(caster.Pos, l, Missile, true, "011_3booms"));
+                    Animation.Create(new Animation_Pause());
                 }
             else if (npctargetlist != null)
                 foreach (var npc in npctargetlist)
                 {
-                    new Animation_Missile(caster.Pos, npc.Pos, Missile, true, "011_3booms");
-                    new Animation_Pause();
+                    Animation.Create(new Animation_Missile(caster.Pos, npc.Pos, Missile, true, "011_3booms"));
+                    Animation.Create(new Animation_Pause());
                 }
             else
-                new Animation_Missile(caster.Pos, target, Missile, true, "011_3booms");
+                Animation.Create(new Animation_Missile(caster.Pos, target, Missile, true, "011_3booms"));
                 
         }
-        new Animation_Hold();
+        Animation.Create(new Animation_Hold());
     }
 }

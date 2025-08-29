@@ -79,7 +79,7 @@ internal static class Gui
 
     public static void HandleToolTip()
     {
-        if (ActiveToolTip != null) ActiveToolTip.Handle();
+        ActiveToolTip?.Handle();
     }
 
     public static void Handle()

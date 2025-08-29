@@ -930,7 +930,7 @@ public partial class TownMap : IListEntity, IMap
                     ci.Pos = FindClearSpot(ci.Pos, true, false);
 
                 if (with_summon_animation)
-                    new Animation_Summon(ci);
+                    Animation.Create(new Animation_Summon(ci));
             }
         }
 
@@ -1057,7 +1057,7 @@ public partial class TownMap : IListEntity, IMap
             if ((cur_monst.Summoned % 100) == 1)
             {
                 cur_monst.Dying = true;
-                new Animation_Death(cur_monst);
+                Animation.Create(new Animation_Death(cur_monst));
                 cur_monst.AP = 0;
                 Game.AddMessage(string.Format("  {0} disappears.", cur_monst.Name));
             }
@@ -1069,7 +1069,7 @@ public partial class TownMap : IListEntity, IMap
             //Sort the list on the basis of how close they are to the PCs
         }
 
-        new Animation_Hold();
+        Animation.Create(new Animation_Hold());
     }
 
     /// <summary>
@@ -2114,7 +2114,7 @@ public partial class TownMap : IListEntity, IMap
             foreach (var item in EachItemThere(pos, true))
             { if (item.Contained) ItemList.Remove(item); }
             removeField(pos, Field.CRATE.Bit | Field.BARREL.Bit);
-            new Animation_CrateMove(pos, loc_to_try, is_crate, true);
+            Animation.Create(new Animation_CrateMove(pos, loc_to_try, is_crate, true));
             return true;
         }
 
@@ -2126,7 +2126,7 @@ public partial class TownMap : IListEntity, IMap
 
         removeField(pos, is_crate ? Field.CRATE.Bit : Field.BARREL.Bit);
         addField(loc_to_try, (is_crate ? Field.CRATE.Bit : Field.BARREL.Bit) | Field.CRATE_MOVE.Bit);
-        new Animation_CrateMove(pos, loc_to_try, is_crate, false);
+        Animation.Create(new Animation_CrateMove(pos, loc_to_try, is_crate, false));
 
         foreach (var item in EachItemThere(pos, true))
         { if (item.Contained) item.Pos = loc_to_try; }
@@ -2272,7 +2272,7 @@ public partial class TownMap : IListEntity, IMap
                 while (spot_ok[where_in_a] == false) where_in_a++;
             }
 
-            if (pc.Pos != Party.Pos) new Animation_Move(pc, Party.Pos, pc.Pos, false);
+            if (pc.Pos != Party.Pos) Animation.Create(new Animation_Move(pc, Party.Pos, pc.Pos, false));
         }
 
         //Reset all npcs target so they might choose a pc to pursue now they are all independent on the map
@@ -2342,7 +2342,7 @@ public partial class TownMap : IListEntity, IMap
                 }
             }
         }
-        new Animation_Hold();
+        Animation.Create(new Animation_Hold());
 
         foreach (var ch in EachCharacterInRange(center, 5))
         {
@@ -2466,7 +2466,7 @@ public partial class TownMap : IListEntity, IMap
             return false;
 
         NPCList.Add(spot);
-        new Animation_Summon(spot);
+        Animation.Create(new Animation_Summon(spot));
         Game.AddMessage(string.Format("  {0} summoned.", spot.Name));
         return true;
     }
@@ -2656,7 +2656,7 @@ public partial class TownMap : IListEntity, IMap
         if (fieldsThere(l, Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit | Field.QUICKFIRE.Bit | Field.FORCE_WALL.Bit 
                            | Field.FIRE_WALL.Bit | Field.ANTIMAGIC.Bit | Field.ICE_WALL.Bit | Field.BLADE_WALL.Bit | Field.SLEEP_CLOUD.Bit)) return;
         addField(l, Field.WEB.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.WEB);
+        Animation.Create(new Animation_FieldAppear(l, Field.WEB));
     }
     public void MakeFireBarrier(Location l)
     {
@@ -2665,7 +2665,7 @@ public partial class TownMap : IListEntity, IMap
         if (fieldsThere(l, Field.CRATE.Bit | Field.BARREL.Bit | Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit | Field.QUICKFIRE.Bit)) return;
         removeField(l, Field.WEB.Bit | Field.FORCE_WALL.Bit | Field.FIRE_WALL.Bit | Field.ANTIMAGIC.Bit | Field.STINK_CLOUD.Bit | Field.ICE_WALL.Bit 
                        | Field.BLADE_WALL.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.BLADE_WALL);
+        Animation.Create(new Animation_FieldAppear(l, Field.BLADE_WALL));
     }
     public void MakeForceBarrier(Location l)
     {
@@ -2675,7 +2675,7 @@ public partial class TownMap : IListEntity, IMap
         removeField(l, Field.WEB.Bit | Field.FORCE_WALL.Bit | Field.FIRE_WALL.Bit | Field.ANTIMAGIC.Bit | Field.STINK_CLOUD.Bit | Field.ICE_WALL.Bit
                        | Field.BLADE_WALL.Bit | Field.SLEEP_CLOUD.Bit);
         addField(l, Field.FORCE_BARRIER.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.FORCE_BARRIER);
+        Animation.Create(new Animation_FieldAppear(l, Field.FORCE_BARRIER));
     }
 
     private void make_force_wall(Location l, IExpRecipient perp)
@@ -2685,7 +2685,7 @@ public partial class TownMap : IListEntity, IMap
         if (fieldsThere(l, Field.CRATE.Bit | Field.BARREL.Bit | Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit | Field.QUICKFIRE.Bit | Field.FORCE_WALL.Bit | Field.ANTIMAGIC.Bit | Field.BLADE_WALL.Bit)) return;
         removeField(l, Field.WEB.Bit | Field.FIRE_WALL.Bit);
         addField(l, Field.FORCE_WALL.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.FORCE_WALL);
+        Animation.Create(new Animation_FieldAppear(l, Field.FORCE_WALL));
     }
 
     private void make_fire_wall(Location l, IExpRecipient perp)
@@ -2696,7 +2696,7 @@ public partial class TownMap : IListEntity, IMap
                            | Field.ANTIMAGIC.Bit | Field.STINK_CLOUD.Bit | Field.ICE_WALL.Bit | Field.BLADE_WALL.Bit | Field.SLEEP_CLOUD.Bit)) return;
         removeField(l, Field.WEB.Bit);
         addField(l, Field.FIRE_WALL.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.FIRE_WALL);
+        Animation.Create(new Animation_FieldAppear(l, Field.FIRE_WALL));
     }
 
     private void make_antimagic(Location l)
@@ -2707,7 +2707,7 @@ public partial class TownMap : IListEntity, IMap
         removeField(l, Field.FORCE_WALL.Bit | Field.FIRE_WALL.Bit | Field.ANTIMAGIC.Bit | Field.STINK_CLOUD.Bit | Field.ICE_WALL.Bit | Field.BLADE_WALL.Bit | Field.SLEEP_CLOUD.Bit);
 
         addField(l, Field.ANTIMAGIC.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.ANTIMAGIC);
+        Animation.Create(new Animation_FieldAppear(l, Field.ANTIMAGIC));
     }
 
     private void make_scloud(Location l)
@@ -2717,7 +2717,7 @@ public partial class TownMap : IListEntity, IMap
         if (fieldsThere(l, Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit | Field.QUICKFIRE.Bit | Field.FORCE_WALL.Bit | Field.FIRE_WALL.Bit | Field.ANTIMAGIC.Bit | Field.ICE_WALL.Bit 
                            | Field.BLADE_WALL.Bit | Field.SLEEP_CLOUD.Bit)) return;
         addField(l, Field.STINK_CLOUD.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.STINK_CLOUD);
+        Animation.Create(new Animation_FieldAppear(l, Field.STINK_CLOUD));
     }
 
     private void make_ice_wall(Location l, IExpRecipient perp)
@@ -2727,7 +2727,7 @@ public partial class TownMap : IListEntity, IMap
         if (fieldsThere(l, Field.WEB.Bit | Field.CRATE.Bit | Field.BARREL.Bit | Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit | Field.QUICKFIRE.Bit | Field.FORCE_WALL.Bit | Field.ANTIMAGIC.Bit | Field.BLADE_WALL.Bit)) return;
         removeField(l, Field.FIRE_WALL.Bit | Field.STINK_CLOUD.Bit);
         addField(l, Field.ICE_WALL.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.ICE_WALL);
+        Animation.Create(new Animation_FieldAppear(l, Field.ICE_WALL));
     }
 
     private void make_blade_wall(Location l, IExpRecipient perp)
@@ -2736,7 +2736,7 @@ public partial class TownMap : IListEntity, IMap
         if (blockageThere(l) == eBlock2.BLOCKED) return;
         if (fieldsThere(l, Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit | Field.QUICKFIRE.Bit | Field.ANTIMAGIC.Bit)) return;
         addField(l, Field.BLADE_WALL.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.BLADE_WALL);
+        Animation.Create(new Animation_FieldAppear(l, Field.BLADE_WALL));
     }
 
     private void make_sleep_cloud(Location l)
@@ -2745,7 +2745,7 @@ public partial class TownMap : IListEntity, IMap
         if (blockageThere(l) == eBlock2.BLOCKED) return;
         if (fieldsThere(l, Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit | Field.QUICKFIRE.Bit | Field.ANTIMAGIC.Bit)) return;
         addField(l, Field.SLEEP_CLOUD.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.SLEEP_CLOUD);
+        Animation.Create(new Animation_FieldAppear(l, Field.SLEEP_CLOUD));
     }
 
     public void MakeQuickfire(Location l)
@@ -2757,7 +2757,7 @@ public partial class TownMap : IListEntity, IMap
         removeField(l, Field.FORCE_WALL.Bit | Field.FIRE_WALL.Bit | Field.ANTIMAGIC.Bit | Field.STINK_CLOUD.Bit | Field.ICE_WALL.Bit | Field.BLADE_WALL.Bit | Field.SLEEP_CLOUD.Bit
                        | Field.WEB.Bit | Field.CRATE.Bit | Field.BARREL.Bit | Field.FIRE_BARRIER.Bit | Field.FORCE_BARRIER.Bit | Field.QUICKFIRE.Bit);
         addField(l, Field.QUICKFIRE.Bit | Field.FIELD_APPEAR.Bit);
-        new Animation_FieldAppear(l, Field.QUICKFIRE);
+        Animation.Create(new Animation_FieldAppear(l, Field.QUICKFIRE));
     }
 
     // mode 0 - dispel spell, 1 - always take  2 - always take and take fire and force too

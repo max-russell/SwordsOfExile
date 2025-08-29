@@ -120,7 +120,7 @@ public class Encounter : IAnimatable
 
         if (!ter.BlocksNPC && !Game.WorldMap.SomeoneThere(newpos) && Game.WorldMap.TownEntranceHere(newpos) == null)
         {
-            if (!suppress_animation) new Animation_Move(this, pos, newpos, Animation.NoAnimationsRunning());
+            if (!suppress_animation) Animation.Create(new Animation_Move(this, pos, newpos, Animation.NoAnimationsRunning()));
             pos = newpos;
             direction = newdir;
         }

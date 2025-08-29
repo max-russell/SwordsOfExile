@@ -13,8 +13,8 @@ namespace SwordsOfExileGame;
 public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 {
     //Shortcuts
-    private TownMap curTown => (TownMap)Game.CurrentMap;
-    private PartyType Party => Game.CurrentParty;
+    private static TownMap CurTown => (TownMap)Game.CurrentMap;
+    private static PartyType Party => Game.CurrentParty;
 
     public string TooltipInfo(bool brief) 
     {
@@ -36,12 +36,13 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         return sb.ToString();
     }
+    
     public int Width => Record.Width;
     public int Height => Record.Height;
     public string Name => Record.Name;
     public int Level { get => Record.Level;
         set { } }
-    public bool IsAlive() { return !Dying && curTown.NPCList.Contains(this); }
+    public bool IsAlive() { return !Dying && CurTown.NPCList.Contains(this); }
     public Personality Personality { get { if (Start != null) return Start.personality; return null; } }
     public int MaxHealth => Record.Health;
 
@@ -110,17 +111,20 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         status[(int)type] += val;
         if (status[(int)type] > max) status[(int)type] = max;
     }
+    
     public void DecStatus(eAffliction type, int val, int min = int.MinValue)
     {
         status[(int)type] -= val;
         if (status[(int)type] < min) status[(int)type] = min;
     }
+    
     public void CounteractStatus(eAffliction type, int amount = 1)
     {
         if (status[(int)type] > amount) status[(int)type] -= amount;
         else if (status[(int)type] < -amount) status[(int)type] += amount;
         else status[(int)type] = 0;
     }
+    
     public void ClearStatus()
     {
         for (var n = 0; n < status.Length; n++)
@@ -129,7 +133,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
     public string DeathSound => Record.DeathSound;
 
-    private static short[] hit_chance = {20,30,40,45,50,55,60,65,69,73,
+    private static readonly short[] HitChance = {20,30,40,45,50,55,60,65,69,73,
         77,81,84,87,90,92,94,96,97,98,99
         ,99,99,99,99,99,99,99,99,99,99
         ,99,99,99,99,99,99,99,99,99,99,
@@ -199,18 +203,20 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
     public static NPC SplitOffCopy(NPC cr, Location pos)
     {
-        var ci = new NPC();
-        ci.Active = eActive.COMBATIVE;
-        ci.Pos = pos;
-        ci.Record = cr.Record;
-        ci.Summoned = 0;
-        ci.Attitude = cr.Attitude;
-        ci.Dir = cr.Dir;
-        ci.health = cr.health;
-        ci.Morale = cr.Morale;
-        ci.sp = cr.sp;
-        ci.AP = cr.AP;
-        ci.Mobile = true;
+        var ci = new NPC
+        {
+            Active = eActive.COMBATIVE,
+            Pos = pos,
+            Record = cr.Record,
+            Summoned = 0,
+            Attitude = cr.Attitude,
+            Dir = cr.Dir,
+            health = cr.health,
+            Morale = cr.Morale,
+            sp = cr.sp,
+            AP = cr.AP,
+            Mobile = true
+        };
         return ci;
     }
 
@@ -294,7 +300,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         for (j = 0; j < Record.Height; j++) {
             destination.X = Pos.X + i;
             destination.Y = Pos.Y + j;
-            if (curTown.CanSee(destination, l) < Constants.OBSCURITY_LIMIT)
+            if (CurTown.CanSee(destination, l) < Constants.OBSCURITY_LIMIT)
                 return true;
         }
         return false;
@@ -506,20 +512,20 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
 
         // Place fields for monsters that create them. Only done when monst sees foe
-        if (Target != null && Record.Radiate != eRadiate.NONE && curTown.CanSee(Pos, Target.Pos) < Constants.OBSCURITY_LIMIT)
+        if (Target != null && Record.Radiate != eRadiate.NONE && CurTown.CanSee(Pos, Target.Pos) < Constants.OBSCURITY_LIMIT)
         {
             if (Maths.Rand(1, 1, 100) <= Record.RadiateProbability)
             {
                 switch (Record.Radiate)
                 {
-                    case eRadiate.FIRE: curTown.PlaceFieldPattern(Pattern.Square, Pos, Field.FIRE_WALL, null); break;
-                    case eRadiate.ICE: curTown.PlaceFieldPattern(Pattern.Square, Pos, Field.ICE_WALL, null); break;
-                    case eRadiate.SHOCK: curTown.PlaceFieldPattern(Pattern.Square, Pos, Field.FORCE_WALL, null); break;
-                    case eRadiate.ANTIMAGIC: curTown.PlaceFieldPattern(Pattern.Square, Pos, Field.ANTIMAGIC, null); break;
-                    case eRadiate.SLEEP: curTown.PlaceFieldPattern(Pattern.Square, Pos, Field.SLEEP_CLOUD, null); break;
-                    case eRadiate.STINK: curTown.PlaceFieldPattern(Pattern.Square, Pos, Field.STINK_CLOUD, null); break;
+                    case eRadiate.FIRE: CurTown.PlaceFieldPattern(Pattern.Square, Pos, Field.FIRE_WALL, null); break;
+                    case eRadiate.ICE: CurTown.PlaceFieldPattern(Pattern.Square, Pos, Field.ICE_WALL, null); break;
+                    case eRadiate.SHOCK: CurTown.PlaceFieldPattern(Pattern.Square, Pos, Field.FORCE_WALL, null); break;
+                    case eRadiate.ANTIMAGIC: CurTown.PlaceFieldPattern(Pattern.Square, Pos, Field.ANTIMAGIC, null); break;
+                    case eRadiate.SLEEP: CurTown.PlaceFieldPattern(Pattern.Square, Pos, Field.SLEEP_CLOUD, null); break;
+                    case eRadiate.STINK: CurTown.PlaceFieldPattern(Pattern.Square, Pos, Field.STINK_CLOUD, null); break;
                     case eRadiate.SUMMON:
-                        if (curTown.SummonMonster(this, Record.NPCtoSummon, Pos, 130) == true)
+                        if (CurTown.SummonMonster(this, Record.NPCtoSummon, Pos, 130) == true)
                         {
                             Game.AddMessage(string.Format("  {0} summons allies.", Name));
                             Sound.Play("061_summoning");
@@ -547,7 +553,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                 {
                     pc_adj[n].Attack(this);
                     pc_adj.Remove(pc_adj[n]);
-                    new Animation_Hold();
+                    Animation.Create(new Animation_Hold());
                 }
 
         // If monster dead, take away actions
@@ -598,13 +604,13 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                         WalkAwayFrom(Target.Pos);
                         if (Maths.Rand(1, 0, 10) < 6) Morale++;
                     }
-                    else if (curTown.NPCHateSpot(this,Pos))
+                    else if (CurTown.NPCHateSpot(this,Pos))
                     {
-                        var l2 = curTown.FindClearSpot(Pos, true, false);
+                        var l2 = CurTown.FindClearSpot(Pos, true, false);
                         if (l2 != Pos) WalkTowards(l2);
                         else WalkToTarget();
                     }
-                    else if (Record.MageLevel == 0 || curTown.CanSee(Pos, Target.Pos) > 3)
+                    else if (Record.MageLevel == 0 || CurTown.CanSee(Pos, Target.Pos) > 3)
                         WalkToTarget();
                 }
                 else
@@ -612,7 +618,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             }
         }
 
-        if (curTown.CanSee(Pos, Party.Pos) < 5)
+        if (CurTown.CanSee(Pos, Party.Pos) < 5)
         {
             if (Active == eActive.INACTIVE)   
                 Active = eActive.DOCILE;
@@ -623,19 +629,19 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         {
             var r1 = Maths.Rand(1, 1, 100);
             r1 += (Party.Stealth > 0) ? 46 : 0;
-            r1 += curTown.CanSee(Pos, Party.Pos) * 10; //Guarantees monsters will not see if walls in the way - as CanSee returns 5 if blocked
+            r1 += CurTown.CanSee(Pos, Party.Pos) * 10; //Guarantees monsters will not see if walls in the way - as CanSee returns 5 if blocked
             if (r1 < 50)
             {
                 Active = eActive.COMBATIVE;
-                new Animation_CharFlash(this, Color.Red, Record.Humanish ? "018_drawingsword" : "046_growl");
+                Animation.Create(new Animation_CharFlash(this, Color.Red, Record.Humanish ? "018_drawingsword" : "046_growl"));
                 Game.AddMessage("Monster saw you!");
             }
             else
-                foreach (var ci in curTown.NPCList)
+                foreach (var ci in CurTown.NPCList)
                     if (ci.Active == eActive.COMBATIVE && pos.DistanceTo(ci.Pos) <= 5)
                     {
                         Active = eActive.COMBATIVE;
-                        new Animation_CharFlash(this, Color.Red, Record.Humanish ? "018_drawingsword" : "046_growl");
+                        Animation.Create(new Animation_CharFlash(this, Color.Red, Record.Humanish ? "018_drawingsword" : "046_growl"));
                         return;
                     }
         }
@@ -665,9 +671,9 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             //If no path to target, or if target is now closer than the existing path's endpoint, re-calculate it.
             if (PathToTarget == null || !PathToTarget.StillValid(Pos, Target.Pos) ||//PathToTarget.Count == 0 || Pos != PathPosition || 
                 Pos.VDistanceTo(Target.Pos) < Pos.VDistanceTo(PathToTarget.GetDestination()) ||
-                curTown.NPCHateSpot(this, Pos))
+                CurTown.NPCHateSpot(this, Pos))
             {
-                PathToTarget = MapPath.CalculateNew(curTown, this, Target.Pos);
+                PathToTarget = MapPath.CalculateNew(CurTown, this, Target.Pos);
             }
             return true;
         }
@@ -680,13 +686,13 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         var possibles = new List<Tuple<ICharacter, int>>();
 
-        foreach (var npc in curTown.NPCList) {
+        foreach (var npc in CurTown.NPCList) {
 
             //If npc is on our side, don't consider
             if (AlliedWith(npc)) continue;
 
             //If npc is not visible, don't consider
-            if (curTown.CanSee(pos, npc.pos) >= 5) continue;
+            if (CurTown.CanSee(pos, npc.pos) >= 5) continue;
 
             //Score is based on weighing together the distance to the target (closer is preferable) to its provocation
             //value. Provocation is calculated at the end of each character's turn based on what it did that turn (eg, 
@@ -715,7 +721,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             foreach (var pc in Party.EachIndependentPC()) {
 
                 //Mostly the same as for npcs
-                if (curTown.CanSee(pos, pc.Pos) >= Constants.OBSCURITY_LIMIT) continue;
+                if (CurTown.CanSee(pos, pc.Pos) >= Constants.OBSCURITY_LIMIT) continue;
                 var score = pos.DistanceTo(pc.Pos);
                 score -= pc.Provocation;
                 if (pc.LastAttacked == this) score -= Constants.AI_RETURN_FAVOUR_BONUS;
@@ -742,7 +748,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         //Set the new target to the one with the lowest score and return success.
         Target = possibles[0].Item1;
 
-        PathToTarget = MapPath.CalculateNew(curTown, this, Target.Pos);
+        PathToTarget = MapPath.CalculateNew(CurTown, this, Target.Pos);
 
         return true;
     }
@@ -766,20 +772,20 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                 store_loc = Pos;
                 store_loc.X += Maths.Rand(1, 0, 24) - 12;
                 store_loc.Y += Maths.Rand(1, 0, 24) - 12;
-                if (curTown.InBounds(store_loc) && curTown.CanSee(Pos, store_loc) < Constants.OBSCURITY_LIMIT)
+                if (CurTown.InBounds(store_loc) && CurTown.CanSee(Pos, store_loc) < Constants.OBSCURITY_LIMIT)
                 {
                     WanderTarget = store_loc; j = 3;
                 }
             }
 
             if (WanderTarget.X == 0) {
-                if (curTown.InBounds(store_loc) && (Maths.Rand(1, 0, 1) == 1))
+                if (CurTown.InBounds(store_loc) && (Maths.Rand(1, 0, 1) == 1))
                     WanderTarget = store_loc;
                 else {
                     store_loc = Pos;
                     store_loc.X += Maths.Rand(1, 0, 20) - 10;
                     store_loc.Y += Maths.Rand(1, 0, 20) - 10;
-                    if (curTown.InBounds(store_loc))
+                    if (CurTown.InBounds(store_loc))
                         WanderTarget = store_loc;
                 }
             }
@@ -868,18 +874,18 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         var d = new Direction(dir);
         var destination = pos + d;
-        if (!curTown.CheckNPCDoors(destination, this)) return false;
-        else if (curTown.CharacterCanBeThere(destination, this) == false)
+        if (!CurTown.CheckNPCDoors(destination, this)) return false;
+        else if (CurTown.CharacterCanBeThere(destination, this) == false)
             return false;
-        else if (Active != eActive.COMBATIVE && (curTown.FieldThere(destination, Field.BARREL) || curTown.FieldThere(destination, Field.CRATE)))
+        else if (Active != eActive.COMBATIVE && (CurTown.FieldThere(destination, Field.BARREL) || CurTown.FieldThere(destination, Field.CRATE)))
             return false;
         else
         {
             direction.Dir = d.Dir;
-            new Animation_Move(this, Pos, destination, Game.Mode == eMode.COMBAT);
-            curTown.PushLocation(this, destination);
+            Animation.Create(new Animation_Move(this, Pos, destination, Game.Mode == eMode.COMBAT));
+            CurTown.PushLocation(this, destination);
             Pos = destination;
-            curTown.InflictFields(this);
+            CurTown.InflictFields(this);
             return true;
         }
     }
@@ -976,7 +982,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         if (Game.OneHitKill)
             Health = -1;
         // splitting monsters
-        if ((Record.SpecialSkill == eCSS.SPLITS) && (Health > 0)) curTown.SplitOffMonster(this);
+        if ((Record.SpecialSkill == eCSS.SPLITS) && (Health > 0)) CurTown.SplitOffMonster(this);
 
         if (attacker is PCType or PartyType)
             Party.total_dam_done += how_much + how_much_spec;
@@ -986,7 +992,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         var animpos = new Vector2(Pos.X + (Width == 2 ? 0.5f : 0), Pos.Y + (Height == 2 ? 0.5f : 0));
 
-        new Animation_Damage(animpos, how_much, how_much_spec, displaydamtype, sound_type);
+        Animation.Create(new Animation_Damage(animpos, how_much, how_much_spec, displaydamtype, sound_type));
 
         if (Health <= 0)
         {
@@ -1001,11 +1007,11 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             if (how_much > 20) Morale -= 2;
         }
 
-        if (!IsABaddie && attacker is PCType or PartyType && !curTown.Hostile)
+        if (!IsABaddie && attacker is PCType or PartyType && !CurTown.Hostile)
         {
             Game.AddMessage("Damaged an innocent.           ");
             Attitude = eAttitude.HOSTILE_A;
-            curTown.MakeTownHostile();
+            CurTown.MakeTownHostile();
         }
         return true;
     }
@@ -1036,33 +1042,33 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
             if ((Record.DropItem != null) && (Maths.Rand(1, 0, 100) < Record.DropItemChance))
             {
-                curTown.PlaceItem(Record.DropItem.Copy(), Pos);
+                CurTown.PlaceItem(Record.DropItem.Copy(), Pos);
             }
         }
         if (Summoned == 0)
-            curTown.place_treasure(Pos, Record.Level / 2, Record.Treasure, 0);
+            CurTown.place_treasure(Pos, Record.Level / 2, Record.Treasure, 0);
 
         switch (Record.Genus)
         {
-            case eGenus.DEMON: curTown.PlaceField(Pos, Field.CRATER); break;
-            case eGenus.UNDEAD: curTown.PlaceField(Pos, Field.BONES); break;
+            case eGenus.DEMON: CurTown.PlaceField(Pos, Field.CRATER); break;
+            case eGenus.UNDEAD: CurTown.PlaceField(Pos, Field.BONES); break;
             case eGenus.SLIME:
-            case eGenus.BUG: curTown.PlaceField(Pos, Field.SMALL_SLIME); break;
-            case eGenus.STONE: curTown.PlaceField(Pos, Field.ROCKS); break;
-            default: curTown.PlaceField(Pos, Field.SMALL_BLOOD); break;
+            case eGenus.BUG: CurTown.PlaceField(Pos, Field.SMALL_SLIME); break;
+            case eGenus.STONE: CurTown.PlaceField(Pos, Field.ROCKS); break;
+            default: CurTown.PlaceField(Pos, Field.SMALL_BLOOD); break;
         }
 
         if (Summoned == 0)
         {
-            curTown.KillCount++;
+            CurTown.KillCount++;
         }
 
         if (Start != null) Start.InstanceWasKilled = true;
 
         Party.total_m_killed++;// party.total_m_killed++;
         Dying = true;
-        new Animation_Hold();
-        new Animation_Death(this);
+        Animation.Create(new Animation_Hold());
+        Animation.Create(new Animation_Death(this));
         return true;
     }
 
@@ -1153,7 +1159,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
     /// </summary>
     public void FinishDying()
     {
-        curTown.NPCList.Remove(this);
+        CurTown.NPCList.Remove(this);
     }
 
     private void adjustMagic(ref int how_much)
@@ -1174,7 +1180,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         Health += amt;
         realamt = Health - realamt;
         if (!silent) Game.AddMessage(string.Format("  {0} healed {1}", Name, realamt));
-        new Animation_CharFlash(this, Color.FloralWhite, "052_magic2");
+        Animation.Create(new Animation_CharFlash(this, Color.FloralWhite, "052_magic2"));
     }
 
     public void Poison(int how_much, bool silent = false)
@@ -1186,7 +1192,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             return;
         }
         status[(int)eAffliction.POISON] = Math.Min(8, status[(int)eAffliction.POISON] + how_much);
-        if (how_much > 0) new Animation_CharFlash(this, Color.LimeGreen, "017_shortcough");
+        if (how_much > 0) Animation.Create(new Animation_CharFlash(this, Color.LimeGreen, "017_shortcough"));
         if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists poison." : " is poisoned."));//String.Format("  {0} resists.", Name)) : Game.AddMessage(String.Format("  {0} is poisoned.", Name));, this);
     }
 
@@ -1195,7 +1201,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         adjustMagic(ref how_much);
         status[(int)eAffliction.ACID] = Maths.MinMax(-8, 8, status[(int)eAffliction.ACID] + how_much);
         if (!silent) Game.AddMessage(string.Format("  {0} is covered with acid.", Name));
-        new Animation_CharFlash(this, Color.GreenYellow, "042_dang");
+        Animation.Create(new Animation_CharFlash(this, Color.GreenYellow, "042_dang"));
     }
 
     public void Slow(int how_much, bool silent = false)
@@ -1203,48 +1209,48 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         adjustMagic(ref how_much);
         status[(int)eAffliction.HASTE_SLOW] = Maths.MinMax(-8, 8, status[(int)eAffliction.HASTE_SLOW] - how_much);
         if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists." : " is slowed."));
-        new Animation_CharFlash(this, Color.PaleTurquoise, "075_cold");
+        Animation.Create(new Animation_CharFlash(this, Color.PaleTurquoise, "075_cold"));
 
     }
     public void Haste(int how_much, bool silent = false)
     {
         status[(int)eAffliction.HASTE_SLOW] = Maths.MinMax(-8, 8, status[(int)eAffliction.HASTE_SLOW] + how_much);
         if (!silent) Game.AddMessage(string.Format("  {0} is hastened.", Name));
-        new Animation_CharFlash(this, Color.Orange, "075_cold");
+        Animation.Create(new Animation_CharFlash(this, Color.Orange, "075_cold"));
     }
     public void Curse(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.BLESS_CURSE] = Maths.MinMax(-8, 8, status[(int)eAffliction.BLESS_CURSE] - how_much);
         if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists curse." : " is cursed."));
-        new Animation_CharFlash(this, Color.Black, "043_stoning");
+        Animation.Create(new Animation_CharFlash(this, Color.Black, "043_stoning"));
     }
     public void Bless(int how_much, bool silent = false)
     {
         status[(int)eAffliction.BLESS_CURSE] = Maths.MinMax(-8, 8, status[(int)eAffliction.BLESS_CURSE] + how_much);
         if (!silent) Game.AddMessage(string.Format("  {0} is blessed.", Name));
-        new Animation_CharFlash(this, Color.Gold, "004_bless");
+        Animation.Create(new Animation_CharFlash(this, Color.Gold, "004_bless"));
     }
     public void Web(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.WEBS] = Maths.MinMax(-8, 8, status[(int)eAffliction.WEBS] + how_much);
         if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "avoids webbing." : " is caught in webs."));
-        new Animation_CharFlash(this, Color.Gray, "017_shortcough");
+        Animation.Create(new Animation_CharFlash(this, Color.Gray, "017_shortcough"));
     }
     public void Scare(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         Morale -= how_much;
         if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists fear." : " is scared."));
-        new Animation_CharFlash(this, Color.DarkKhaki, "054_scream");
+        Animation.Create(new Animation_CharFlash(this, Color.DarkKhaki, "054_scream"));
     }
     public void Disease(int how_much, bool silent = false)
     {
         adjustMagic(ref how_much);
         status[(int)eAffliction.DISEASE] = Maths.MinMax(-8, 8, status[(int)eAffliction.DISEASE] + how_much);
         if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists disease." : " is diseased."));
-        new Animation_CharFlash(this, Color.DarkOrange, "066_disease");
+        Animation.Create(new Animation_CharFlash(this, Color.DarkOrange, "066_disease"));
     }
 
     public void Dumbfound(int how_much, bool silent = false)
@@ -1252,7 +1258,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         adjustMagic(ref how_much);
         status[(int)eAffliction.DUMB] = Maths.MinMax(-8, 8, status[(int)eAffliction.DUMB] + how_much);
         if (!silent) Game.AddMessage(string.Format("  {0} {1}", Name, how_much == 0 ? "resists dumbfounding." : " is dumbfounded."));
-        new Animation_CharFlash(this, Color.DarkSlateBlue, "067_huh");
+        Animation.Create(new Animation_CharFlash(this, Color.DarkSlateBlue, "067_huh"));
     }
 
     public void Sleep(int amount, int penalty)
@@ -1282,7 +1288,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         IncStatus(eAffliction.ASLEEP, amount, 0);
                 
         Game.AddMessage(string.Format("  {0} falls asleep.", Name));
-        new Animation_CharFlash(this, Color.MidnightBlue, "096_sleep");    
+        Animation.Create(new Animation_CharFlash(this, Color.MidnightBlue, "096_sleep"));    
     }
 
     public void Paralyze(int amount, int penalty)
@@ -1302,7 +1308,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
         IncStatus(eAffliction.PARALYZED, amount, 5000);
         Game.AddMessage(string.Format("  {0} is paralyzed.", Name));
-        new Animation_CharFlash(this, Color.Olive, "090_paralyze");
+        Animation.Create(new Animation_CharFlash(this, Color.Olive, "090_paralyze"));
     }
 
     public void Charm(int penalty)
@@ -1322,7 +1328,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
   
         Attitude = eAttitude.FRIENDLY;
         Game.AddMessage(string.Format("  {0} is charmed.", Name));
-        new Animation_CharFlash(this, Color.PeachPuff, "007_cool");
+        Animation.Create(new Animation_CharFlash(this, Color.PeachPuff, "007_cool"));
     }
 
     ////Amalgamation of monster_attack_pc and monster_attack_monster
@@ -1342,7 +1348,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         if (target.Status(eAffliction.INVISIBLE) > 0)
         {
             var r1 = Maths.Rand(1, 0, 100);
-            if (r1 > hit_chance[Record.Level / 2])
+            if (r1 > HitChance[Record.Level / 2])
             {
                 Game.AddMessage("  Can't find target!                 ");
             }
@@ -1389,9 +1395,10 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             }
 
             // Check if hit, and do effects
-            if (r1 <= hit_chance[(Record.Skill + 4) / 2])
+            if (r1 <= HitChance[(Record.Skill + 4) / 2])
             {
                 var aa = new Animation_Attack(this);
+                Animation.Create(aa);
 
                 if (Record.Genus == eGenus.DEMON)
                     dam_type = eDamageType.DEMON;
@@ -1492,7 +1499,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                         else if (Record.SpecialSkill is eCSS.ICY_TOUCH or eCSS.ICY_AND_DRAINING_TOUCH
                                  && Maths.Rand(1, 0, 8) < 6 && (target is NPC || pc.HasItemEquippedWithAbility(eItemAbil.LIFE_SAVING) == null))
                         {
-                            new Animation_Hold();
+                            Animation.Create(new Animation_Hold());
                             Game.AddMessage("  Freezing touch!");
                             r1 = Maths.Rand(3, 1, 10);
                             target.Damage(this, r1, 0, eDamageType.COLD);
@@ -1501,7 +1508,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                         // Killing touch
                         else if (Record.SpecialSkill == eCSS.DEATH_TOUCH) //&& (Maths.get_ran(1, 0, 8) < 6)) 
                         {
-                            new Animation_Hold();
+                            Animation.Create(new Animation_Hold());
                             Game.AddMessage("  Killing touch!");
                             r1 = Maths.Rand(20, 1, 10);
                             target.Damage(this, r1, 0, eDamageType.UNBLOCKABLE);
@@ -1524,11 +1531,11 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             else
             {
                 Game.AddMessage(string.Format("{0} misses {1}:", Record.Name, target.Name));
-                new Animation_Attack(this, "002_swordswish");
+                Animation.Create(new Animation_Attack(this, "002_swordswish"));
             }
             LastAttacked = target; //Save who we just attacked for last time - used for working out who we might target in future
 
-            new Animation_Hold();
+            Animation.Create(new Animation_Hold());
         }
 
     }
@@ -1564,21 +1571,21 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
             case eCSS.BREATHES_SLEEP_CLOUDS:
                 Game.AddMessage("Creature breathes.");               
-                new Animation_Missile(Pos, Target.Pos, 0, false, "044_breathe");
-                new Animation_Hold();
-                curTown.PlaceFieldPattern(Pattern.Radius2, Target.Pos, Field.SLEEP_CLOUD, this);
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 0, false, "044_breathe"));
+                Animation.Create(new Animation_Hold());
+                CurTown.PlaceFieldPattern(Pattern.Radius2, Target.Pos, Field.SLEEP_CLOUD, this);
                 break;
             case eCSS.BREATHES_STINKING_CLOUDS:
                 Game.AddMessage(string.Format("  Breathes on {0}.", Target.Name));
-                new Animation_Missile(Pos, Target.Pos, 12, false, "044_breathe");
-                new Animation_Hold();
-                curTown.PlaceFieldPattern(Pattern.Single, Target.Pos, Field.STINK_CLOUD, this);
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 12, false, "044_breathe"));
+                Animation.Create(new Animation_Hold());
+                CurTown.PlaceFieldPattern(Pattern.Single, Target.Pos, Field.STINK_CLOUD, this);
                 break;
             case eCSS.SHOOTS_WEB:
                 Game.AddMessage(string.Format("  Throws web at {0}.", Target.Name));
-                new Animation_Missile(Pos, Target.Pos, 8, false, "014_missile");
-                new Animation_Hold();
-                curTown.PlaceFieldPattern(Pattern.Single, Target.Pos, Field.WEB, this);
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 8, false, "014_missile"));
+                Animation.Create(new Animation_Hold());
+                CurTown.PlaceFieldPattern(Pattern.Single, Target.Pos, Field.WEB, this);
                 break;
             case eCSS.PARALYSIS_RAY:
                 Sound.Play(51);
@@ -1586,8 +1593,8 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                 Target.Paralyze(100, 0);
                 break;
             case eCSS.PETRIFICATION_RAY:
-                new Animation_Missile(Pos, Target.Pos, 14, false, "043_stoning");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 14, false, "043_stoning"));
+                Animation.Create(new Animation_Hold());
                 Game.AddMessage(string.Format("  Gazes at {0}.", Target.Name));
                 r1 = Maths.Rand(1, 0, 20) + Target.Level / 4 + Target.Status(eAffliction.BLESS_CURSE);
                 if (r1 > 14)
@@ -1596,49 +1603,49 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                     Target.Kill(this, eLifeStatus.STONE);
                 break;
             case eCSS.SP_DRAIN_RAY:
-                new Animation_Missile(Pos, Target.Pos, 8, false, "043_stoning");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 8, false, "043_stoning"));
+                Animation.Create(new Animation_Hold());
                 Game.AddMessage(string.Format("  Drains {0}.", Target.Name));
                 Target.SP /= 2;
                 break;
             case eCSS.HEAT_RAY:
-                new Animation_Missile(Pos, Target.Pos, 13, false, "051_magic1");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 13, false, "051_magic1"));
+                Animation.Create(new Animation_Hold());
                 r1 = Maths.Rand(7, 1, 6);
                 Game.AddMessage(string.Format("  Hits {0} with heat ray.", Target.Name));
-                if (Target.Damage(this, r1, 0, eDamageType.FIRE)) new Animation_Hold();
+                if (Target.Damage(this, r1, 0, eDamageType.FIRE)) Animation.Create(new Animation_Hold());
                 break;
             case eCSS.ACID_SPIT:
-                new Animation_Missile(Pos, Target.Pos, 0, true, "064_spit");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 0, true, "064_spit"));
+                Animation.Create(new Animation_Hold());
                 Game.AddMessage(string.Format("  Spits acid on {0}.", Target.Name));
                 Target.Acid(6);
                 break;
             case eCSS.THROWS_DARTS:
             case eCSS.SHOOTS_ARROWS:
             case eCSS.GOOD_ARCHER:
-                new Animation_Missile(Pos, Target.Pos, 3, true, "012_longbow");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 3, true, "012_longbow"));
+                Animation.Create(new Animation_Hold());
                 Game.AddMessage(string.Format("  Shoots at {0}.", Target.Name));
                 break;
             case eCSS.THROWS_SPEARS:
-                new Animation_Missile(Pos, Target.Pos, 5, true, "014_missile");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 5, true, "014_missile"));
+                Animation.Create(new Animation_Hold());
                 Game.AddMessage(string.Format("  Throws spear at {0}.", Target.Name));
                 break;
             case eCSS.THROWS_RAZORDISKS:
-                new Animation_Missile(Pos, Target.Pos, 7, true, "014_missile");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 7, true, "014_missile"));
+                Animation.Create(new Animation_Hold());
                 Game.AddMessage(string.Format("  Throws razordisk at {0}.", Target.Name));
                 break;
             case eCSS.SHOOTS_SPINES:
-                new Animation_Missile(Pos, Target.Pos, 5, true, "014_missile");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 5, true, "014_missile"));
+                Animation.Create(new Animation_Hold());
                 Game.AddMessage(string.Format("  Fires spines at {0}.", Target.Name));
                 break;
             default://rock throwing
-                new Animation_Missile(Pos, Target.Pos, 12, true, "014_missile");
-                new Animation_Hold();
+                Animation.Create(new Animation_Missile(Pos, Target.Pos, 12, true, "014_missile"));
+                Animation.Create(new Animation_Hold());
                 Game.AddMessage(string.Format("  Throws rock at {0}.", Target.Name));
                 break;
         }
@@ -1646,21 +1653,21 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         // Check sanctuary
         if (Target.Status(eAffliction.INVISIBLE) > 0)
         {
-            if (Maths.Rand(1, 0, 100) > hit_chance[(int)Record.SpecialSkill])
+            if (Maths.Rand(1, 0, 100) > HitChance[(int)Record.SpecialSkill])
                 Game.AddMessage("  Can't find target!");
             return;
         }
 
         r1 = Maths.Rand(1, 0, 100) - 5 * Maths.Min(10, Status(eAffliction.BLESS_CURSE)) + 5 * Target.Status(eAffliction.BLESS_CURSE)
-             - 5 * (curTown.CanSee(Pos, Target.Pos));
+             - 5 * (CurTown.CanSee(Pos, Target.Pos));
             
         if (Target is PCType && ((PCType)Target).Parry < 100)
             r1 += 5 * ((PCType)Target).Parry;
         var r2 = Maths.Rand(dam[(int)Record.SpecialSkill], 1, 7) + Math.Min(10, Status(eAffliction.BLESS_CURSE));
 
-        if (r1 <= hit_chance[dam[(int)Record.SpecialSkill] * 2])
+        if (r1 <= HitChance[dam[(int)Record.SpecialSkill] * 2])
         {
-            if (Target.Damage(this, r2, 0, eDamageType.WEAPON, eDamageType.WEAPON, "098_missilehit")) new Animation_Hold();
+            if (Target.Damage(this, r2, 0, eDamageType.WEAPON, eDamageType.WEAPON, "098_missilehit")) Animation.Create(new Animation_Hold());
         }
         else
         {
@@ -1798,15 +1805,15 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             //emergency spells level 7 (major haste, major summoning, firestorm, shockwave)
             {NPCMageSpell.MajorHaste,NPCMageSpell.MajorSummoning,NPCMageSpell.Firestorm,NPCMageSpell.Shockwave}};
 
-        if (curTown.FieldThere(Pos, Field.ANTIMAGIC)) return null;
+        if (CurTown.FieldThere(Pos, Field.ANTIMAGIC)) return null;
 
         //Find the Caster's spell level for this spell
         var level = Maths.Max(1, Record.MageLevel - Status(eAffliction.DUMB)) - 1;
 
-        target_pos = curTown.FindSpellTargetPosition(Pos, 1, ref target_levels, this);//ter.find_fireball_loc(Pos, 1, (Attitude % 2 == 1) ? 0 : 1, ref target_levels);
+        target_pos = CurTown.FindSpellTargetPosition(Pos, 1, ref target_levels, this);//ter.find_fireball_loc(Pos, 1, (Attitude % 2 == 1) ? 0 : 1, ref target_levels);
         target_char = Target;
 
-        friend_levels_near = -1 * curTown.CountLevels(Pos, 3, this);//(Attitude % 2 != 1) ? town.count_levels(Pos, 3) : -1 * town.count_levels(Pos, 3);
+        friend_levels_near = -1 * CurTown.CountLevels(Pos, 3, this);//(Attitude % 2 != 1) ? town.count_levels(Pos, 3) : -1 * town.count_levels(Pos, 3);
 
         //Less than a quarter health remaining -  maybe cast emergency defensive spell
         if (Health * 4 < Record.Health && Maths.Rand(1, 0, 10) < 9)
@@ -1849,15 +1856,15 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         if (target_char == null)
         {
-            if (curTown.FieldThere(target_pos, Field.ANTIMAGIC)) return null;// false;
+            if (CurTown.FieldThere(target_pos, Field.ANTIMAGIC)) return null;// false;
         }
         else
-        if (curTown.FieldThere(target_char.Pos, Field.ANTIMAGIC)) return null;// false;
+        if (CurTown.FieldThere(target_char.Pos, Field.ANTIMAGIC)) return null;// false;
 
         // How about shockwave? Good idea?
         if (spell == NPCMageSpell.Shockwave && !IsABaddie)
             spell = NPCMageSpell.MajorSummoning;
-        if (spell == NPCMageSpell.Shockwave && IsABaddie && curTown.CountLevels(Pos, 10, this) < 45)
+        if (spell == NPCMageSpell.Shockwave && IsABaddie && CurTown.CountLevels(Pos, 10, this) < 45)
             spell = NPCMageSpell.MajorSummoning;
 
         if (SP < spell.Cost) return null;
@@ -1914,13 +1921,13 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             //emergency spells level 7 (avatar, divine thud, revive all)
             {NPCPriestSpell.Avatar,NPCPriestSpell.Avatar,NPCPriestSpell.DivineThud,NPCPriestSpell.ReviveAll}};
 
-        if (curTown.FieldThere(Pos, Field.ANTIMAGIC)) return null;
+        if (CurTown.FieldThere(Pos, Field.ANTIMAGIC)) return null;
 
         var level = Maths.Max(1, Record.PriestLevel - Status(eAffliction.DUMB)) - 1;
 
         var target_levels = 0;
-        target_pos = curTown.FindSpellTargetPosition(Pos, 1, ref target_levels, this);
-        var friend_levels_near = -1 * curTown.CountLevels(Pos, 3, this);
+        target_pos = CurTown.FindSpellTargetPosition(Pos, 1, ref target_levels, this);
+        var friend_levels_near = -1 * CurTown.CountLevels(Pos, 3, this);
 
         if ((Health * 4 < Record.Health) && (Maths.Rand(1, 0, 10) < 9))
             spell = emer_spells[level, 3];
@@ -1946,8 +1953,8 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         if (spell.AreaEffect > 0) target_char = null;
 
-        if (target_char == null && curTown.FieldThere(target_pos, Field.ANTIMAGIC)) return null;
-        if (target_char != null && curTown.FieldThere(target_char.Pos, Field.ANTIMAGIC)) return null;
+        if (target_char == null && CurTown.FieldThere(target_pos, Field.ANTIMAGIC)) return null;
+        if (target_char != null && CurTown.FieldThere(target_char.Pos, Field.ANTIMAGIC)) return null;
 
         // snuff heals if unwounded
         if (Health == Record.Health && (spell == NPCPriestSpell.MajorHeal || spell == NPCPriestSpell.ReviveSelf || spell == NPCPriestSpell.LightHeal || spell == NPCPriestSpell.Heal))
@@ -1973,9 +1980,9 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
 
         if (spell == NPCMageSpell.Spark)
         {
-            new Animation_Missile(l, targc.Pos, 6, true, "011_3booms");
-            new Animation_Hold();
-            if (targc.Damage(this, Maths.Rand(2, 1, 4), 0, eDamageType.FIRE)) new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 6, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            if (targc.Damage(this, Maths.Rand(2, 1, 4), 0, eDamageType.FIRE)) Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCMageSpell.MinorHaste){ // minor haste
             Haste(2);
@@ -1986,58 +1993,58 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
         else if (spell == NPCMageSpell.FlameCloud)
         { 
-            new Animation_Missile(l, targc.Pos, 2, true, "011_3booms");
-            new Animation_Hold();
-            curTown.PlaceFieldPattern(Pattern.Single, targc.Pos, Field.FIRE_WALL, this);
+            Animation.Create(new Animation_Missile(l, targc.Pos, 2, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            CurTown.PlaceFieldPattern(Pattern.Single, targc.Pos, Field.FIRE_WALL, this);
         }
         else if (spell == NPCMageSpell.Flame)
         { 
-            new Animation_Missile(l, targc.Pos, 2, true, "011_3booms");
-            new Animation_Hold();
-            if (targc.Damage(this, Maths.Rand(Record.Level, 1, 4), 0, eDamageType.FIRE)) new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 2, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            if (targc.Damage(this, Maths.Rand(Record.Level, 1, 4), 0, eDamageType.FIRE)) Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCMageSpell.MinorPoison)
         {
-            new Animation_Missile(l, targc.Pos, 11, false, "025_magespell");
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 11, false, "025_magespell"));
+            Animation.Create(new Animation_Hold());
             targc.Poison(2 + Maths.Rand(1, 0, 1));
         }
         else if (spell == NPCMageSpell.Slow)
         { 
-            new Animation_Missile(l, targc.Pos, 15, false, "025_magespell");
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 15, false, "025_magespell"));
+            Animation.Create(new Animation_Hold());
             targc.Slow(2 + Record.Level / 2);
         }
         else if (spell == NPCMageSpell.Dumbfound)
         { 
-            new Animation_Missile(l, targc.Pos, 14, false, "025_magespell");
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 14, false, "025_magespell"));
+            Animation.Create(new Animation_Hold());
             targc.Dumbfound(2);
         }
         else if (spell == NPCMageSpell.StinkingCloud)
         { 
-            new Animation_Missile(l, target, 0, false, "025_magespell");
-            new Animation_Hold();
-            curTown.PlaceFieldPattern(Pattern.Square, target, Field.STINK_CLOUD, this);
+            Animation.Create(new Animation_Missile(l, target, 0, false, "025_magespell"));
+            Animation.Create(new Animation_Hold());
+            CurTown.PlaceFieldPattern(Pattern.Square, target, Field.STINK_CLOUD, this);
         }
         else if (spell == NPCMageSpell.SummonBeast)
         { 
             var sum = NPCRecord.GetSummonMonster(1);
             if (sum != null)
-                curTown.SummonMonster(this, sum, Pos, (!IsABaddie ? 0 : 100) + Maths.Rand(3, 1, 4));
+                CurTown.SummonMonster(this, sum, Pos, (!IsABaddie ? 0 : 100) + Maths.Rand(3, 1, 4));
         }
         else if (spell == NPCMageSpell.Conflagration)
         { 
-            new Animation_Missile(l, target, 13, true, "025_magespell");
-            new Animation_Hold();
-            curTown.PlaceFieldPattern(Pattern.Radius2, target, Field.FIRE_WALL, this);
+            Animation.Create(new Animation_Missile(l, target, 13, true, "025_magespell"));
+            Animation.Create(new Animation_Hold());
+            CurTown.PlaceFieldPattern(Pattern.Radius2, target, Field.FIRE_WALL, this);
         }
         else if (spell == NPCMageSpell.Fireball)
         { 
-            new Animation_Missile(l, target, 2, true, "011_3booms");
-            new Animation_Hold();
-            curTown.HitArea(target, Maths.Min(1 + (Record.Level * 3) / 4, 29),1,6, eDamageType.FIRE, Pattern.Square, true, this);
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, target, 2, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            CurTown.HitArea(target, Maths.Min(1 + (Record.Level * 3) / 4, 29),1,6, eDamageType.FIRE, Pattern.Square, true, this);
+            Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCMageSpell.WeakSummoning || spell == NPCMageSpell.Summoning || spell == NPCMageSpell.MajorSummoning)
         {
@@ -2062,7 +2069,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             {
                 for (i = 0; i < j; i++)
                 {
-                    if (!curTown.SummonMonster(this, sum, Pos, (!IsABaddie ? 0 : 100) + Maths.Rand(4, 1, 4)))
+                    if (!CurTown.SummonMonster(this, sum, Pos, (!IsABaddie ? 0 : 100) + Maths.Rand(4, 1, 4)))
                     {
                         Game.AddMessage("  Summon failed.");
                         break;
@@ -2073,23 +2080,23 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         else if (spell == NPCMageSpell.Web)
         {
             Sound.Play(25);
-            curTown.PlaceFieldPattern(Pattern.Radius2, target, Field.WEB, this);
+            CurTown.PlaceFieldPattern(Pattern.Radius2, target, Field.WEB, this);
         }
         else if (spell == NPCMageSpell.Poison)
         {
-            new Animation_Missile(l, targc.Pos, 11, false, "025_magespell");
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 11, false, "025_magespell"));
+            Animation.Create(new Animation_Hold());
             targc.Poison(4 + Maths.Rand(1, 0, 3));
         }
         else if (spell == NPCMageSpell.IceBolt)
         {
-            new Animation_Missile(l, targc.Pos, 6, true, "011_3booms");
-            new Animation_Hold();
-            if (targc.Damage(this, Maths.Rand(5 + (Record.Level / 5), 1, 8), 0, eDamageType.COLD)) new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 6, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            if (targc.Damage(this, Maths.Rand(5 + (Record.Level / 5), 1, 8), 0, eDamageType.COLD)) Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCMageSpell.SlowGroup)
         {
-            foreach (var ch in curTown.EachCharacterInRange(Pos, 7))
+            foreach (var ch in CurTown.EachCharacterInRange(Pos, 7))
             {
                 if (!AlliedWith(ch))
                     ch.Slow(2 + Record.Level / 4, true);
@@ -2097,7 +2104,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
         else if (spell == NPCMageSpell.MajorHaste)
         {
-            foreach (var ch in curTown.EachCharacterInRange(Pos, 7))
+            foreach (var ch in CurTown.EachCharacterInRange(Pos, 7))
             {
                 if (AlliedWith(ch))
                     ch.Haste(3);
@@ -2105,35 +2112,35 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
         else if (spell == NPCMageSpell.Firestorm)
         {
-            new Animation_Missile(l, target, 1, true, "011_3booms");
-            new Animation_Hold();
-            curTown.HitArea(target, Maths.Min(1 + (Record.Level * 3) / 4 + 3, 29), 1,6, eDamageType.FIRE, Pattern.Radius2, true, this); new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, target, 1, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            CurTown.HitArea(target, Maths.Min(1 + (Record.Level * 3) / 4 + 3, 29), 1,6, eDamageType.FIRE, Pattern.Radius2, true, this); Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCMageSpell.Shockstorm)
         {
-            new Animation_Missile(l, target, 6, true, "011_3booms");
-            new Animation_Hold();
-            curTown.PlaceFieldPattern(Pattern.Radius2, target, Field.FORCE_WALL, this);
+            Animation.Create(new Animation_Missile(l, target, 6, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            CurTown.PlaceFieldPattern(Pattern.Radius2, target, Field.FORCE_WALL, this);
         }
         else if (spell == NPCMageSpell.MajorPoison)
         {
-            new Animation_Missile(l, targc.Pos, 11, true, "011_3booms");
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 11, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
             targc.Poison(6 + Maths.Rand(1, 1, 2));
         }
         else if (spell == NPCMageSpell.Kill)
         {
-            new Animation_Missile(l, targc.Pos, 9, true, "011_3booms");
-            new Animation_Hold();
-            if (targc.Damage(this, 35 + Maths.Rand(3, 1, 10), 0, eDamageType.MAGIC)) new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 9, true, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            if (targc.Damage(this, 35 + Maths.Rand(3, 1, 10), 0, eDamageType.MAGIC)) Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCMageSpell.Daemon)
         {
-            curTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Demon_ID], Pos, (!IsABaddie ? 0 : 100) + Maths.Rand(3, 1, 4));
+            CurTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Demon_ID], Pos, (!IsABaddie ? 0 : 100) + Maths.Rand(3, 1, 4));
         }
         else if (spell == NPCMageSpell.MajorBlessing)
         { 
-            foreach (var ch in curTown.EachCharacterInRange(Pos, 7))
+            foreach (var ch in CurTown.EachCharacterInRange(Pos, 7))
             {
                 if (!AlliedWith(ch))
                 {
@@ -2149,10 +2156,10 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         else if (spell == NPCMageSpell.Shockwave)
         { 
             Game.AddMessage("  The ground shakes.");
-            foreach (var ch in curTown.EachCharacterInRange(Pos, 10))
-                if (ch != this && curTown.Visible(ch.Pos))
+            foreach (var ch in CurTown.EachCharacterInRange(Pos, 10))
+                if (ch != this && CurTown.Visible(ch.Pos))
                     ch.Damage(this, Maths.Rand(2 + Pos.DistanceTo(ch.Pos) / 2, 1, 6), 0, eDamageType.MAGIC);
-            new Animation_Hold();
+            Animation.Create(new Animation_Hold());
         }
     }
 
@@ -2170,55 +2177,55 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         SP -= spell.Cost;
 
         if (spell == NPCPriestSpell.Wrack){
-            new Animation_Missile(l, targc.Pos, 8, false, "024_priestspell");
-            new Animation_Hold();
-            if (targc.Damage(this, Maths.Rand(2, 1, 4),0, eDamageType.UNBLOCKABLE)) new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 8, false, "024_priestspell"));
+            Animation.Create(new Animation_Hold());
+            if (targc.Damage(this, Maths.Rand(2, 1, 4),0, eDamageType.UNBLOCKABLE)) Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCPriestSpell.Stumble){
             Sound.Play(24);
-            curTown.PlaceFieldPattern(Pattern.Single, targc.Pos, Field.WEB, this);
+            CurTown.PlaceFieldPattern(Pattern.Single, targc.Pos, Field.WEB, this);
         }
         else if (spell == NPCPriestSpell.MinorBless) Bless(3);
         else if (spell == NPCPriestSpell.Bless) Bless(5);
         else if (spell == NPCPriestSpell.Curse){
-            new Animation_Missile(l, targc.Pos, 8, false, "024_priestspell");
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 8, false, "024_priestspell"));
+            Animation.Create(new Animation_Hold());
             var x = Maths.Rand(1, 0, 1);
             targc.Curse(2 + x);
         }
         else if (spell == NPCPriestSpell.Wound){
-            new Animation_Missile(l, targc.Pos, 8, false, "024_priestspell");
-            new Animation_Hold();
-            if (targc.Damage(this, Maths.Rand(2, 1, 6) + 2, 0, eDamageType.MAGIC)) new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 8, false, "024_priestspell"));
+            Animation.Create(new Animation_Hold());
+            if (targc.Damage(this, Maths.Rand(2, 1, 6) + 2, 0, eDamageType.MAGIC)) Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCPriestSpell.SummonSpirit){
-            curTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Shade_ID], Pos, (IsABaddie ? 100 : 0) + Maths.Rand(3, 1, 4));
+            CurTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Shade_ID], Pos, (IsABaddie ? 100 : 0) + Maths.Rand(3, 1, 4));
         }
         else if (spell == NPCPriestSpell.SummonGuardian){
-            curTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Guardian_ID], Pos, (IsABaddie ? 100 : 0) + Maths.Rand(3, 1, 4));
+            CurTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Guardian_ID], Pos, (IsABaddie ? 100 : 0) + Maths.Rand(3, 1, 4));
         }
         else if (spell == NPCPriestSpell.Disease){
-            new Animation_Missile(l, targc.Pos, 11, false, "024_priestspell");
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 11, false, "024_priestspell"));
+            Animation.Create(new Animation_Hold());
             targc.Disease(2 + Maths.Rand(1, 0, 2));
         }
         else if (spell == NPCPriestSpell.HolyScourge){
-            new Animation_Missile(l, targc.Pos, 15, false, "024_priestspell");
-            new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 15, false, "024_priestspell"));
+            Animation.Create(new Animation_Hold());
             targc.Slow(2 + Maths.Rand(1,0,2), true);
             targc.Curse(3 + Maths.Rand(1,0,2));
         }
         else if (spell == NPCPriestSpell.Smite){
-            new Animation_Missile(l, targc.Pos, 6, false, "024_priestspell");
-            new Animation_Hold();
-            if (targc.Damage(this, Maths.Rand(4, 1, 6) + 2, 0, eDamageType.COLD)) new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 6, false, "024_priestspell"));
+            Animation.Create(new Animation_Hold());
+            if (targc.Damage(this, Maths.Rand(4, 1, 6) + 2, 0, eDamageType.COLD)) Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCPriestSpell.SticksToSnakes){
             var r1 = Maths.Rand(1, 1, 4) + 2;
             for (var i = 0; i < r1; i++)
             {
                 var r2 = Maths.Rand(1, 0, 7);
-                curTown.SummonMonster(this, r2 == 1 ? NPCRecord.List[Constants.NPC_Mage_Spell_Asp_ID] : NPCRecord.List[Constants.NPC_Mage_Spell_Serpent_ID], Pos, (IsABaddie ? 100 : 0) + Maths.Rand(3, 1, 4));
+                CurTown.SummonMonster(this, r2 == 1 ? NPCRecord.List[Constants.NPC_Mage_Spell_Asp_ID] : NPCRecord.List[Constants.NPC_Mage_Spell_Serpent_ID], Pos, (IsABaddie ? 100 : 0) + Maths.Rand(3, 1, 4));
             }
         }
         else if (spell == NPCPriestSpell.MartyrsShield){
@@ -2227,10 +2234,10 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         }
         else if (spell == NPCPriestSpell.SummonHost){
             var duration = Maths.Rand(3, 1, 4) + 1;
-            curTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Deva_ID], Pos, (!IsABaddie ? 0 : 100) + duration);
+            CurTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Deva_ID], Pos, (!IsABaddie ? 0 : 100) + duration);
             for (var i = 0; i < 4; i++)
             {
-                if (curTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Shade_ID], Pos,
+                if (CurTown.SummonMonster(this, NPCRecord.List[Constants.NPC_Mage_Spell_Shade_ID], Pos,
                         (IsABaddie ? 100 : 0) + duration) == false)
                     break;
             }
@@ -2238,7 +2245,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         else if (spell == NPCPriestSpell.CurseAll || spell == NPCPriestSpell.Pestilence){
             Sound.Play(24);
 
-            foreach(var ci in curTown.EachCharacterInRange(Pos, 7))
+            foreach(var ci in CurTown.EachCharacterInRange(Pos, 7))
                 if (!AlliedWith(ci))
                 {
                     ci.Curse(2 + Maths.Rand(2, 0, 2), true);
@@ -2251,7 +2258,7 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         else if (spell == NPCPriestSpell.ReviveSelf) Heal(50); 
         else if (spell == NPCPriestSpell.BlessAll || spell == NPCPriestSpell.ReviveAll){
             Sound.Play(24);
-            foreach(var ci in curTown.EachCharacterInRange(Pos, 7))
+            foreach(var ci in CurTown.EachCharacterInRange(Pos, 7))
                 if (AlliedWith(ci))
                 {
                     if (spell == NPCPriestSpell.BlessAll)
@@ -2261,14 +2268,14 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
                 }
         }
         else if (spell == NPCPriestSpell.Flamestrike){
-            new Animation_Missile(l, target, 2, false, "011_3booms");
-            new Animation_Hold();
-            curTown.HitArea(target, 2 + Record.Level / 2 + 2, 1,6,eDamageType.FIRE, Pattern.Square, true, this); new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, target, 2, false, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            CurTown.HitArea(target, 2 + Record.Level / 2 + 2, 1,6,eDamageType.FIRE, Pattern.Square, true, this); Animation.Create(new Animation_Hold());
         }
         else if (spell == NPCPriestSpell.UnholyRavaging){
-            new Animation_Missile(l, targc.Pos, 14, false, "053_magic3");
-            new Animation_Hold();
-            if (targc.Damage(this, Maths.Rand(4, 1, 8), 0, eDamageType.MAGIC)) new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, targc.Pos, 14, false, "053_magic3"));
+            Animation.Create(new Animation_Hold());
+            if (targc.Damage(this, Maths.Rand(4, 1, 8), 0, eDamageType.MAGIC)) Animation.Create(new Animation_Hold());
             targc.Slow(6);
             targc.Poison(5 + Maths.Rand(1, 0, 2));
         }
@@ -2285,9 +2292,9 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
             SetStatus(eAffliction.MARTYRS_SHIELD, 8);
         }
         else if (spell == NPCPriestSpell.DivineThud){
-            new Animation_Missile(l, target, 9, false, "011_3booms");
-            new Animation_Hold();
-            curTown.HitArea(target, Maths.Min((Record.Level * 3) / 4 + 5,29),1,6, eDamageType.COLD, Pattern.Radius2, true, this); new Animation_Hold();
+            Animation.Create(new Animation_Missile(l, target, 9, false, "011_3booms"));
+            Animation.Create(new Animation_Hold());
+            CurTown.HitArea(target, Maths.Min((Record.Level * 3) / 4 + 5,29),1,6, eDamageType.COLD, Pattern.Radius2, true, this); Animation.Create(new Animation_Hold());
         }
     }
 
@@ -2303,13 +2310,13 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         l = Pos;
         if (Dir.IsFacingRight && Record.Width > 1) l.X++;
 
-        new Animation_Attack(this);
-        new Animation_Missile(l, target, missile_t[(byte)Record.BreathType], false, "044_breathe");
-        new Animation_Hold();
+        Animation.Create(new Animation_Attack(this));
+        Animation.Create(new Animation_Missile(l, target, missile_t[(byte)Record.BreathType], false, "044_breathe"));
+        Animation.Create(new Animation_Hold());
         Game.AddMessage(string.Format("  {0} breathes.", Record.Name));
         level = Maths.Rand(Record.Breath, 1, 8);
         if (Game.Mode != eMode.COMBAT) level = level / 3;
-        curTown.HitArea(target, 1, level,0, type[(byte)Record.BreathType], Pattern.Single, false, this); new Animation_Hold();
+        CurTown.HitArea(target, 1, level,0, type[(byte)Record.BreathType], Pattern.Single, false, this); Animation.Create(new Animation_Hold());
         return true;
     }
 }

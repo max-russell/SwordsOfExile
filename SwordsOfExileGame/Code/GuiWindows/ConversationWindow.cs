@@ -15,8 +15,7 @@ internal class ConversationWindow : GuiWindow
     private List<TalkingNode> _nodeList;
     private readonly Button[] _buttons = new Button[8];
     private bool _forceEnd; //When true, all options that continue the conversation vanish.
-
-    private List<Tuple<string, bool>> goBackList = new();
+    private readonly List<Tuple<string, bool>> _goBackList = new();
 
     public ConversationWindow(NPC npc) :
         base(0, 0, 400, 445, true, true, true, true, true)
@@ -42,7 +41,7 @@ internal class ConversationWindow : GuiWindow
             }
         }
 
-        _talkBox = AddBlankRichTextBox(pressText, 20, 62, 350, 280);
+        _talkBox = AddBlankRichTextBox(PressText, 20, 62, 350, 280);
         _talkBox.SetFonts(0);
             
         LineUpControls(20, 318, 5,
@@ -52,7 +51,7 @@ internal class ConversationWindow : GuiWindow
             _buttons[3] = AddButton(pressGoBack, "(G)o Back", 0, 352));
 
         LineUpControls(20, _buttons[0].Y + _buttons[0].Height + 10, 5,
-            _buttons[4] = AddButton(pressBuy, "(B)uy", 0, 352),
+            _buttons[4] = AddButton(PressBuy, "(B)uy", 0, 352),
             _buttons[5] = AddButton(PressSell, "(S)ell", 0, 352),
             _buttons[6] = AddButton(PressAsk, "(A)sk About", 0, 352),
             _buttons[7] = AddButton(PressRecord, "(R)ecord", 0, 352));
@@ -92,7 +91,7 @@ internal class ConversationWindow : GuiWindow
         return false;
     }
 
-    private void pressText(int index)
+    private void PressText(int index)
     {
         RunNode(_nodeList[index]);
     }
@@ -103,15 +102,15 @@ internal class ConversationWindow : GuiWindow
 
     private void pressGoBack(Control button)
     {
-        if (goBackList.Count <= 1) return;
+        if (_goBackList.Count <= 1) return;
         
-        goBackList.RemoveAt(goBackList.Count - 1);
-        var store = goBackList[^1];
-        goBackList.RemoveAt(goBackList.Count - 1);
+        _goBackList.RemoveAt(_goBackList.Count - 1);
+        var store = _goBackList[^1];
+        _goBackList.RemoveAt(_goBackList.Count - 1);
         SetUpText(store.Item1, store.Item2);
     }
 
-    private void pressBuy(Control button)
+    private void PressBuy(Control button)
     {
         var ss = new[] { "purc", "sale", "heal", "iden", "trai" };
 
@@ -224,9 +223,9 @@ internal class ConversationWindow : GuiWindow
     {
         _buttons[7].Enabled = true;
 
-        goBackList.Add(new Tuple<string, bool>(Text, doWordLinks));
-        if (goBackList.Count == 10)
-            goBackList.RemoveAt(0);
+        _goBackList.Add(new Tuple<string, bool>(Text, doWordLinks));
+        if (_goBackList.Count == 10)
+            _goBackList.RemoveAt(0);
 
         //Put new lines in properly.
         Text = Text.Replace("|", "@n");

@@ -389,7 +389,7 @@ public class Action
             case eAction.StartRest:
                 if (CurrentParty.CanRest())
                 {
-                    new Animation_FadeDown(300);
+                    Animation.Create(new Animation_FadeDown(300));
                     return eState.DO_CAMPING;
                 }
                 break;

@@ -271,8 +271,9 @@ public partial class PartyType : IExpRecipient
         foreach (var pc in EachAlivePC())
             if (!silent) pc.Heal(amount);
             else pc.Health += amount;
-        if (!silent) new Animation_Hold();
+        if (!silent) Animation.Create(new Animation_Hold());
     }
+    
     public void RestoreSP(int amount)
     {
         foreach (var pc in EachAlivePC())
@@ -523,7 +524,7 @@ public partial class PartyType : IExpRecipient
         {
             if (pc2 != pc)
             {
-                new Animation_Move(pc2, pc2.Pos, pc.Pos, false);//, 0.1f);
+                Animation.Create(new Animation_Move(pc2, pc2.Pos, pc.Pos, false));//, 0.1f));
                 pc2.PositionPConPC(pc);
             }
             pc2.Parry = 0;
@@ -576,7 +577,7 @@ public partial class PartyType : IExpRecipient
         Gfx.CentreView(Pos, true);
         currentMap.UpdateVisible();
         Animation.CancelAll();
-        new Animation_FadeUp(300);
+        Animation.Create(new Animation_FadeUp(300));
     }
 
     public bool Move(Location mod)
@@ -617,7 +618,7 @@ public partial class PartyType : IExpRecipient
             someone = activePC.Damage(null, how_much, 0, dam_type);
         else foreach (var pc in EachAlivePC())
             someone |= pc.Damage(null, how_much, 0, dam_type);
-        if (someone) new Animation_Hold();
+        if (someone) Animation.Create(new Animation_Hold());
     }
 
     /// <summary>
@@ -629,7 +630,7 @@ public partial class PartyType : IExpRecipient
     {   var someone = false;
         foreach (var pc in EachAlivePC())
             someone |= pc.Damage(null, how_much, 0, dam_type);
-        if (someone) new Animation_Hold();
+        if (someone) Animation.Create(new Animation_Hold());
         return false;
     }
 
@@ -807,7 +808,7 @@ public partial class PartyType : IExpRecipient
             if (!currentMap.CharacterCanBeThere(Pos, LeaderPC))
             {
                 Game.AddMessage("You plummet to your deaths.");
-                new Animation_Death(LeaderPC);
+                Animation.Create(new Animation_Death(LeaderPC));
                 LeaderPC.Dying = true;
                 foreach (var pc in PCList)
                 {
@@ -952,7 +953,7 @@ public partial class PartyType : IExpRecipient
             var p = pc.Status(eAffliction.POISON);
             if (p > 0)
             {
-                if (pc.Damage(null, Maths.Rand(p,1,6), 0, eDamageType.POISON)) new Animation_Hold();
+                if (pc.Damage(null, Maths.Rand(p,1,6), 0, eDamageType.POISON)) Animation.Create(new Animation_Hold());
                 if (Maths.Rand(1, 0, 8) < 6) pc.DecStatus(eAffliction.POISON, 1, 0);
                 if (Maths.Rand(1, 0, 8) < 6 && pc.HasTrait(Trait.Constitution)) pc.DecStatus(eAffliction.POISON, 1, 0);
             }
@@ -1007,7 +1008,7 @@ public partial class PartyType : IExpRecipient
             var p = pc.Status(eAffliction.ACID);
             if (p > 0)
             {
-                if (pc.Damage(null, Maths.Rand(p,1,6), 0, eDamageType.MAGIC)) new Animation_Hold();
+                if (pc.Damage(null, Maths.Rand(p,1,6), 0, eDamageType.MAGIC)) Animation.Create(new Animation_Hold());
                 pc.DecStatus(eAffliction.ACID, 1, 0);
             }
         }

@@ -689,13 +689,13 @@ public partial class WorldMapType : IMap
             if (!PCAttacker.Record.CantFlee && ((Party.TotalLevel > (PCAttacker.Record.out_enc_lev_tot * 5) / 3 && PCAttacker.Record.out_enc_lev_tot < 200) || Game.NPCGroupsFlee))
             {
                 Game.AddMessage("Combat: Enemies fled!");
-                new Animation_Hold();
-                new Animation_Death(PCAttacker);
+                Animation.Create(new Animation_Hold());
+                Animation.Create(new Animation_Death(PCAttacker));
                 return;
             }
 
-            new Animation_Hold();
-            new Animation_Attack(PCAttacker, "023_startoutdoorcombat");
+            Animation.Create(new Animation_Hold());
+            Animation.Create(new Animation_Attack(PCAttacker, "023_startoutdoorcombat"));
         }
     }
 

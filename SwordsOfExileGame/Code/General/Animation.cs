@@ -65,6 +65,13 @@ public class Animation
         }
     }
 
+    public static void Create<T>(T newAnimation) where T: Animation
+    {
+        // This is a dummy function until all the plain animation constructors stop automatically being put on the
+        // animation list as a side-effect.
+        // AnimationList.Add(newAnimation);
+    }
+
     /// <summary>
     /// Returns all the queued Overlay animations in the list for drawing, as long as they are running.
     /// </summary>

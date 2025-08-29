@@ -330,7 +330,7 @@ internal class Script
                 TalkingText = Params.TalkingText;
         }
         else if (Params.Origin == eCallOrigin.LEAVING_TOWN)
-            new Animation_FadeDown(300);
+            Animation.Create(new Animation_FadeDown(300));
         else if (Params.Origin == eCallOrigin.ENTERING_TOWN && ScriptQueue.Count <= 1)
             Game.AutoSave();
     }
