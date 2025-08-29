@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
 using XnaRect = Microsoft.Xna.Framework.Rectangle;
@@ -8,172 +9,172 @@ namespace SwordsOfExileGame;
 
 internal class ConversationWindow : GuiWindow
 {
-    private NPC NPC;
-    private Personality P;
-    private RichTextBox talkBox;
-    private List<TalkingNode> nodeList;
-    private Button[] buttons = new Button[8];
-    private bool forceEnd; //When true, all options that continue the conversation vanish.
+    private readonly NPC _npc;
+    private readonly Personality _personality;
+    private readonly RichTextBox _talkBox;
+    private List<TalkingNode> _nodeList;
+    private readonly Button[] _buttons = new Button[8];
+    private bool _forceEnd; //When true, all options that continue the conversation vanish.
 
     private List<Tuple<string, bool>> goBackList = new();
 
     public ConversationWindow(NPC npc) :
         base(0, 0, 400, 445, true, true, true, true, true)
     {
-        NPC = npc;
-        P = NPC.Personality;
+        _npc = npc;
+        _personality = _npc.Personality;
 
-        AddLabel(P.Name, 60, 20, -1, -1, false);
+        AddLabel(_personality.Name, 60, 20, -1, -1, false);
 
-        if (NPC.Start.FacialPic >= 0)
+        if (_npc.Start.FacialPic >= 0)
         {
-            XnaRect sr;
-            var sheet = (NPC.Start.FacialPic & 0x7C00) >> 10;
-            var no = (NPC.Start.FacialPic & 0x03FF);
+            var sheet = (_npc.Start.FacialPic & 0x7C00) >> 10;
+            var no = (_npc.Start.FacialPic & 0x03FF);
 
             if (Gfx.FacesGfx[sheet] != null)
             {
-                sr = new XnaRect((NPC.Start.FacialPic % Gfx.FacesGfxSlotsAcross[sheet]) * Gfx.FACEGFXWIDTH, (NPC.Start.FacialPic / Gfx.FacesGfxSlotsAcross[sheet]) * Gfx.FACEGFXHEIGHT, Gfx.FACEGFXWIDTH, Gfx.FACEGFXHEIGHT);
+                var sr = new XnaRect(
+                    _npc.Start.FacialPic % Gfx.FacesGfxSlotsAcross[sheet] * Gfx.FACEGFXWIDTH, 
+                    _npc.Start.FacialPic / Gfx.FacesGfxSlotsAcross[sheet] * Gfx.FACEGFXHEIGHT, 
+                    Gfx.FACEGFXWIDTH, 
+                    Gfx.FACEGFXHEIGHT);
                 AddPictureBox(Gfx.FacesGfx[sheet], sr, new XnaRect(20, 20, Gfx.FACEGFXWIDTH, Gfx.FACEGFXHEIGHT));
             }
         }
 
-        talkBox = AddBlankRichTextBox(pressText, 20, 62, 350, 280);
+        _talkBox = AddBlankRichTextBox(pressText, 20, 62, 350, 280);
+        _talkBox.SetFonts(0);
             
         LineUpControls(20, 318, 5,
-            buttons[0] = AddButton(pressLook, "(L)ook", 0, 352),
-            buttons[1] = AddButton(pressName, "(N)ame", 0, 352),
-            buttons[2] = AddButton(pressJob, "(J)ob", 0, 352),
-            buttons[3] = AddButton(pressGoBack, "(G)o Back", 0, 352));
+            _buttons[0] = AddButton(pressLook, "(L)ook", 0, 352),
+            _buttons[1] = AddButton(pressName, "(N)ame", 0, 352),
+            _buttons[2] = AddButton(pressJob, "(J)ob", 0, 352),
+            _buttons[3] = AddButton(pressGoBack, "(G)o Back", 0, 352));
 
-        LineUpControls(20, buttons[0].Y + buttons[0].Height + 10, 5,
-            buttons[4] = AddButton(pressBuy, "(B)uy", 0, 352),
-            buttons[5] = AddButton(pressSell, "(S)ell", 0, 352),
-            buttons[6] = AddButton(pressAsk, "(A)sk About", 0, 352),
-            buttons[7] = AddButton(pressRecord, "(R)ecord", 0, 352));
+        LineUpControls(20, _buttons[0].Y + _buttons[0].Height + 10, 5,
+            _buttons[4] = AddButton(pressBuy, "(B)uy", 0, 352),
+            _buttons[5] = AddButton(PressSell, "(S)ell", 0, 352),
+            _buttons[6] = AddButton(PressAsk, "(A)sk About", 0, 352),
+            _buttons[7] = AddButton(PressRecord, "(R)ecord", 0, 352));
 
-        buttons[0].KeyShortcut = Keys.L;
-        buttons[1].KeyShortcut = Keys.N;
-        buttons[2].KeyShortcut = Keys.J;
-        buttons[3].KeyShortcut = Keys.G;
-        buttons[4].KeyShortcut = Keys.B;
-        buttons[5].KeyShortcut = Keys.S;
-        buttons[6].KeyShortcut = Keys.A;
-        buttons[7].KeyShortcut = Keys.R;
+        _buttons[0].KeyShortcut = Keys.L;
+        _buttons[1].KeyShortcut = Keys.N;
+        _buttons[2].KeyShortcut = Keys.J;
+        _buttons[3].KeyShortcut = Keys.G;
+        _buttons[4].KeyShortcut = Keys.B;
+        _buttons[5].KeyShortcut = Keys.S;
+        _buttons[6].KeyShortcut = Keys.A;
+        _buttons[7].KeyShortcut = Keys.R;
 
 
-        var b = AddButton(pressDone, "Done", 340, 389);
+        var b = AddButton(PressDone, "Done", 340, 389);
         b.Position(-10, -10, 1, 1);
         OKKeyControl = b;
         CancelKeyControl = b;
 
-        setUpText(P.Look, false);
+        SetUpText(_personality.Look, false);
         Position(-2, -2);
     }
 
     public override bool Handle()
     {
-        if (Script.IsRunning)
+        if (!Script.IsRunning)
         {
-            if (Script.RunNext())
-            {
-                var text = Script.TalkingText;
-                setUpText(text);
-            }
-            return false;
+            return base.Handle();
         }
-        return base.Handle();
+
+        if (Script.RunNext())
+        {
+            var text = Script.TalkingText;
+            SetUpText(text);
+        }
+        
+        return false;
     }
 
     private void pressText(int index)
     {
-        runNode(nodeList[index]);
+        RunNode(_nodeList[index]);
     }
 
-    private void pressLook(Control button) { setUpText(P.Look, false); }
-    private void pressName(Control button) { setUpText(P.NameResponse); }
-    private void pressJob(Control button) { setUpText(P.JobResponse); }
+    private void pressLook(Control button) { SetUpText(_personality.Look, false); }
+    private void pressName(Control button) { SetUpText(_personality.NameResponse); }
+    private void pressJob(Control button) { SetUpText(_personality.JobResponse); }
 
     private void pressGoBack(Control button)
     {
-        if (goBackList.Count > 1)
-        {
-            goBackList.RemoveAt(goBackList.Count - 1);
-            var store = goBackList[goBackList.Count - 1];
-            goBackList.RemoveAt(goBackList.Count - 1);
-            setUpText(store.Item1, store.Item2);
-        }
+        if (goBackList.Count <= 1) return;
+        
+        goBackList.RemoveAt(goBackList.Count - 1);
+        var store = goBackList[^1];
+        goBackList.RemoveAt(goBackList.Count - 1);
+        SetUpText(store.Item1, store.Item2);
     }
 
     private void pressBuy(Control button)
     {
-        var ss = new string[] { "purc", "sale", "heal", "iden", "trai" };
+        var ss = new[] { "purc", "sale", "heal", "iden", "trai" };
 
-        foreach (var s in ss)
+        if (ss.Select(s => _personality.FindTalkingNode(s)).Any(node => node != null && RunNode(node)))
         {
-            var node = P.FindTalkingNode(s);
-            if (node != null && runNode(node))
-            {
-                return;
-            }
+            return;
         }
-        setUpText(P.BlankResponse);
+        SetUpText(_personality.BlankResponse);
     }
 
-    private void pressSell(Control button)
+    private void PressSell(Control button)
     {
-        var node = P.FindTalkingNode("sell");
-        if (node == null || !runNode(node))
-            setUpText(P.BlankResponse);
+        var node = _personality.FindTalkingNode("sell");
+        if (node == null || !RunNode(node))
+            SetUpText(_personality.BlankResponse);
     }
 
-    private void pressRecord(Control button) 
+    private void PressRecord(Control button) 
     {
         Game.AddMessage("Dialogue saved to Notes.");
-        Scenario.MakeNote(P.Name + " - Day " + Party.Day, talkBox.GetRawText());
-        buttons[7].Enabled = false;
+        Scenario.MakeNote(_personality.Name + " - Day " + Party.Day, _talkBox.GetRawText());
+        _buttons[7].Enabled = false;
     }
 
-    private void pressAsk(Control button) { new InputTextWindow(returnedAskAbout, "Type what to ask about:", "", false); }
+    private void PressAsk(Control button) { new InputTextWindow(ReturnedAskAbout, "Type what to ask about:", "", false); }
 
-    private void pressDone(Control button) {
+    private void PressDone(Control button) {
         KillMe = true; 
     }
 
-    private void returnedAskAbout(string text)
+    private void ReturnedAskAbout(string text)
     {
-        if (text != null)
-        {
-            var node = P.FindTalkingNode(text);
-            if (node == null || !runNode(node))
-                setUpText(P.BlankResponse);
-        }
+        if (text == null) return;
+        
+        var node = _personality.FindTalkingNode(text);
+        if (node == null || !RunNode(node))
+            SetUpText(_personality.BlankResponse);
     }
 
 
-    private bool runNode(TalkingNode node)
+    private bool RunNode(TalkingNode node)
     {
         if (!node.CheckCondition()) return false;
 
         if (node.SetsVar) Script.StuffDone[node.ConditionVar] = node.ConditionValue;
 
-        if (node.ForceEnd) forceEnd = true;
+        if (node.ForceEnd) _forceEnd = true;
 
         switch (node.Type)
         {
             case eTalkNodeType.REGULAR:
-                setUpText(node.Text, !forceEnd);
+                SetUpText(node.Text, !_forceEnd);
                 break;
             case eTalkNodeType.RUN_FUNCTION:
                 Script.TalkingText = node.Text;
-                Script.New_Talking(node.LinkedID, NPC);
+                Script.New_Talking(node.LinkedID, _npc);
                 break;
             case eTalkNodeType.RUN_SHOP:
                     
                 var shop = Shop.List[node.LinkedID];
                 if (shop == null)
                 {
-                    setUpText("Shop ID '" + node.LinkedID + "' not found.", false);
+                    SetUpText("Shop ID '" + node.LinkedID + "' not found.", false);
 
                 }
                 else
@@ -189,16 +190,18 @@ internal class ConversationWindow : GuiWindow
                 break;
             case eTalkNodeType.RUN_HEALER:
                 Visible = false;
-                var n = 0;
-                int.TryParse(node.LinkedID, out n);
-                n = Maths.MinMax(0, 6, n);
-                new HealerShopWindow(this, n);
+                if (int.TryParse(node.LinkedID, out var n))
+                {
+                    n = Maths.MinMax(0, 6, n);
+                    new HealerShopWindow(this, n);
+                }
                 break;
             case eTalkNodeType.RUN_IDENTIFY:
                 Visible = false;
-                n = 0;
-                int.TryParse(node.LinkedID, out n);
-                new IdentifyWindow(this, node.Text, n);
+                if (int.TryParse(node.LinkedID, out n))
+                {
+                    new IdentifyWindow(this, node.Text, n);
+                }
                 break;
             case eTalkNodeType.RUN_TRAINING:
                 Visible = false;
@@ -206,67 +209,55 @@ internal class ConversationWindow : GuiWindow
                 break;
             case eTalkNodeType.RUN_ENCHANTING:
                 Visible = false;
-                n = 0;
-                int.TryParse(node.LinkedID, out n);
-                n = Maths.MinMax(0, 6, n);
-                new EnchantingWindow(this, node.Text, (eEnchantShop)n);
+                if (int.TryParse(node.LinkedID, out n))
+                {
+                    n = Maths.MinMax(0, 6, n);
+                    new EnchantingWindow(this, node.Text, (eEnchantShop)n);
+                }
+
                 break;
         }
         return true;
     }
 
-    private string joinTexts(string[] texts)
+    private void SetUpText(string Text, bool doWordLinks = true)
     {
-        var sb = new StringBuilder();
-        var first = true;
+        _buttons[7].Enabled = true;
 
-        foreach (var s in texts)
-        {
-            if (!first)
-                sb.Append("@n");
-            sb.Append(s);
-            first = false;
-        }
-        return sb.ToString();
-    }
-
-    private void setUpText(string Text, bool do_word_links = true)
-    {
-        buttons[7].Enabled = true;
-
-        goBackList.Add(new Tuple<string, bool>(Text, do_word_links));
+        goBackList.Add(new Tuple<string, bool>(Text, doWordLinks));
         if (goBackList.Count == 10)
             goBackList.RemoveAt(0);
 
         //Put new lines in properly.
         Text = Text.Replace("|", "@n");
 
-        if (forceEnd)
+        if (_forceEnd)
         {
             //It has been decreed this conversation must stop. Remove all buttons except for the 'Done' and 'Record' ones.
-            foreach (var b in buttons) b.Visible = false;
+            foreach (var b in _buttons) b.Visible = false;
         }
 
-        if (forceEnd || !do_word_links)
+        if (_forceEnd || !doWordLinks)
         {
-            talkBox.FormatText(Text);
+            _talkBox.FormatText(Text);
             return;
         }
 
-        nodeList = new List<TalkingNode>();
+        _nodeList = new List<TalkingNode>();
         var sb = new StringBuilder();
-        var foundword = false;
-        var startpos = 0;
+        var foundWord = false;
+        var startPos = 0;
+        
         //Go through each word in the text, checking it with dialogue nodes for this personality.
         for (var n = 0; n < Text.Length; n++)
         {
             if (char.IsLetterOrDigit(Text[n]))
             {
                 sb.Append(Text[n]);
-                if (!foundword) startpos = n;
-                foundword = true;
+                if (!foundWord) startPos = n;
+                foundWord = true;
             }
-            else if (foundword && !char.IsLetterOrDigit(Text[n]) || n == Text.Length - 1)
+            else if (foundWord && !char.IsLetterOrDigit(Text[n]) || n == Text.Length - 1)
             {
                 if (n == Text.Length - 1)
                     sb.Append(Text[n++]);
@@ -274,20 +265,20 @@ internal class ConversationWindow : GuiWindow
                 //sb should now be our word
                 var word = sb.ToString();
 
-                var node = P.FindTalkingNode(word);
+                var node = _personality.FindTalkingNode(word);
 
                 if (node != null)
                 {
                     Text = Text.Insert(n, "@e");
-                    Text = Text.Insert(startpos, "@l");
-                    nodeList.Add(node);
+                    Text = Text.Insert(startPos, "@l");
+                    _nodeList.Add(node);
                     n += 3;
                 }
-                foundword = false;
+                foundWord = false;
                 sb.Clear();
             }
         }
-        talkBox.FormatText(Text);
+        _talkBox.FormatText(Text);
     }
 
 }

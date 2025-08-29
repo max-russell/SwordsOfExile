@@ -93,7 +93,7 @@ internal class MessageWindow : GuiWindow
         }
 
         var winpos = ypos + mainButtons[0].Height + 30;
-        Resize(390 + xpos, winpos);
+        base.Resize(390 + xpos, winpos);
         LineUpControlsRight(InnerWidth - 10, ypos, 10, mainButtons.ToArray<Control>());
         Position(-2, -2);
 

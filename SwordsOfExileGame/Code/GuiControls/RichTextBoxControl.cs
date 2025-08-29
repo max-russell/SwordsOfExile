@@ -11,7 +11,7 @@ internal delegate void LinkClickHandler(int index);
 
 internal class RichTextBox : Control
 {
-    private static float stringWidthModifier = 1.1f;
+    private float _stringWidthModifier = 1f;
 
     private BitmapFont fontNormal = Gfx.TalkFontNormal, fontItalic = Gfx.TalkFontItalic, fontBold = Gfx.TalkFontBold;
     public BitmapFont FontNormal { get => fontNormal;
@@ -56,6 +56,7 @@ internal class RichTextBox : Control
     {
         hasHypertext = handler != null;
         linkHandler = handler;
+        SetFonts(1);
     }
 
     //Constructor generally for Rich Text controls
@@ -86,12 +87,14 @@ internal class RichTextBox : Control
     {
         if (s == 0)
         {
+            _stringWidthModifier = 1.2f;
             fontNormal = Gfx.TalkFontNormal;
             fontItalic = Gfx.TalkFontItalic;
             fontBold = Gfx.TalkFontBold;
         }
         else
         {
+            _stringWidthModifier = 1.3f;
             fontNormal = Gfx.TinyFont;
             fontItalic = Gfx.ItalicFont;
             fontBold = Gfx.SmallBoldFont;
@@ -199,129 +202,127 @@ internal class RichTextBox : Control
 
         do
         {
-            string_ended = false;
-
             do
             {
                 if (pos >= rawText.Length) { string_ended = true; break; }
                 if (char.IsWhiteSpace(rawText[pos]))
                 {
                     sb.Append(rawText[pos]);
-                    linelength += curfont.MeasureString(rawText.Substring(pos, 1)).Width * stringWidthModifier;
+                    linelength += curfont.MeasureString(rawText.Substring(pos, 1)).Width * _stringWidthModifier;
                     pos++;
                 }
                 else
                     break;
             } while (true);
-
-            var wordstartpos = pos;
-            if (!string_ended)
+            
+            if (string_ended)
             {
+                break;
+            }
+            
+            var word = new System.Text.StringBuilder();
+            var wordstartpos = pos;
+            var wordlength = 0f;
+            var newline = false;
 
-                var word = new System.Text.StringBuilder();
-                var wordlength = 0f;
-                var newline = false;
-
-                if (linelength < boxwidth)
+            if (linelength < boxwidth)
+            {
+                do
                 {
-                    do
-                    {
-                        if (pos >= rawText.Length) { string_ended = true; break; }
+                    if (pos >= rawText.Length) { string_ended = true; break; }
                             
-                        if (rawText[pos] == '@')
+                    if (rawText[pos] == '@')
+                    {
+                        pos++;
+                        if (pos >= rawText.Length) { string_ended = true; break; }
+
+                        if (rawText[pos] == 'n')
                         {
+                            newline = true;
                             pos++;
-                            if (pos >= rawText.Length) { string_ended = true; break; }
+                            break;
+                        }
 
-                            if (rawText[pos] == 'n')
+                        if (char.IsDigit(rawText[pos])) //Check for colour code
+                        {
+                            word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
+                        }
+                        else if (rawText[pos] == 'b')
+                        {
+                            curfont = fontBold; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
+                        }
+                        else if (rawText[pos] == 'i')
+                        {
+                            curfont = fontItalic; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
+                        }
+                        else if (rawText[pos] == 'e')
+                        {
+                            curfont = fontNormal; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
+                        }
+                        else if (rawText[pos] == 'l')
+                        {
+                            curfont = fontNormal; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
+                        }
+                        else if (rawText[pos] == '[')
+                        {
+                            word.Append(DENOTE_CHAR);
+                            word.Append('[');
+                            do
                             {
-                                newline = true;
-                                pos++;
-                                break;
-                            }
-
-                            if (char.IsDigit(rawText[pos])) //Check for colour code
-                            {
-                                word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
-                            }
-                            else if (rawText[pos] == 'b')
-                            {
-                                curfont = fontBold; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
-                            }
-                            else if (rawText[pos] == 'i')
-                            {
-                                curfont = fontItalic; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
-                            }
-                            else if (rawText[pos] == 'e')
-                            {
-                                curfont = fontNormal; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
-                            }
-                            else if (rawText[pos] == 'l')
-                            {
-                                curfont = fontNormal; word.Append(DENOTE_CHAR); word.Append(rawText[pos]);
-                            }
-
-                            else if (rawText[pos] == '[')
-                            {
-                                word.Append(DENOTE_CHAR);
-                                word.Append('[');
                                 do
                                 {
-                                    do
-                                    {
-                                        pos++;
-                                        if (pos >= rawText.Length) 
-                                        { Game.FlagError("Text Formatting Error", "Can't format Rich text: No matching ']'"); return new XnaRect(0, 0, 10, 10); }
-                                        word.Append(rawText[pos]);
-                                    } while (rawText[pos] != '@');
-                                    if (pos + 1 >= rawText.Length) 
-                                    { Game.FlagError("Text Formatting Error", "Can't format Rich text: No matching ']'"); return new XnaRect(0,0,10,10); }
-                                } while (rawText[pos + 1] != ']');
-                                word.Remove(word.Length - 1, 1);
-                                word.Append(DENOTE_CHAR /*'@'*/);
-                                pos++;
-                            }
-
-                            else if (rawText[pos] == '@')
-                            {
-                                word.Append(rawText[pos]);
-                            }
+                                    pos++;
+                                    if (pos >= rawText.Length) 
+                                    { Game.FlagError("Text Formatting Error", "Can't format Rich text: No matching ']'"); return new XnaRect(0, 0, 10, 10); }
+                                    word.Append(rawText[pos]);
+                                } while (rawText[pos] != '@');
+                                if (pos + 1 >= rawText.Length) 
+                                { Game.FlagError("Text Formatting Error", "Can't format Rich text: No matching ']'"); return new XnaRect(0,0,10,10); }
+                            } while (rawText[pos + 1] != ']');
+                            word.Remove(word.Length - 1, 1);
+                            word.Append(DENOTE_CHAR /*'@'*/);
                             pos++;
-                            if (pos >= rawText.Length) string_ended = true;
                         }
-                        else if (!char.IsWhiteSpace(rawText[pos]))
+                        else if (rawText[pos] == '@')
                         {
                             word.Append(rawText[pos]);
-                            wordlength += curfont.MeasureString(rawText.Substring(pos, 1)).Width * stringWidthModifier;
-                            pos++;
                         }
-                        else
-                            break;
+                        
+                        pos++;
+                        if (pos >= rawText.Length) string_ended = true;
                     }
-                    while (true);
+                    else if (!char.IsWhiteSpace(rawText[pos]))
+                    {
+                        word.Append(rawText[pos]);
+                        wordlength += curfont.MeasureString(rawText.Substring(pos, 1)).Width * _stringWidthModifier;
+                        pos++;
+                    }
+                    else
+                        break;
+                }
+                while (true);
 
-                    linelength += wordlength;
-                }
+                linelength += wordlength;
+            }
 
-                if (linelength >= boxwidth)
-                {
-                    lines.Add(sb.ToString());
-                    sb.Clear();
-                    linestartpos = wordstartpos;
-                    linelength = wordlength;
-                }
-                if (newline)
-                {
-                    sb.Append(word);
-                    lines.Add(sb.ToString());
-                    sb.Clear();
-                    linestartpos = pos;
-                    linelength = 0;
-                }
-                else
-                {
-                    sb.Append(word);
-                }
+            if (linelength >= boxwidth)
+            {
+                lines.Add(sb.ToString());
+                sb.Clear();
+                linestartpos = wordstartpos;
+                linelength = wordlength;
+            }
+            if (newline)
+            {
+                sb.Append(word);
+                lines.Add(sb.ToString());
+                sb.Clear();
+                linestartpos = pos;
+                linelength = 0;
+            }
+            else
+            {
+                sb.Append(word);
             }
 
         }
