@@ -25,7 +25,7 @@ def ValeInfestation_340_MapTrigger_1_25(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?")
+        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?", True)
         if pc == None:
             p.CancelAction = True
             return
@@ -55,7 +55,7 @@ def ValeInfestation_344_MapTrigger_42_42(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?")
+        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?", True)
         if pc == None:
             p.CancelAction = True
             return

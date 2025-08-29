@@ -33,7 +33,7 @@ public enum eAction
     NONE=0, Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight, StandReady, Wait, Act, 
 
     //General actions:
-    Attack, CastSpell, Search, BoatLanding, StartRest, Parry, QuickSave, QuickLoad, LoadSaveMenu, DoAlchemy, Use, DropItem, FireRanged, EscapeMenu, RunConsoleWindow,
+    Attack, CastSpell, Search, BoatLanding, StartRest, Parry, QuickSave, QuickLoad, LoadSaveMenu, DoAlchemy, Use, DropItem, FireRanged, EscapeMenu, RunConsoleWindow, ZoomIn, ZoomOut,
 
     //Menu button actions: triggered by pressing the menu bar buttons, or their key shortcuts
     StartCombat, EndCombat, GatherLoot, ChooseMagicM, ChooseMagicP,

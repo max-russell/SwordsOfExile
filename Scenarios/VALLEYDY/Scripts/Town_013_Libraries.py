@@ -46,7 +46,7 @@ def Libraries_249_MapTrigger_3_23(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?")
+        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?", True)
         if pc == None:
             p.CancelAction = True
             return

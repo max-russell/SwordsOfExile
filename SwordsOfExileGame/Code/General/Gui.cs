@@ -14,10 +14,11 @@ internal static class Gui
 
     public static MouseState Ms;
     public static bool LMBStop, RMBStop, MMBStop, LMBDown, RMBDown, MMBDown, LMBHit, RMBHit, MMBHit,
-        LMBHitUp, RMBHitUp, MMBHitUp;
+        LMBHitUp, RMBHitUp, MMBHitUp, MouseWheeledUp, MouseWheeledDown;
     public static bool NeedMouseRelease; //Set this if we want the user to release the mouse buttons before the GUI will respond to anything else
     private static bool mouseScrolling;
     private static int mouseScrollX, mouseScrollY;
+    public static int ScrollWheel = 0;
 
     private static GuiWindow moveWindow, resizeWindow;
     private static int moveWinOrgX, moveWinOrgY, resizeWinOrgY;
@@ -32,7 +33,7 @@ internal static class Gui
 
     private static bool worldModalPaused = false;
     public static bool WorldModalPaused { get => worldModalPaused;
-        set { worldModalPaused = value; KeyHandler.ScrollWheel = Ms.ScrollWheelValue; } }// = false;
+        set { worldModalPaused = value; ScrollWheel = Ms.ScrollWheelValue; } }// = false;
     public static int TooltipDelay = 5;
 
     public static ToolTipV2 ActiveToolTip = null;
@@ -100,6 +101,19 @@ internal static class Gui
         RMBHitUp = !RMBDown && RMBStop;
         MMBHitUp = !MMBDown && MMBStop;
 
+        MouseWheeledUp = false;
+        MouseWheeledDown = false;
+        if (ScrollWheel < Ms.ScrollWheelValue)
+        {
+            MouseWheeledUp = true;
+            ScrollWheel = Ms.ScrollWheelValue;
+        }
+        else if (ScrollWheel > Ms.ScrollWheelValue)
+        {
+            MouseWheeledDown = true;
+            ScrollWheel = Ms.ScrollWheelValue;
+        }
+        
         if (RMBHit && DragItem != null)
         {
             DragItem = null; //Right click always cancels item drag.
@@ -130,7 +144,7 @@ internal static class Gui
             bringFrontWin = null;
         }
 
-        var mouseoverwindow = false;
+        var mouseOverWindow = false;
 
         if (doMoveWindow()) return;
         if (doResizingWindow()) return;
@@ -138,7 +152,7 @@ internal static class Gui
         //Check for interaction with window or control on it
         foreach (var win in GuiWindows.Reverse<GuiWindow>()) 
         {
-            mouseoverwindow |= win.Visible && win.MouseIsInside();
+            mouseOverWindow |= win.Visible && win.MouseIsInside();
             var interacted = win.Handle();
             if (win.KillMe)
             {
@@ -161,19 +175,18 @@ internal static class Gui
             }
         }
 
-        if (mouseoverwindow) Gfx.SetCursor(eCursor.SWORD);
+        if (mouseOverWindow) Gfx.SetCursor(eCursor.SWORD);
 
-        if (mouseoverwindow || Game.CurrentMap == null || Gfx.FadeMode != 0) return; //!interacted
+        if (mouseOverWindow || Game.CurrentMap == null || Gfx.FadeMode != 0) 
+            return; //!interacted
         
         //User hasn't gone near a window, so check the map
         if (!WorldModalPaused && MMBHit) {
-
             if (!mouseScrolling) {
                 mouseScrolling = true;
                 mouseScrollX = Ms.X;
                 mouseScrollY = Ms.Y;
             }
-
         }
 
         var mloc = Gfx.GetTileAtMouse(Ms);
@@ -187,6 +200,15 @@ internal static class Gui
             new ToolTipV2(true, Gfx.GetMapMouseRect(), tt, -1);
         }
 
+        if (MouseWheeledUp)
+        {
+            Gfx.StartZoom(false, Constants.ZOOM_SPEED);
+        }
+        else if (MouseWheeledDown)
+        {
+            Gfx.StartZoom(true, Constants.ZOOM_SPEED);
+        }
+        
         if (Game.PlayerTargeting)
         {
             switch (Action.TargetWhat)

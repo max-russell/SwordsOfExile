@@ -64,7 +64,7 @@ def VisitorsQuarters_66_MapTrigger_32_34(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("It\'s impossible to mistake the meaning of the rune etched on the latch. This chest is clearly magically trapped. You may be able to disarm it, but it\'ll be tricky.")
+        pc = SelectPCBox("It\'s impossible to mistake the meaning of the rune etched on the latch. This chest is clearly magically trapped. You may be able to disarm it, but it\'ll be tricky.", True)
         if pc == None:
             p.CancelAction = True
             return
@@ -90,7 +90,7 @@ def VisitorsQuarters_71_MapTrigger_3_24(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("Goblins are not skilled in the area of trap design. The gas trap on this chest is pretty obvious and shouldn\'t be too difficult to disarm.")
+        pc = SelectPCBox("Goblins are not skilled in the area of trap design. The gas trap on this chest is pretty obvious and shouldn\'t be too difficult to disarm.", True)
         if pc == None:
             p.CancelAction = True
             return

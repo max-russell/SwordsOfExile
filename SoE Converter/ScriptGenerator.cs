@@ -1336,7 +1336,7 @@ internal partial class Program
                 WriteScript("        return");
                 WriteScript("    pc = p.PC");
                 WriteScript("else:");
-                WriteScript("    pc = SelectPCBox(\"{0}\")", msg); 
+                WriteScript("    pc = SelectPCBox(\"{0}\", True)", msg); 
                 WriteScript("    if pc == None:");
                 WriteScript("        p.CancelAction = True");
                 WriteScript("        return");

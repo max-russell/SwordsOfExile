@@ -366,12 +366,15 @@ public partial class NPC : ICharacter, IExpRecipient, IAnimatable
         var current_monst_tactic = 0;
         if (Target != null && AP > 1 && MessingAround == 0)
         {
-            var l = Party.ClosestPC(Pos).Pos;
-            if ((Record.MageLevel > 0 || Record.PriestLevel > 0) && l.DistanceTo(Pos) < 5 && !AdjacentTo(l))
-                current_monst_tactic = 1; // this means flee
+            var closestPc = Party.ClosestPC(Pos);
+            if (closestPc is not null)
+            {
+                var l = Party.ClosestPC(Pos).Pos;
+                if ((Record.MageLevel > 0 || Record.PriestLevel > 0) && l.DistanceTo(Pos) < 5 && !AdjacentTo(l))
+                    current_monst_tactic = 1; // this means flee
+            }
 
-            if (((Record.SpecialSkill > eCSS.NO_SPECIAL_ABILITY && Record.SpecialSkill < eCSS.THROWS_ROCKS1)
-                 || Record.SpecialSkill == eCSS.GOOD_ARCHER) && // Archer?
+            if (Record.SpecialSkill is > eCSS.NO_SPECIAL_ABILITY and < eCSS.THROWS_ROCKS1 or eCSS.GOOD_ARCHER && // Archer?
                 Pos.DistanceTo(Target.Pos) < 6 && !AdjacentTo(Target.Pos))
                 current_monst_tactic = 1; // this means flee
         }

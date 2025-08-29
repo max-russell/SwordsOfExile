@@ -115,7 +115,7 @@ def Administration_173_MapTrigger_62_9(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?")
+        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?", True)
         if pc == None:
             p.CancelAction = True
             return

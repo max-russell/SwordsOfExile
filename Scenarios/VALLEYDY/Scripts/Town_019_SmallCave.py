@@ -8,7 +8,7 @@ def SmallCave_354_MapTrigger_6_5(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("You doubtthat  the troglodytes would leave a treasure chest here without some sort of nice, nasty trap on it ...")
+        pc = SelectPCBox("You doubtthat  the troglodytes would leave a treasure chest here without some sort of nice, nasty trap on it ...", True)
         if pc == None:
             p.CancelAction = True
             return

@@ -13,8 +13,6 @@ public static class KeyHandler
     private static int keyRepeatTime;
     private static Keys keyRepeat;
 
-    public static int ScrollWheel = 0;
-
     private static Keys hitKey;
 
 
@@ -70,19 +68,6 @@ public static class KeyHandler
 
     public static void GetActionKeys()
     {
-        //Handle map zooming with mouse scroll wheel
-        var ms = Mouse.GetState();
-        if (ScrollWheel < ms.ScrollWheelValue)
-        {
-            Gfx.StartZoom(false, Constants.ZOOM_SPEED);
-            ScrollWheel = ms.ScrollWheelValue;
-        }
-        else if (ScrollWheel > ms.ScrollWheelValue)
-        {
-            Gfx.StartZoom(true, Constants.ZOOM_SPEED);
-            ScrollWheel = ms.ScrollWheelValue;
-        }
-
         if (hitKey != Keys.None)
         {
             if (hitKey == Keys.Up) Gfx.Scroll.Y -= 1;

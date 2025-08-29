@@ -267,11 +267,26 @@ internal class InventoryBox : Control, IScrollBarOwner
                 pressedButton = Gui.LMBDown;
                 return true;
             }
-            else if (!Gui.LMBDown && !Gui.RMBDown)
+            
+            if (!Gui.LMBDown && !Gui.RMBDown)
             {
                 var slotatmouse = getSlotAtMouse(xOffset, yOffset);
                 if (pressedSlot == -1)
                 {
+                    if (Gui.MouseWheeledUp)
+                    {
+                        scrollViewPos = Maths.Max(scrollViewPos - Gfx.ITEMGFXHEIGHT, 0);
+                        updateView();
+                        return true;
+                    }
+
+                    if (Gui.MouseWheeledDown)
+                    {
+                        scrollViewPos = Maths.Min(scrollViewPos + Gfx.ITEMGFXHEIGHT, scrollFullHeight);
+                        updateView();
+                        return true;
+                    }
+                    
                     //Button not pressed and hasn't just been released.
                     if (slotatmouse == tooltipSlot)
                         owner.MakeItemToolTip(owner.GetSlot(tooltipSlot), getSlotRectangle(tooltipSlot, xOffset, yOffset));

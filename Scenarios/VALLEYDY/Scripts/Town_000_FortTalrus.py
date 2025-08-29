@@ -43,7 +43,7 @@ def FortTalrus_4_MapTrigger_10_32(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("The commander clearly doesn\'t want anyone going through his things. The trap is easy to find. Disarming it may be another matter.")
+        pc = SelectPCBox("The commander clearly doesn\'t want anyone going through his things. The trap is easy to find. Disarming it may be another matter.", True)
         if pc == None:
             p.CancelAction = True
             return

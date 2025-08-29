@@ -24,7 +24,7 @@ def Sweetgrove_11_MapTrigger_16_8(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?")
+        pc = SelectPCBox("You've found a trap. Do you want to try to disarm it?", True)
         if pc == None:
             p.CancelAction = True
             return
@@ -49,7 +49,7 @@ def Sweetgrove_15_MapTrigger_32_22(p):
             return
         pc = p.PC
     else:
-        pc = SelectPCBox("The runes on the floor are glowing gently. It must be a magical trap. These are intensely difficult to disarm ... you can only hope it\'s not too powerful.")
+        pc = SelectPCBox("The runes on the floor are glowing gently. It must be a magical trap. These are intensely difficult to disarm ... you can only hope it\'s not too powerful.", True)
         if pc == None:
             p.CancelAction = True
             return
