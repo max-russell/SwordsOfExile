@@ -64,9 +64,7 @@ namespace SoE_Converter
         private static int Main(string[] args)
         {
 #if DEBUG
-            Directory.SetCurrentDirectory(@"..\..\..\..");
 #endif
-
             var legacy = true;
             foreach (var s in args)
             {

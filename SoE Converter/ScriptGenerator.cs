@@ -1100,10 +1100,10 @@ internal partial class Program
                 break;
             case 14: //Play sound
                 if (TalkingFunc)
-                    WriteScript("Sound.Play({0})", GetSoundID(nd.ex1a));
+                    WriteScript("Sound.Play(\"{0}\")", GetSoundID(nd.ex1a));
                 else
                 {
-                    WriteScript("Animation_Hold(-1, {0})", GetSoundID(nd.ex1a));
+                    WriteScript("Animation_Hold(-1, \"{0}\")", GetSoundID(nd.ex1a));
                     WriteScript("Wait()");
                 }
                 break;

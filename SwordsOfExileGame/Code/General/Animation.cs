@@ -152,7 +152,7 @@ public class Animation
 public class Animation_Hold : Animation, IAnimHold
 {
     public Animation_Hold(int duration = 0) : base(duration,null) { }
-    public Animation_Hold(int duration, int sound_index) : base(duration, sound_index) { }
+    public Animation_Hold(int duration, string sound) : base(duration, sound) { }
     public Animation_Hold(string sound) : base(sound) { }
 }
 
